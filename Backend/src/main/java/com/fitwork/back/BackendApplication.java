@@ -1,4 +1,4 @@
-package com.firwork.back;
+package com.fitwork.back;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
