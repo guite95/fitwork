@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS member (
     email VARCHAR(100),
     phone_number VARCHAR(20) NOT NULL,
     address VARCHAR(100) NOT NULL,
-    instructor INT NOT NULL DEFAULT 0,
+    member_role VARCHAR(20) DEFAULT 'common',
     PRIMARY KEY(id)
 );
 
@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS board (
     reg_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     view_cnt INT DEFAULT 0,
     like_cnt INT DEFAULT 0,
+    is_modified BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(board_no),
     FOREIGN KEY (writer) REFERENCES member(nickname) ON DELETE CASCADE ON UPDATE CASCADE
 );
