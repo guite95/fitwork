@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS member (
     email VARCHAR(100),
     phone_number VARCHAR(20) NOT NULL,
     address VARCHAR(100) NOT NULL,
-    member_role VARCHAR(20) DEFAULT 'common',
+    member_role VARCHAR(20) DEFAULT 'ROLE_GENERAL',
     PRIMARY KEY(id)
 );
 
@@ -31,6 +31,13 @@ CREATE TABLE IF NOT EXISTS board (
     is_modified BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(board_no),
     FOREIGN KEY (writer) REFERENCES member(nickname) ON DELETE CASCADE ON UPDATE CASCADE
+);
+-- 게시판 좋아요 테이블
+CREATE TABLE IF NOT EXISTS board_like (
+	id VARCHAR(30),
+    board_no INT,
+    FOREIGN KEY(id) REFERENCES member(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY(board_no) REFERENCES board(board_no) ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- 댓글 테이블
 CREATE TABLE IF NOT EXISTS comment (

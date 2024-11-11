@@ -43,10 +43,10 @@ public interface BoardRepository {
 	
 	/**
 	 * 게시물 파일 선택
-	 * @param fileNo
+	 * @param boardNo
 	 * @return
 	 */
-	public BoardFile selectBoardFileByNo(int fileNo);
+	public BoardFile selectBoardFileByNo(int boardNo);
 	
 	/**
 	 * 게시물 조회수 업데이트
@@ -55,16 +55,42 @@ public interface BoardRepository {
 	public void updateViewCnt(int boardNo);
 	
 	/**
-	 * 게시물 좋아요 수 업데이트
+	 * 게시물 좋아요 수 증가
 	 * @param boardNo
 	 */
-	public void updateLikeCnt(int boardNo);
+	public void increaseLikeCnt(int boardNo);
+	
+	/**
+	 * 좋아요 테이블에 추가
+	 * @param id
+	 * @param boardNo
+	 */
+	public void insertLike(String id, int boardNo);
+	
+	/**
+	 * 좋아요 테이블에서 삭제
+	 * @param id
+	 * @param boardNo
+	 */
+	public void deleteLike(String id, int boardNo);
+	
+	/**
+	 * 게시물 좋아요 수 감소
+	 * @param boardNo
+	 */
+	public void decreaseLikeCnt(int boardNo);
 	
 	/**
 	 * 게시물 삭제
 	 * @param boardNo
 	 */
 	public void deleteBoard(int boardNo);
+	
+	/**
+	 * 게시물 파일 삭제
+	 * @param fileNo
+	 */
+	public void deleteBoardFile(int fileNo);
 	
 	/**
 	 * 게시물 수정
