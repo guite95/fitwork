@@ -19,6 +19,14 @@ public interface MemberService {
 	public Member getMemberInfo(String id);
 	
 	/**
+	 * 로그인 체크
+	 * @param id
+	 * @param password
+	 * @return
+	 */
+	public Member loginCheck(String id, String password);
+	
+	/**
 	 * 회원 탈퇴
 	 * @param id
 	 * @return

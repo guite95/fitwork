@@ -4,11 +4,13 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 
+@Component
 public class JWTUtil {
 //	private static final Logger logger = LoggerFactory.getLogger(JWTUtil.class);
 

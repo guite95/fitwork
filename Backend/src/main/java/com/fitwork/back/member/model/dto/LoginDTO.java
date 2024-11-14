@@ -12,4 +12,9 @@ import lombok.NoArgsConstructor;
 public class LoginDTO {
 	String id;
 	String password;
+	
+	public LoginDTO(Member member) {
+		this.id = member.getId();
+		this.password = member.getPassword();
+	}
 }

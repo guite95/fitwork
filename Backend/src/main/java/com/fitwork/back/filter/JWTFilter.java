@@ -8,8 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fitwork.back.member.model.dto.CustomUserDetails;
 import com.fitwork.back.member.model.dto.Member;
-import com.fitwork.back.member.model.service.CustomUserDetails;
 import com.fitwork.back.util.JWTUtil;
 
 import jakarta.servlet.FilterChain;

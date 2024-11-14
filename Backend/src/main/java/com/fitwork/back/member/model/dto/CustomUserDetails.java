@@ -1,12 +1,10 @@
-package com.fitwork.back.member.model.service;
+package com.fitwork.back.member.model.dto;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.fitwork.back.member.model.dto.Member;
 
 public class CustomUserDetails implements UserDetails {
 
