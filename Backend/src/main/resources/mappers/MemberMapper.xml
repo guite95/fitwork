@@ -17,22 +17,26 @@
 	</select>
 	
 	<!-- 전체 회원 조회 -->
-	<select id="selectAllMember">
-		
+	<select id="selectAllMember" resultType="Member">
+		SELECT *
+		FROM member
 	</select>
 	
 	<!-- 회원 상세 조회 -->
-	<select id="selectMemberById">
-		
+	<select id="selectMemberById" resultType="Member" parameterType="String">
+		SELECT *
+		FROM member
+		WHERE id = #{id}
 	</select>
 	
 	<!-- 회원 정보 삭제 -->
-	<delete id="deleteMember">
-		
+	<delete id="deleteMember" parameterType="String">
+		DELETE FROM member
+		WHERE id = #{id}
 	</delete>
 	
 	<!-- 회원 정보 수정 -->
-	<update id="updateMemberInfo">
+	<update id="updateMemberInfo" parameterType="String">
 		
 	</update>
 </mapper>

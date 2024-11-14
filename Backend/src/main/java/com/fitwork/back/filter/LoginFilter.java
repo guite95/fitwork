@@ -3,6 +3,7 @@ package com.fitwork.back.filter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,6 +12,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitwork.back.member.model.dto.CustomUserDetails;
 import com.fitwork.back.util.JWTUtil;
 
@@ -31,12 +33,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
-		String id = request.getParameter("id");
-		String password = obtainPassword(request);
-		
-		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(id, password);
-		
-		return authenticationManager.authenticate(authToken);
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    // request의 InputStream에서 JSON 데이터를 Map으로 변환
+	    Map<String, String> credentials;
+		try {
+			credentials = objectMapper.readValue(request.getInputStream(), Map.class);
+			
+			String id = credentials.get("id");
+			String password = credentials.get("password");
+			
+			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(id, password);
+			
+			return authenticationManager.authenticate(authToken);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 	
 	// 로그인 성공 시 동작하는 메서드. JWT 발급
