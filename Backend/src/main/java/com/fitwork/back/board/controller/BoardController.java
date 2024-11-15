@@ -28,6 +28,7 @@ import com.fitwork.back.board.model.service.BoardService;
 @RestController
 @RequestMapping("/api-board")
 public class BoardController {
+  
 	private final BoardService boardService;
 	public BoardController(BoardService boardService) {
 		this.boardService = boardService;
