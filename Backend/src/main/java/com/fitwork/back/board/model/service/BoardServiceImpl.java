@@ -70,8 +70,9 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public void updateBoard(Board board) {
-		
+	public void modifyBoard(Board board) {
+		board.setModified(true);
+		boardRepository.updateBoard(board);
 	}
 
 	@Override
