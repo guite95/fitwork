@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,7 +57,7 @@ public class BoardController {
 	 * @param boardNo
 	 * @return
 	 */
-	@GetMapping("/detail/{boardNo}")
+	@GetMapping("/{boardNo}")
 	public ResponseEntity<Object> detail(@PathVariable int boardNo) {
 		
 		try {
@@ -120,18 +122,60 @@ public class BoardController {
 	 * @param boardNo
 	 * @return
 	 */
-	@DeleteMapping("{no}")
+	@DeleteMapping("{boardNo}")
 	public ResponseEntity<String> delete(@PathVariable int boardNo) {
 		
 		try {
 			boardService.deleteBoard(boardNo);
 			return ResponseEntity.status(HttpStatus.OK).body("파일이 정상적으로 삭제되었습니다");
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 에러가 발생했습니다.");
 		}
 		
 	}
 	
-//	@PutMapping
+	/**
+	 * 게시물 수정
+	 * @param boardNo
+	 * @param board
+	 * @param file
+	 * @return
+	 */
+	@PutMapping("{boardNo}")
+	public ResponseEntity<String> modify(@PathVariable int boardNo, @RequestPart Board board, @RequestPart MultipartFile file) {
+		try {
+			
+			String oriName = file.getOriginalFilename();
+			
+			if (oriName.length() > 0) {
+				SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
+				String subDir = sdf.format(new Date());
+				
+				File dir = new File("c:/SSAFY/final-prj/board/img" + subDir); // 디렉토리 경로를 나타내는 파일 객체
+				dir.mkdirs();
+				
+				String systemName = UUID.randomUUID().toString() + oriName;
+				
+				file.transferTo(new File(dir, systemName)); // 메모리의 파일 정보를 특정 위치에 저장
+				
+				BoardFile boardFile = new BoardFile();
+				boardFile.setPath(subDir);
+				boardFile.setOriName(oriName);
+				boardFile.setSystemName(systemName);
+				
+				board.setBoardFile(boardFile);
+			} else {
+				board.setBoardFile(null);
+			}
+			
+			boardService.modifyBoard(board);
+			
+			return ResponseEntity.status(HttpStatus.OK).body("수정완료");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
+		}
+	}
 	
 }
