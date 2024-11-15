@@ -26,7 +26,7 @@ import com.fitwork.back.board.model.dto.BoardSearch;
 import com.fitwork.back.board.model.service.BoardService;
 
 @RestController
-@RequestMapping("/board")
+@RequestMapping("/api-board")
 public class BoardController {
 	private final BoardService boardService;
 	public BoardController(BoardService boardService) {
@@ -142,7 +142,7 @@ public class BoardController {
 	 * @param file
 	 * @return
 	 */
-	@PutMapping("{boardNo}")
+	@PutMapping("/modify/{boardNo}")
 	public ResponseEntity<String> modify(@PathVariable int boardNo, @RequestPart Board board, @RequestPart MultipartFile file) {
 		try {
 			
@@ -172,6 +172,40 @@ public class BoardController {
 			boardService.modifyBoard(board);
 			
 			return ResponseEntity.status(HttpStatus.OK).body("수정완료");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
+		}
+	}
+	
+	/**
+	 * 좋아요 수 증가
+	 * @param boardNo
+	 * @param id
+	 * @return
+	 */
+	@PutMapping("/plus/{boardNo}")
+	public ResponseEntity<String> likePlus(@PathVariable int boardNo, @RequestBody String id) {
+		try {
+			boardService.increseLikeCnt(id, boardNo);
+			return ResponseEntity.status(HttpStatus.OK).body("좋아요 증가");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
+		}
+	}
+	
+	/**
+	 * 좋아요 수 감소
+	 * @param boardNo
+	 * @param id
+	 * @return
+	 */
+	@PutMapping("/minus/{boardNo}")
+	public ResponseEntity<String> likeMinus(@PathVariable int boardNo, @RequestBody String id) {
+		try {
+			boardService.decreaseLikeCnt(id, boardNo);
+			return ResponseEntity.status(HttpStatus.OK).body("좋아요 감소");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
