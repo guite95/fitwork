@@ -41,6 +41,7 @@ public class BoardController {
 	 */
 	@GetMapping("/list")
 	public ResponseEntity<Object> list(BoardSearch boardSearch) {
+		System.out.println("리스트 요청 확인");
 		
 		try {
 			Map<String, Object> result = boardService.list(boardSearch);

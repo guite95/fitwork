@@ -2,31 +2,21 @@ package com.fitwork.back.member.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fitwork.back.member.model.dto.LoginDTO;
 import com.fitwork.back.member.model.dto.Member;
 import com.fitwork.back.member.model.service.MemberService;
-import com.fitwork.back.util.JWTUtil;
 
 @RestController
 @RequestMapping("/api-member")
 public class MemberController {
 	
-	private final AuthenticationManager authenticationManager;
 	private final MemberService memberService;
-	private final JWTUtil jwtUtil;
-	public MemberController(AuthenticationManager authenticationManager, MemberService memberService, JWTUtil jwtUtil) {
-		this.authenticationManager = authenticationManager;
+	public MemberController(MemberService memberService) {
 		this.memberService = memberService;
-		this.jwtUtil = jwtUtil;
 	}
 	
 	@PostMapping("/regist/general")

@@ -36,6 +36,7 @@ public class JWTFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 			return;
 		}
+		System.out.println("헤더통과");
 		
 		String token = authorization.split(" ")[1];
 		
@@ -45,6 +46,7 @@ public class JWTFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 			return;
 		}
+		System.out.println("소멸시간 통과");
 		
 		String id = jwtUtil.getId(token);
 		String role = jwtUtil.getRole(token);

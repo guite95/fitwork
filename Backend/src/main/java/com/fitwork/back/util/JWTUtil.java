@@ -16,7 +16,7 @@ public class JWTUtil {
 
 	// 12.3버전
     //accessToken 만료시간 설정
-    public static final long ACCESS_TOKEN_VALIDATION_SECOND = 1000L*60*60; //12시간
+    public static final long ACCESS_TOKEN_VALIDATION_SECOND = 1000L*60*60; //1시간
     public static final String AUTHORIZATION_HEADER = "Authorization"; //헤더 이름
 
     // SecretKey 생성

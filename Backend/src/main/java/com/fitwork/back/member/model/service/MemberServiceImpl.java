@@ -35,17 +35,6 @@ public class MemberServiceImpl implements MemberService {
 	public Member getMemberInfo(String id) {
 		return memberRepository.selectMemberById(id);
 	}
-
-	@Override
-	public Member loginCheck(String id, String password) {
-		Member member = memberRepository.selectMemberById(id);
-		
-		if (member == null || !password.equals(member.getPassword())) {
-			return null;
-		}
-		
-		return member;
-	}
 	
 	@Override
 	public boolean deleteMember(String id) {
