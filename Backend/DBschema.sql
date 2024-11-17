@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS comment (
     content VARCHAR(300),
     reg_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     board_no INT,
-    parent_comment_number INT DEFAULT -1,
+    parent_comment_number INT DEFAULT 0,
     PRIMARY KEY(comment_no),
     FOREIGN KEY (writer) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (board_no) REFERENCES board(board_no) ON UPDATE CASCADE ON DELETE CASCADE
