@@ -1,10 +1,12 @@
 package com.fitwork.back.member.model.service;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import com.fitwork.back.member.model.dto.Member;
 import com.fitwork.back.member.model.repository.MemberRepository;
 
+@Service
 public class MemberServiceImpl implements MemberService {
 	
 	private final MemberRepository memberRepository;
@@ -31,19 +33,18 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public Member getMemberInfo(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		return memberRepository.selectMemberById(id);
 	}
-
+	
 	@Override
 	public boolean deleteMember(String id) {
-		// TODO Auto-generated method stub
+		
+		
 		return false;
 	}
 
 	@Override
 	public boolean modifyMemberInfo(Member member) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

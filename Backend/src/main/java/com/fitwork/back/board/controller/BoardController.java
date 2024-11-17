@@ -28,6 +28,7 @@ import com.fitwork.back.board.model.service.BoardService;
 @RestController
 @RequestMapping("/api-board")
 public class BoardController {
+  
 	private final BoardService boardService;
 	public BoardController(BoardService boardService) {
 		this.boardService = boardService;
@@ -40,6 +41,7 @@ public class BoardController {
 	 */
 	@GetMapping("/list")
 	public ResponseEntity<Object> list(BoardSearch boardSearch) {
+		System.out.println("리스트 요청 확인");
 		
 		try {
 			Map<String, Object> result = boardService.list(boardSearch);
