@@ -122,7 +122,6 @@ CREATE TABLE IF NOT EXISTS club (
     location VARCHAR(100),
     description VARCHAR(10000),
     head_count INT DEFAULT 0,
-    price INT NOT NULL,
     PRIMARY KEY(club_no),
     FOREIGN KEY (leader) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (category) REFERENCES category(category_name) ON UPDATE CASCADE ON DELETE CASCADE
