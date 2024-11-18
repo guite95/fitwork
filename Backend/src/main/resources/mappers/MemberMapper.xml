@@ -36,7 +36,9 @@
 	</delete>
 	
 	<!-- 회원 정보 수정 -->
-	<update id="updateMemberInfo" parameterType="String">
-		
+	<update id="updateMemberInfo" parameterType="Member">
+		UPDATE member
+		SET password = #{password}, nickname = #{nickname}, email = #{email}, address = #{address}
+		WHERE id = #{id}
 	</update>
 </mapper>

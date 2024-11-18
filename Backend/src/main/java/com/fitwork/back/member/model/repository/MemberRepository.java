@@ -38,6 +38,6 @@ public interface MemberRepository {
 	 * 회원 정보 수정
 	 * @param id
 	 */
-	public void updateMemberInfo(String id);
+	public void updateMemberInfo(Member member);
 	
 }
