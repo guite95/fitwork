@@ -1,6 +1,7 @@
 package com.fitwork.back.board.model.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.fitwork.back.board.model.dto.Board;
 import com.fitwork.back.board.model.dto.BoardFile;
 import com.fitwork.back.board.model.dto.BoardSearch;
+import com.fitwork.back.board.model.dto.Comment;
 import com.fitwork.back.board.model.repository.BoardRepository;
 import com.fitwork.back.util.PageResult;
 
@@ -47,7 +49,11 @@ public class BoardServiceImpl implements BoardService {
 		
 		Board board = boardRepository.selectBoardByNo(boardNo);
 		
-		board.setBoardFile(boardRepository.selectBoardFileByNo(boardNo));
+		BoardFile boardFile = boardRepository.selectBoardFileByNo(boardNo);
+		
+		if (boardFile != null) {
+			board.setBoardFile(boardFile);
+		}
 		
 		return board;
 	}
@@ -87,6 +93,33 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public void deleteFile(int fileNo) {
 		boardRepository.deleteBoardFile(fileNo);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public void addComment(Comment comment) {
+		boardRepository.insertComment(comment);
+	}
+
+	@Override
+	public List<Comment> commentList(int boardNo) {
+		return boardRepository.selectCommentByBoardNo(boardNo);
+	}
+
+	@Override
+	public List<Comment> userComment(String writer) {
+		return boardRepository.selectCommentByWriter(writer);
+	}
+
+	@Override
+	public void modifyComment(Comment comment) {
+		boardRepository.updateComment(comment);
+	}
+
+	@Override
+	public void deleteComment(int commentNo) {
+		boardRepository.deleteComment(commentNo);
 	}
 
 }

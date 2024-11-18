@@ -99,6 +99,8 @@ public interface BoardRepository {
 	 */
 	public void updateBoard(Board board);
 	
+	//////////////////////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * 댓글 등록
 	 * @param comment

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fitwork.back.board.model.dto.Board;
 import com.fitwork.back.board.model.dto.BoardFile;
 import com.fitwork.back.board.model.dto.BoardSearch;
+import com.fitwork.back.board.model.dto.Comment;
 import com.fitwork.back.board.model.service.BoardService;
 
 @RestController
@@ -208,6 +210,94 @@ public class BoardController {
 		try {
 			boardService.decreaseLikeCnt(id, boardNo);
 			return ResponseEntity.status(HttpStatus.OK).body("좋아요 감소");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
+		}
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * 댓글 등록
+	 * @param comment
+	 * @return
+	 */
+	@PostMapping("/comment")
+	public ResponseEntity<String> writeComment(@RequestBody Comment comment) {
+		try {
+			boardService.addComment(comment);
+			return ResponseEntity.status(HttpStatus.CREATED).body("댓글이 등록되었습니다");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
+		}
+	}
+	
+	/**
+	 * 게시물의 댓글 조회
+	 * @param boardNo
+	 * @return
+	 */
+	@GetMapping("/comment")
+	public ResponseEntity<Object> getBoardComment(int boardNo) {
+		try {
+			List<Comment> commentList = boardService.commentList(boardNo);
+			if (commentList == null) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("댓글이 없습니다");
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(commentList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
+		}
+	}
+	
+	/**
+	 * 회원이 쓴 댓글 조회
+	 * @param nickname
+	 * @return
+	 */
+	@GetMapping("/comment/{nickname}")
+	public ResponseEntity<Object> getMemberComment(@PathVariable String nickname) {
+		try {
+			List<Comment> commentList = boardService.userComment(nickname);
+			if (commentList == null) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("작성한 댓글이 없습니다");
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(commentList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
+		}
+	}
+	
+	/**
+	 * 댓글 수정
+	 * @param comment
+	 * @return
+	 */
+	@PutMapping("/comment")
+	public ResponseEntity<String> modifyComment(@RequestBody Comment comment) {
+		try {
+			boardService.modifyComment(comment);
+			return ResponseEntity.status(HttpStatus.OK).body("댓글이 수정되었습니다");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
+		}
+	}
+	
+	/**
+	 * 댓글 삭제
+	 * @param commentNo
+	 * @return
+	 */
+	@DeleteMapping("/comment/{commentNo}")
+	public ResponseEntity<String> deleteComment(@PathVariable int commentNo) {
+		try {
+			boardService.deleteComment(commentNo);
+			return ResponseEntity.status(HttpStatus.OK).body("댓글이 삭제되었습니다");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
