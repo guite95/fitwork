@@ -5,8 +5,7 @@
 </template>
 
 <script setup>
-import Home from './components/Home.vue';
-import Clubs from './components/Clubs.vue';
+
 </script>
 
 <style>
