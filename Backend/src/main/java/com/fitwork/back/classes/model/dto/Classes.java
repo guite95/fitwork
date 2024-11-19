@@ -1,4 +1,4 @@
-package com.fitwork.back._class.model.dto;
+package com.fitwork.back.classes.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class _Class {
+public class Classes {
 	private int classNo;
 	private String leader;
 	private String className;
