@@ -98,16 +98,16 @@ CREATE TABLE IF NOT EXISTS class_file (
 );
 -- 클래스 신청 목록
 CREATE TABLE IF NOT EXISTS class_regist (
-	nickname VARCHAR(50),
+	id VARCHAR(50),
     class_no INT,
-    FOREIGN KEY (nickname) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (class_no) REFERENCES class(class_no) ON UPDATE CASCADE ON DELETE CASCADE
 );
 -- 클래스 수강 인원
 CREATE TABLE IF NOT EXISTS class_member (
-	nickname VARCHAR(50),
+	id VARCHAR(50),
     class_no INT,
-    FOREIGN KEY (nickname) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (class_no) REFERENCES class(class_no) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -122,7 +122,6 @@ CREATE TABLE IF NOT EXISTS club (
     location VARCHAR(100),
     description VARCHAR(10000),
     head_count INT DEFAULT 0,
-    price INT NOT NULL,
     PRIMARY KEY(club_no),
     FOREIGN KEY (leader) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (category) REFERENCES category(category_name) ON UPDATE CASCADE ON DELETE CASCADE
@@ -139,15 +138,15 @@ CREATE TABLE IF NOT EXISTS club_file (
 );
 -- 모임 신청 목록
 CREATE TABLE IF NOT EXISTS club_regist (
-	nickname VARCHAR(50),
+	id VARCHAR(50),
     club_no INT,
-    FOREIGN KEY (nickname) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (club_no) REFERENCES club(club_no) ON UPDATE CASCADE ON DELETE CASCADE
 );
 -- 모임 수강 인원
 CREATE TABLE IF NOT EXISTS club_member (
-	nickname VARCHAR(50),
+	id VARCHAR(50),
     club_no INT,
-    FOREIGN KEY (nickname) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (club_no) REFERENCES club(club_no) ON UPDATE CASCADE ON DELETE CASCADE
 );

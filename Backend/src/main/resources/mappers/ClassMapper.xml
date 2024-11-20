@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fitwork.back.Classes.model.repository.ClassesRepository">
+	<!-- 전체 클래스 조회 -->
+	<select id="selectAllClass" resultType="Classes">
+		SELECT *
+		FROM class
+	</select>
+
+	<!-- 클래스 상세 조회 -->
+	<select id="selectClassByClassNo" parameterType="int" resultType="Classes">
+		SELECT *
+		FROM class
+		WHERE class_no = #{classNo}
+	</select>
+
+	<!-- 위치별 클래스 조회 -->
+	<select id="selectClassByLocation" parameterType="String" resultType="Classes">
+		SELECT *
+		FROM class
+		WHERE location = #{location}
+	</select>
+	
+	<!-- 카테고리별 클래스 조회 -->
+	<select id="selectClassByCategory" parameterMap="String" resultType="Classes">
+		SELECT *
+		FROM class
+		WHERE category = #{category}
+	</select>
+
+	<!-- 성별 비중 순으로 클래스 조회 -->
+	<select id="selectClassByGender" parameterType="String" resultType="Classes">
+		SELECT *
+		FROM class
+		
+	</select>
+
+	<!-- 회원이 신청한 클래스 조회 -->
+	<select id="selectRegistedClassById" parameterType="String" resultType="Classes">
+		SELECT *
+		FROM class
+		
+	</select>
+
+	<!-- 회원이 가입된 클래스 조회 -->
+	<select id="selectMemberedClassById" parameterType="String" resultType="Classes">
+		SELECT *
+		FROM class
+		
+	</select>
+
+	<!-- 강사가 개설한 클래스 조회 -->
+	<select id="selectClassByLeader" parameterType="String" resultType="Classes">
+		SELECT *
+		FROM class
+		WHERE leader = #{leader}
+	</select>
+
+	<!-- 클래스 정보 등록 -->
+	<insert id="insertClass" parameterType="Classes">
+		INSERT INTO class(leader, class_name, category, location, description, price)
+		VALUES(#{leader}, #{className}, #{category}, #{location}, #{description}, #{price})
+	</insert>
+	
+	<!-- 클래스 이미지 등록-->
+	<insert id="insertClassFile" parameterType="ClassesFile">
+		INSERT INTO board_file(ori_name, system_name, path, class_no)
+		VALUES(#{oriName}, #{systemName}, #{path}, #{classNo})
+	</insert>
+	
+	<!-- 클래스 신청 테이블에 저장 -->
+	<insert id="insertClassRegist">
+		INSERT INTO class_regist(id, class_no)
+		VLAUES (#{id}, #{class_no})
+	</insert>
+	
+	<!-- 클래스 신청 목록에서 삭제 -->
+	<delete id="deleteClassRegist" >
+		DELETE FROM class_regist
+		WHERE id = #{id} AND class_no = #{classNo}
+	</delete>
+	
+	<!-- 클래스 수강인원으로 등록 -->
+	<insert id="insertClassMember">
+		INSERT INTO class_member(id, class_no)
+		VLAUES (#{id}, #{class_no})
+	</insert>
+	
+	<!-- 클래스 수강인원에서 삭제 -->
+	<delete id="deleteClassMember">
+		DELETE FROM class_member
+		WHERE id = #{id} AND class_no = #{classNo}
+	</delete>
+	
+	<!-- 클래스 정보 수정 -->
+	<update id="updateClassInfo" parameterType="Classes">
+		<!-- 
+		UPDATE class
+		SET
+		WHERE class_no = #{classNo}
+		 -->
+	</update>
+	
+	<!-- 클래스 정보 삭제 -->
+	<delete id="deleteClass" parameterType="int">
+		DELETE FROM class
+		WHERE class_no = #{classNo}
+	</delete>
+</mapper>
