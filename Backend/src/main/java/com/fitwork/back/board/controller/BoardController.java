@@ -113,7 +113,7 @@ public class BoardController {
 			}
 			boardService.addBoard(board);
 			
-			return ResponseEntity.status(HttpStatus.CREATED).build();
+			return ResponseEntity.status(HttpStatus.CREATED).body("게시글이 성공적으로 등록되었습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글이 등록되지 않았습니다. 잠시 후 다시 시도해주세요");

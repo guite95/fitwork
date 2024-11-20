@@ -24,7 +24,7 @@ public class BoardServiceImpl implements BoardService {
 		
 		BoardFile boardFile = board.getBoardFile();
 		if (boardFile != null) {
-			boardFile.setFileNo(board.getBoardNo());
+			boardFile.setBoardNo(board.getBoardNo());
 			
 			boardRepository.insertFile(boardFile);
 		}

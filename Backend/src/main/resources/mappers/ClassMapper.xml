@@ -83,7 +83,7 @@
 	</select>
 
 	<!-- 클래스 정보 등록 -->
-	<insert id="insertClass" parameterType="Classes">
+	<insert id="insertClass" parameterType="Classes" useGeneratedKeys="true" keyProperty="classNo">
 		INSERT INTO class(leader, class_name, category, location, description, price)
 		VALUES(#{leader}, #{className}, #{category}, #{location}, #{description}, #{price})
 	</insert>
@@ -97,7 +97,7 @@
 	<!-- 클래스 신청 테이블에 저장 -->
 	<insert id="insertClassRegist">
 		INSERT INTO class_regist(id, class_no)
-		VLAUES (#{id}, #{class_no})
+		VALUES (#{id}, #{class_no})
 	</insert>
 	
 	<!-- 클래스 신청 목록에서 삭제 -->
@@ -109,7 +109,7 @@
 	<!-- 클래스 수강인원으로 등록 -->
 	<insert id="insertClassMember">
 		INSERT INTO class_member(id, class_no)
-		VLAUES (#{id}, #{class_no})
+		VALUES (#{id}, #{class_no})
 	</insert>
 	
 	<!-- 클래스 수강인원에서 삭제 -->
@@ -120,11 +120,9 @@
 	
 	<!-- 클래스 정보 수정 -->
 	<update id="updateClassInfo" parameterType="Classes">
-		<!-- 
 		UPDATE class
-		SET
-		WHERE class_no = #{classNo}
-		 -->
+	    SET class_name = #{className}, location = #{location}, description = #{description}, price = #{price}
+	    WHERE class_no = #{classNo}
 	</update>
 	
 	<!-- 클래스 정보 삭제 -->

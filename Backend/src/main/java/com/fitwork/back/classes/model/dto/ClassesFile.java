@@ -14,5 +14,5 @@ public class ClassesFile {
 	private String oriName;
 	private String systemName;
 	private String path;
-	private int boardNo;
+	private int classNo;
 }
