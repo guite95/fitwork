@@ -5,26 +5,28 @@
 <mapper namespace="com.fitwork.back.member.model.repository.MemberRepository">
 	<!-- 회원 등록 -->
 	<insert id="insertMember" parameterType="Member">
-		INSERT INTO member(id, password, name, nickname, gender, email, phone_number, address, member_role)
-		VALUES (#{id}, #{password}, #{name}, #{nickname}, #{gender}, #{email}, #{phoneNumber}, #{address}, #{memberRole})
+		INSERT INTO member(id, password, name, nickname, gender, birth_date, email, phone_number, address, member_role)
+		VALUES (#{id}, #{password}, #{name}, #{nickname}, #{gender}, #{birthDate}, #{email}, #{phoneNumber}, #{address}, #{memberRole})
 	</insert>
 	
 	<!-- 회원 존재하는지 확인 -->
-	<select id="isMemberExist">
-		SELECT count(*)
-		FROM member
-		WHERE id = #{id}
+	<select id="isMemberExist" resultType="boolean">
+		SELECT EXISTS(
+			SELECT 1
+			FROM member
+			WHERE id = #{id}
+		)
 	</select>
 	
 	<!-- 전체 회원 조회 -->
 	<select id="selectAllMember" resultType="Member">
-		SELECT *
+		SELECT id, password, name, nickname, gender, birth_date, year(now()) - year(birth_date) as age, email, phone_number, address, member_role
 		FROM member
 	</select>
 	
 	<!-- 회원 상세 조회 -->
 	<select id="selectMemberById" resultType="Member" parameterType="String">
-		SELECT *
+		SELECT id, password, name, nickname, gender, birth_date, year(now()) - year(birth_date) as age, email, phone_number, address, member_role
 		FROM member
 		WHERE id = #{id}
 	</select>

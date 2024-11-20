@@ -21,7 +21,7 @@ public class MemberServiceImpl implements MemberService {
 		
 		String id = member.getId();
 		
-		if (memberRepository.isMemberExist(id) == 0) {
+		if (!memberRepository.isMemberExist(id)) {
 			member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
 			
 			memberRepository.insertMember(member);

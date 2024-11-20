@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS member (
     name VARCHAR(50) NOT NULL,
     nickname VARCHAR(50) UNIQUE,
     gender VARCHAR(1),
+    birth_date DATE,
     email VARCHAR(100),
     phone_number VARCHAR(20) NOT NULL,
     address VARCHAR(100) NOT NULL,
