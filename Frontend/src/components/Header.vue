@@ -1,6 +1,6 @@
 <template>
     <!-- Header -->
-    <header class="flex items-center justify-between px-4 py-4 bg-white shadow-md">
+    <header class="flex items-center justify-between px-12 py-4 bg-white shadow-md">
         <div class="flex items-center space-x-4">
             <!-- Logo -->
             <router-link to="/">

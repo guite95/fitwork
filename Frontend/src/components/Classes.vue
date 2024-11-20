@@ -4,7 +4,7 @@
     <Header />
 
     <!-- 콘텐츠 -->
-    <section class="px-8 py-12 bg-gray-50">
+    <section class="px-80 py-12 bg-gray-50">
       <h1 class="text-3xl font-title text-darkBlue mb-6">운동 클래스 🏋️‍♀️</h1>
 
       <!-- 검색 섹션 -->
@@ -109,7 +109,7 @@ function searchClasses() {
 }
 
 /* Swiper 네비게이션 버튼 커스터마이징 */
-::v-deep(.swiper-button-next),
+::v-deep(.swiper-button-next),s
 ::v-deep(.swiper-button-prev) {
   color: #64748b !important; /* greyBlue */
   font-size: 1.2rem !important;

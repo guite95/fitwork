@@ -34,7 +34,7 @@
         </aside>
   
         <!-- Main Section -->
-        <section class="flex-1 p-8">
+        <section class="flex-1 px-20 py-10">
           <!-- Title -->
           <div class="flex items-center justify-between mb-6">
             <h1 class="text-2xl font-title text-darkBlue">
