@@ -11,6 +11,9 @@ import ForgotUsername from '../components/ForgotUsername.vue';
 import NewPost from '../components/NewPost.vue';
 import Community from '../components/Community.vue';
 import CommunityDetails from '../components/CommunityDetails.vue';
+import MyPage from '../components/MyPage.vue';
+import ProfileEdit from '../components/ProfileEdit.vue';
+import Applications from '../components/Applications.vue';
 
 // 라우트 설정
 const routes = [
@@ -68,15 +71,36 @@ const routes = [
     path: '/new-post',
     name: 'newpost',
     component: NewPost,
+    props: (route) => ({ state: route.state || {} }), // state를 props로 전달
   },
   {
-    path: '/community-details',
+    path: '/community-details/:id',
     name: 'communitydetails',
     component: CommunityDetails,
+    props: true,
   },
-
-
-
+  {
+    path: '/mypage',
+    name: 'mypage',
+    component: MyPage,
+    children: [
+      {
+        path: '', // 기본 자식 경로
+        name: 'default',
+        redirect: '/mypage/profile-edit', // "회원정보 조회/수정"으로 리다이렉트
+      },
+      {
+        path: 'profile-edit',
+        name: 'profileedit',
+        component: ProfileEdit,
+      },
+      {
+        path: 'applications',
+        name: 'applications',
+        component: Applications,
+      },
+    ],
+  },
 
 
   // 다른 경로 추가 가능
