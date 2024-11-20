@@ -34,6 +34,7 @@ public class JWTFilter extends OncePerRequestFilter {
 			logger.info("Token is null or invalid.");
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().write("Missing or malformed Authorization header.");
+			filterChain.doFilter(request, response);
 			return;
 		}
 		System.out.println("헤더통과");
@@ -45,6 +46,7 @@ public class JWTFilter extends OncePerRequestFilter {
 			logger.info("Token has expired.");
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().write("Token expired.");
+			filterChain.doFilter(request, response);
 			return;
 		}
 		System.out.println("소멸시간 통과");

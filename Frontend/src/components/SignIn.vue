@@ -13,18 +13,18 @@
             <h2 class="text-center text-darkBlue font-title text-2xl mb-6">SIGN IN</h2>
 
             <!-- 로그인 폼 -->
-            <form class="space-y-8">
+            <form @submit.prevent="handleLogin" class="space-y-8">
                 <!-- Username -->
                 <div>
                     <label for="username" class="block text-darkBlue text-sm font-title mb-2">USERNAME</label>
-                    <input id="username" type="text"
+                    <input id="username" type="text" v-model="id"
                         class="w-full px-4 py-2 border border-gray-100 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-darkBlue text-sm" />
                 </div>
 
                 <!-- Password -->
                 <div>
                     <label for="password" class="block text-darkBlue text-sm font-title mb-2">PASSWORD</label>
-                    <input id="password" type="password"
+                    <input id="password" type="password" v-model="password"
                         class="w-full px-4 py-2 border border-gray-100 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-darkBlue" />
                 </div>
 
@@ -41,15 +41,34 @@
                 <span class="text-gray-300">|</span>
                 <router-link to="/forgot-password" class="hover:underline">아이디/비밀번호 찾기</router-link>
             </div>
-
         </div>
     </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
+import { useMemberStore } from '@/stores/member';
 
+const id = ref('');
+const password = ref('');
+const loginError = ref('');
+
+const memberStore = useMemberStore();
+
+const handleLogin = () => {
+    loginError.value = '';
+    memberStore.login(id.value, password.value)
+        // .then(() => {
+        //     // 로그인 성공 처리
+        // })
+        // .catch((error) => {
+        //     // 로그인 실패 시 오류 메시지 표시
+        //     loginError.value = '로그인에 실패했습니다. 다시 시도해 주세요.';
+        //     console.error('로그인 실패:', error);
+        // });
+};
 </script>
 
 <style scoped>
-
+/* 스타일 그대로 유지 */
 </style>

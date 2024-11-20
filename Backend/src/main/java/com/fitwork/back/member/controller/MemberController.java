@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fitwork.back.member.model.dto.Member;
 import com.fitwork.back.member.model.service.MemberService;
 @RestController
-@RequestMapping("/api-member")
+@RequestMapping /* ("/api-member") */
 public class MemberController {
 
 	private final MemberService memberService;
@@ -27,8 +27,9 @@ public class MemberController {
 	 * @param member
 	 * @return
 	 */
-	@PostMapping("/regist/general")
+	@PostMapping /* ("/regist/general") */("/join")
 	public ResponseEntity<String> generalRegist(@RequestBody Member member) {
+		System.out.println("회원가입 확인");
 		member.setMemberRole("ROLE_GENERAL");
 		
 		if (memberService.joinMember(member)) {

@@ -96,12 +96,13 @@
 	
 	<!-- 클래스 신청 테이블에 저장 -->
 	<insert id="insertClassRegist">
-		INSERT INTO class_regist(id, class_no)
-		VALUES (#{id}, #{class_no})
+	    INSERT INTO class_regist(id, class_no)
+	    VALUES (#{id}, #{classNo})
 	</insert>
+
 	
 	<!-- 클래스 신청 목록에서 삭제 -->
-	<delete id="deleteClassRegist" >
+	<delete id="deleteClassRegist">
 		DELETE FROM class_regist
 		WHERE id = #{id} AND class_no = #{classNo}
 	</delete>
@@ -109,7 +110,7 @@
 	<!-- 클래스 수강인원으로 등록 -->
 	<insert id="insertClassMember">
 		INSERT INTO class_member(id, class_no)
-		VALUES (#{id}, #{class_no})
+		VALUES (#{id}, #{classNo})
 	</insert>
 	
 	<!-- 클래스 수강인원에서 삭제 -->
