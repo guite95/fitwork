@@ -32,23 +32,47 @@
 
 	<!-- 성별 비중 순으로 클래스 조회 -->
 	<select id="selectClassByGender" parameterType="String" resultType="Classes">
-		SELECT *
-		FROM class
-		
+		SELECT 
+            c.*,
+            (SUM(CASE WHEN m.gender = #{gender} THEN 1 ELSE 0 END) * 100 / COUNT(cm.nickname)) AS gender_percentage
+        FROM 
+            class c
+        LEFT JOIN 
+            class_member cm ON c.class_no = cm.class_no
+        LEFT JOIN 
+            member m ON cm.nickname = m.nickname
+        GROUP BY 
+            c.class_no
+        ORDER BY 
+            gender_percentage DESC;
 	</select>
 
 	<!-- 회원이 신청한 클래스 조회 -->
 	<select id="selectRegistedClassById" parameterType="String" resultType="Classes">
-		SELECT *
-		FROM class
-		
+		SELECT 
+            c.*
+        FROM 
+            class c
+        INNER JOIN 
+            class_member cm ON c.class_no = cm.class_no
+        INNER JOIN 
+            member m ON cm.nickname = m.nickname
+        WHERE 
+            m.nickname = #{nickname}
 	</select>
 
 	<!-- 회원이 가입된 클래스 조회 -->
 	<select id="selectMemberedClassById" parameterType="String" resultType="Classes">
-		SELECT *
-		FROM class
-		
+		SELECT 
+            c.*
+        FROM 
+            class c
+        INNER JOIN 
+            class_member cm ON c.class_no = cm.class_no
+        INNER JOIN 
+            member m ON cm.nickname = m.nickname
+        WHERE 
+            m.nickname = #{nickname}
 	</select>
 
 	<!-- 강사가 개설한 클래스 조회 -->
