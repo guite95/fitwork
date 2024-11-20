@@ -24,7 +24,7 @@
 	</select>
 	
 	<!-- 카테고리별 클래스 조회 -->
-	<select id="selectClassByCategory" parameterMap="String" resultType="Classes">
+	<select id="selectClassByCategory" parameterType="String" resultType="Classes">
 		SELECT *
 		FROM class
 		WHERE category = #{category}

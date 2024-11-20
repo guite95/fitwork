@@ -42,6 +42,7 @@ public class JWTUtil {
  	}
  	
  	public String createJwt(String id, String role) {
+ 		System.out.println("발급되었음");
  		return Jwts.builder()
  				.claim("id", id)
  				.claim("role", role)

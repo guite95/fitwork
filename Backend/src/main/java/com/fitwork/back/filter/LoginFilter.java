@@ -21,7 +21,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	private final AuthenticationManager authenticationManager;
 	private final JWTUtil jwtUtil;
 	public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
-//		this.setFilterProcessesUrl("/api-member/login");
+		this.setFilterProcessesUrl("/api-member/login");
 		this.authenticationManager = authenticationManager;
 		this.jwtUtil = jwtUtil;
 	}
@@ -42,8 +42,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 			
 			return authenticationManager.authenticate(authToken);
 		} catch (IOException e) {
+			System.out.println("오류발생");
 			e.printStackTrace();
 		}
+		
 		return null;
 	}
 	
@@ -51,21 +53,26 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
-		
-		CustomUserDetails customUserDetails = (CustomUserDetails) authResult.getPrincipal();
-		
-		String id = customUserDetails.getUsername();
-		
-		Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
-		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-		GrantedAuthority auth = iterator.next();
-		
-		String role = auth.getAuthority();
-		
-		String token = jwtUtil.createJwt(id, role);
-		
-		response.addHeader("Authorization", "Bearer " + token);
-		
+		try {
+			CustomUserDetails customUserDetails = (CustomUserDetails) authResult.getPrincipal();
+			
+			String id = customUserDetails.getUsername();
+			
+			Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
+			Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+			GrantedAuthority auth = iterator.next();
+			
+			String role = auth.getAuthority();
+			
+			String token = jwtUtil.createJwt(id, role);
+			System.out.println("JWT발급 확인");
+			response.addHeader("Authorization", "Bearer " + token);
+			System.out.println("헤더에 추가");
+		} catch (Exception e) {
+			System.out.println("문제발생");
+			e.printStackTrace();
+		}
+		System.out.println("완전히 끝남");
 	}
 	
 	// 로그인 실패 시 실행하는 메서드
@@ -73,8 +80,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException failed) throws IOException, ServletException {
 		
-		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	    response.getWriter().write("Authentication failed: " + failed.getMessage());
+//		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		System.out.println("실패함");
+		response.setStatus(401);
+//	    response.getWriter().write("Authentication failed: " + failed.getMessage());
 		
 	}
 	

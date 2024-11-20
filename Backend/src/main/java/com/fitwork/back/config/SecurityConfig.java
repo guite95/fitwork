@@ -48,7 +48,7 @@ public class SecurityConfig {
 						.anyRequest().authenticated());
 		
 		// JWT필터 추가
-		httpSecurity.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+		httpSecurity.addFilterAfter(new JWTFilter(jwtUtil), LoginFilter.class);
 		
 		// Login 필터 추가
 		httpSecurity

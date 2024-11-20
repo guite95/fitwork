@@ -29,9 +29,9 @@ public class MemberController {
 	 */
 	@PostMapping /* ("/regist/general") */("/join")
 	public ResponseEntity<String> generalRegist(@RequestBody Member member) {
-		System.out.println("회원가입 확인");
+		System.out.println("회원가입 요청 확인");
 		member.setMemberRole("ROLE_GENERAL");
-		
+		System.out.println("역할 부여 확인");
 		if (memberService.joinMember(member)) {
 			return ResponseEntity.status(HttpStatus.CREATED).body("회원가입을 축하합니다!");
 		}
