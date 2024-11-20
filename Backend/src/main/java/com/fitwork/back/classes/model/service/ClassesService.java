@@ -20,6 +20,13 @@ public interface ClassesService {
 	public Classes classDetail(int classNo);
 	
 	/**
+	 * list가 비어있는지 체크
+	 * @param list
+	 * @return
+	 */
+	public String checkIfClassIsEmpty(List<Classes> list);
+	
+	/**
 	 * 위치별 클래스 목록 조회
 	 * @param location
 	 * @return

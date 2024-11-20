@@ -2,105 +2,132 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fitwork.back.board.model.repository.ClassRepository">
-	<!-- 게시물 등록 -->
-	<insert id="insertBoard" parameterType="Board" useGeneratedKeys="true" keyProperty="boardNo">
-		INSERT INTO board(title, writer, content)
-		VALUES (#{title}, #{writer}, #{content})
-	</insert>
-	
-	<!-- 게시물 파일 등록-->
-	<insert id="insertFile" parameterType="BoardFile">
-		INSERT INTO board_file(ori_name, system_name, path, board_no)
-		VALUES(#{oriName}, #{systemName}, #{path}, #{boardNo})
-	</insert>
-	
-	<!-- 게시물 전체 조회(검색, 페이징 포함) -->
-	<select id="selectAllBoard" parameterType="BoardSearch" resultType="Board">
-		SELECT * FROM board
-		
-		<if test="key != null">
-			WHERE ${key} LIKE concat('%',#{word},'%')
-		</if>
-		
-		<if test="orderBy != null">
-			ORDER BY ${orderBy} ${orderByDir}
-		</if>
-		
-		<if test="orderBy == null">
-			ORDER BY board_no DESC
-		</if>
-		
-		LIMIT #{offset}, #{listSize}
-	</select>
-	
-	<!-- 페이징 처리를 위한 전체 게시물 수 반환 -->
-	<select id="selectBoardCount" parameterType="BoardSearch" resultType="int">
-		SELECT count(*)
-		FROM board
-	</select>
-	
-	<!-- 게시물 상세 보기 -->
-	<select id="selectBoardByNo" parameterType="int" resultType="Board">
-		SELECT * FROM board
-		WHERE board_no = #{boardNo}
-	</select>
-	
-	<!-- 게시물 파일 선택 -->
-	<select id="selectBoardFileByNo" parameterType="int" resultType="BoardFile">
-		SELECT * FROM board_file
-		WHERE board_no = #{boardNo}
-	</select>
-	
-	<!-- 게시물 조회수 업데이트 -->
-	<update id="updateViewCnt" parameterType="int">
-		UPDATE board
-		SET view_cnt = view_cnt + 1
-		WHERE board_no = #{boardNo}
-	</update>
-	
-	<!-- 게시물 좋아요 수 증가 -->
-	<update id="increaseLikeCnt" parameterType="int">
-		UPDATE board
-		SET like_cnt = like_cnt + 1
-		WHERE board_no = #{boardNo}
-	</update>
-	
-	<!-- 좋아요 테이블에 추가 -->
-	<insert id="insertLike">
-		INSERT INTO board_like(id, board_no)
-		VALUES (#{id}, #{boardNo})
-	</insert>
-	
-	<!-- 게시물 좋아요 수 감소 -->
-	<update id="decreaseLikeCnt" parameterType="int">
-		UPDATE board
-		SET like_cnt = like_cnt - 1
-		WHERE board_no = #{boardNo} AND like_cnt > 0
-	</update>
-	
-	<!-- 좋아요 테이블에서 삭제 -->
-	<delete id="deleteLike">
-		DELETE FROM board_like
-		WHERE id = #{id} AND board_no = #{boardNo}
-	</delete>
-	
-	<!-- 게시물 삭제 -->
-	<delete id="deleteBoard" parameterType="int">
-		DELETE FROM board
-		WHERE board_no = #{boardNo}
-	</delete>
-	
-	<!-- 게시물 파일 삭제 -->
-	<delete id="deleteBoardFile" parameterType="int">
-		DELETE FROM board_file
-		WHERE file_no = #{fileNo}
-	</delete>
-	
-	<!-- 게시물 수정 -->
-	<update id="updateBoard" parameterType="Board">
-		UPDATE board
-		SET title = #{title}, content = #{content}
-		WHERE board_no = #{boardNo}
-	</update>
+<mapper namespace="com.fitwork.back.club.model.repository.ClubRepository">
+    <!-- 전체 클럽 조회 -->
+    <select id="selectAllClub" resultType="Club">
+        SELECT *
+        FROM club
+    </select>
+
+    <!-- 클럽 상세 조회 -->
+    <select id="selectClubByClubNo" parameterType="int" resultType="Club">
+        SELECT *
+        FROM club
+        WHERE club_no = #{clubNo}
+    </select>
+
+    <!-- 위치별 클럽 조회 -->
+    <select id="selectClubByLocation" parameterType="String" resultType="Club">
+        SELECT *
+        FROM club
+        WHERE location = #{location}
+    </select>
+    
+    <!-- 카테고리별 클럽 조회 -->
+    <select id="selectClubByCategory" parameterType="String" resultType="Club">
+        SELECT *
+        FROM club
+        WHERE category = #{category}
+    </select>
+
+    <!-- 성별 비중 순으로 클럽 조회 -->
+    <select id="selectClubByGender" parameterType="String" resultType="Club">
+        SELECT 
+            c.*,
+            (SUM(CASE WHEN m.gender = #{gender} THEN 1 ELSE 0 END) * 100 / COUNT(cm.nickname)) AS gender_percentage
+        FROM 
+            club c
+        LEFT JOIN 
+            club_member cm ON c.club_no = cm.club_no
+        LEFT JOIN 
+            member m ON cm.nickname = m.nickname
+        GROUP BY 
+            c.club_no
+        ORDER BY 
+            gender_percentage DESC;
+    </select>
+
+    <!-- 회원이 신청한 클럽 조회 -->
+    <select id="selectRegisteredClubById" parameterType="String" resultType="Club">
+        SELECT 
+            c.*
+        FROM 
+            club c
+        INNER JOIN 
+            club_member cm ON c.club_no = cm.club_no
+        INNER JOIN 
+            member m ON cm.nickname = m.nickname
+        WHERE 
+            m.nickname = #{nickname}
+    </select>
+
+    <!-- 회원이 가입된 클럽 조회 -->
+    <select id="selectMemberedClubById" parameterType="String" resultType="Club">
+        SELECT 
+            c.*
+        FROM 
+            club c
+        INNER JOIN 
+            club_member cm ON c.club_no = cm.club_no
+        INNER JOIN 
+            member m ON cm.nickname = m.nickname
+        WHERE 
+            m.nickname = #{nickname}
+    </select>
+
+    <!-- 강사가 개설한 클럽 조회 -->
+    <select id="selectClubByLeader" parameterType="String" resultType="Club">
+        SELECT *
+        FROM club
+        WHERE leader = #{leader}
+    </select>
+
+    <!-- 클럽 정보 등록 -->
+    <insert id="insertClub" parameterType="Club" useGeneratedKeys="true" keyProperty="clubNo">
+        INSERT INTO club(leader, club_name, category, location, description, price)
+        VALUES(#{leader}, #{clubName}, #{category}, #{location}, #{description}, #{price})
+    </insert>
+    
+    <!-- 클럽 이미지 등록 -->
+    <insert id="insertClubFile" parameterType="ClubFile">
+        INSERT INTO club_file(ori_name, system_name, path, club_no)
+        VALUES(#{oriName}, #{systemName}, #{path}, #{clubNo})
+    </insert>
+    
+    <!-- 클럽 신청 테이블에 저장 -->
+    <insert id="insertClubRegister">
+        INSERT INTO club_register(id, club_no)
+        VALUES (#{id}, #{clubNo})
+    </insert>
+    
+    <!-- 클럽 신청 목록에서 삭제 -->
+    <delete id="deleteClubRegister">
+        DELETE FROM club_register
+        WHERE id = #{id} AND club_no = #{clubNo}
+    </delete>
+    
+    <!-- 클럽 수강인원으로 등록 -->
+    <insert id="insertClubMember">
+        INSERT INTO club_member(id, club_no)
+        VALUES (#{id}, #{clubNo})
+    </insert>
+    
+    <!-- 클럽 수강인원에서 삭제 -->
+    <delete id="deleteClubMember">
+        DELETE FROM club_member
+        WHERE id = #{id} AND club_no = #{clubNo}
+    </delete>
+    
+    <!-- 클럽 정보 수정 -->
+    <update id="updateClubInfo" parameterType="Club">
+        UPDATE club
+        SET club_name = #{clubName}, location = #{location}, description = #{description}, price = #{price}
+        WHERE club_no = #{clubNo}
+    </update>
+    
+    <!-- 클럽 정보 삭제 -->
+    <delete id="deleteClub" parameterType="int">
+        DELETE FROM club
+        WHERE club_no = #{clubNo}
+    </delete>
 </mapper>

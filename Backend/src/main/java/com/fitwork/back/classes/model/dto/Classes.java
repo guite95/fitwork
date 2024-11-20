@@ -18,4 +18,5 @@ public class Classes {
 	private String description;
 	private int headCount;
 	private int price;
+	private ClassesFile classesFile;
 }

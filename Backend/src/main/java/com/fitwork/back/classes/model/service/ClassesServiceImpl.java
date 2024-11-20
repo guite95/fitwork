@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.fitwork.back.classes.model.dto.Classes;
+import com.fitwork.back.classes.model.dto.ClassesFile;
 import com.fitwork.back.classes.model.repository.ClassesRepository;
 
 @Service
@@ -58,8 +59,15 @@ public class ClassesServiceImpl implements ClassesService {
 	@Override
 	public void registClass(Classes classes) {
 		classesRepository.insertClass(classes);
+		
+		ClassesFile classesFile = classes.getClassesFile();
+		if (classesFile != null && classesFile.getOriName() != null && !classesFile.getOriName().isEmpty()) {
+			classesFile.setClassNo(classes.getClassNo());
+			
+			classesRepository.insertClassFile(classesFile);
+		}
 	}
-
+	
 	@Override
 	public void addToRegistedClass(String id, int classNo) {
 		classesRepository.insertClassRegist(id, classNo);
@@ -89,6 +97,14 @@ public class ClassesServiceImpl implements ClassesService {
 	@Override
 	public void deleteClassInfo(int classNo) {
 		classesRepository.deleteClass(classNo);
+	}
+
+	@Override
+	public String checkIfClassIsEmpty(List<Classes> list) {
+		if (list.isEmpty()) {
+            return "클래스가 없습니다";
+        }
+        return null;
 	}
 
 }
