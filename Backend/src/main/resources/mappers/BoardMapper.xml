@@ -28,7 +28,7 @@
 		</if>
 		
 		<if test="orderBy == null">
-			ORDER BY board_no DESC
+			ORDER BY id DESC
 		</if>
 		
 		LIMIT #{offset}, #{listSize}
