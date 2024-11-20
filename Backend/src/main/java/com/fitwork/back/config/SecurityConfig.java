@@ -44,7 +44,7 @@ public class SecurityConfig {
 		httpSecurity
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers("/member/login", "/", "/join").permitAll()
-						.requestMatchers("/admin").hasRole("ADMIN")
+						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.anyRequest().authenticated());
 		
 		// JWT필터 추가

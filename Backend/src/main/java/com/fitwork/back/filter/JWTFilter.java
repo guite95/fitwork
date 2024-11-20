@@ -1,5 +1,8 @@
 package com.fitwork.back.filter;
 import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 public class JWTFilter extends OncePerRequestFilter {
 	
+	private static final Logger logger = LoggerFactory.getLogger(JWTFilter.class);
+	
 	private final JWTUtil jwtUtil;
 	public JWTFilter(JWTUtil jwtUtil) {
 		this.jwtUtil = jwtUtil;
@@ -26,8 +31,9 @@ public class JWTFilter extends OncePerRequestFilter {
 		
 		// 헤더 검증
 		if (authorization == null || !authorization.startsWith("Bearer ")) {
-			System.out.println("token null");
-			filterChain.doFilter(request, response);
+			logger.info("Token is null or invalid.");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.getWriter().write("Missing or malformed Authorization header.");
 			return;
 		}
 		System.out.println("헤더통과");
@@ -36,8 +42,9 @@ public class JWTFilter extends OncePerRequestFilter {
 		
 		// 토큰 소멸시간 검증
 		if (jwtUtil.isExpired(token)) {
-			System.out.println("token expired");
-			filterChain.doFilter(request, response);
+			logger.info("Token has expired.");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.getWriter().write("Token expired.");
 			return;
 		}
 		System.out.println("소멸시간 통과");

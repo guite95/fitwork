@@ -38,14 +38,20 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public boolean deleteMember(String id) {
-		// TODO Auto-generated method stub
-		return false;
+		if (memberRepository.isMemberExist(id)) {
+	        memberRepository.deleteMember(id);
+	        return true;
+	    }
+	    return false;
 	}
 
 	@Override
 	public boolean modifyMemberInfo(Member member) {
-		// TODO Auto-generated method stub
-		return false;
+		if (memberRepository.isMemberExist(member.getId())) {
+	        memberRepository.updateMemberInfo(member);
+	        return true;
+	    }
+	    return false;
 	}
 
 }
