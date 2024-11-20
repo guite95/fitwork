@@ -14,7 +14,7 @@ public interface MemberRepository {
 	 * @param id
 	 * @return
 	 */
-	public int isMemberExist(String id);
+	public boolean isMemberExist(String id);
 	
 	/**
 	 * 전체 회원 조회
@@ -38,6 +38,6 @@ public interface MemberRepository {
 	 * 회원 정보 수정
 	 * @param id
 	 */
-	public void updateMember(String id);
+	public void updateMemberInfo(Member member);
 	
 }

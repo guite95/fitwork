@@ -28,7 +28,7 @@
 		</if>
 		
 		<if test="orderBy == null">
-			ORDER BY id DESC
+			ORDER BY board_no DESC
 		</if>
 		
 		LIMIT #{offset}, #{listSize}
@@ -103,4 +103,40 @@
 		SET title = #{title}, content = #{content}
 		WHERE board_no = #{boardNo}
 	</update>
+	
+	
+	<!-- 댓글 등록 -->
+	<insert id="insertComment" parameterType="Comment">
+		INSERT INTO comment(writer, content)
+		VALUES(#{writer}, #{content})
+	</insert>
+	
+	<!-- 게시물 댓글 조회 -->
+	<select id="selectCommentByBoardNo" resultType="Comment">
+		SELECT *
+		FROM comment
+		WHERE board_no = #{boardNo}
+	</select>
+	
+	<!-- 내가 쓴 댓글 조회 -->
+	<select id="selectCommentByWriter" resultType="Comment">
+		SELECT *
+		FROM comment
+		WHERE writer = #{writer}
+	</select>
+	
+	<!-- 댓글 수정 -->
+	<update id="updateComment">
+		UPDATE comment
+		SET content = #{content}
+		WHERE comment_no = #{commentNo}
+	</update>
+	
+	<!-- 댓글 삭제 -->
+	<update id="deleteComment">
+		UPDATE comment
+		SET parent_comment_number = -1
+		WHERE comment_no = #{commentNo}
+	</update>
+	
 </mapper>
