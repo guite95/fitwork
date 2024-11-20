@@ -50,7 +50,7 @@ public interface BoardService {
 	 * 게시글 수정
 	 * @param board
 	 */
-	public void modifyBoard(Board board);
+	public void updateBoard(Board board);
 	
 	/**
 	 * 수정 등을 위한 게시글 1개 선택

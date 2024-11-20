@@ -10,12 +10,10 @@ CREATE TABLE IF NOT EXISTS member (
     password VARCHAR(100) NOT NULL,
     name VARCHAR(50) NOT NULL,
     nickname VARCHAR(50) UNIQUE,
-    gender VARCHAR(1),
-    birth_date DATE,
     email VARCHAR(100),
     phone_number VARCHAR(20) NOT NULL,
     address VARCHAR(100) NOT NULL,
-    member_role VARCHAR(20) NOT NULL,
+    member_role VARCHAR(20) DEFAULT 'ROLE_GENERAL',
     PRIMARY KEY(id)
 );
 
