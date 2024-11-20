@@ -3,12 +3,15 @@ package com.fitwork.back.board.model.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import com.fitwork.back.board.model.dto.Board;
 import com.fitwork.back.board.model.dto.BoardFile;
 import com.fitwork.back.board.model.dto.BoardSearch;
 import com.fitwork.back.board.model.repository.BoardRepository;
 import com.fitwork.back.util.PageResult;
 
+@Service
 public class BoardServiceImpl implements BoardService {
 	
 	private final BoardRepository boardRepository;
@@ -67,8 +70,9 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public void updateBoard(Board board) {
-		
+	public void modifyBoard(Board board) {
+		board.setModified(true);
+		boardRepository.updateBoard(board);
 	}
 
 	@Override
