@@ -61,7 +61,7 @@ public class ClassesServiceImpl implements ClassesService {
 		classesRepository.insertClass(classes);
 		
 		ClassesFile classesFile = classes.getClassesFile();
-		if (classesFile != null) {
+		if (classesFile != null && classesFile.getOriName() != null && !classesFile.getOriName().isEmpty()) {
 			classesFile.setClassNo(classes.getClassNo());
 			
 			classesRepository.insertClassFile(classesFile);
