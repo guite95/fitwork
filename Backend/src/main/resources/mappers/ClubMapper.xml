@@ -56,9 +56,9 @@
         INNER JOIN 
             club_member cm ON c.club_no = cm.club_no
         INNER JOIN 
-            member m ON cm.nickname = m.nickname
+            member m ON cm.id = m.id
         WHERE 
-            m.nickname = #{nickname}
+            m.id = #{id}
     </select>
 
     <!-- 회원이 가입된 클럽 조회 -->
@@ -70,9 +70,9 @@
         INNER JOIN 
             club_member cm ON c.club_no = cm.club_no
         INNER JOIN 
-            member m ON cm.nickname = m.nickname
+            member m ON cm.id = m.id
         WHERE 
-            m.nickname = #{nickname}
+            m.id = #{id}
     </select>
 
     <!-- 강사가 개설한 클럽 조회 -->
