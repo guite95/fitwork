@@ -28,7 +28,6 @@ import com.fitwork.back.board.model.dto.Comment;
 import com.fitwork.back.board.model.service.BoardService;
 
 @RestController
-@RequestMapping("/api-board")
 public class BoardController {
   
 	private final BoardService boardService;
