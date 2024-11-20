@@ -28,6 +28,7 @@ import com.fitwork.back.board.model.dto.Comment;
 import com.fitwork.back.board.model.service.BoardService;
 
 @RestController
+@RequestMapping("/api-board")
 public class BoardController {
   
 	private final BoardService boardService;
@@ -92,7 +93,7 @@ public class BoardController {
 		try {
 			String oriName = file.getOriginalFilename();
 			
-			if (oriName.length() > 0) {
+			if (oriName != null && oriName.length() > 0) {
 				SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
 				String subDir = sdf.format(new Date());
 				
@@ -151,7 +152,7 @@ public class BoardController {
 			
 			String oriName = file.getOriginalFilename();
 			
-			if (oriName.length() > 0) {
+			if (oriName != null && oriName.length() > 0) {
 				SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
 				String subDir = sdf.format(new Date());
 				
