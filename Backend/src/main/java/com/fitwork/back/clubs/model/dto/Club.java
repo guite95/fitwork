@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Club {
-	int club_no;
-	String leader;
-	String club_name;
-	String category;
-	String location;
-	String description;
-	String head_count;
+	private int clubNo;
+	private String leader;
+	private String clubName;
+	private String category;
+	private String location;
+	private String description;
+	private String headCount;
+	private ClubFile clubFile;
 }
