@@ -4,7 +4,7 @@
     <Header />
 
     <!-- 콘텐츠 -->
-    <section class="px-8 py-12 bg-gray-50">
+    <section class="px-80 py-12 bg-gray-50">
       <h1 class="text-3xl font-title text-darkBlue mb-6">운동 클럽 🏃‍♀️</h1>
 
       <!-- 검색 섹션 -->
