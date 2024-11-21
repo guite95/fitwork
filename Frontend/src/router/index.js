@@ -74,7 +74,7 @@ const routes = [
     props: (route) => ({ state: route.state || {} }), // state를 props로 전달
   },
   {
-    path: '/community-details/:id',
+    path: '/community-details/:boardNo',
     name: 'communitydetails',
     component: CommunityDetails,
     props: true,

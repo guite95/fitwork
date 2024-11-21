@@ -24,8 +24,8 @@ export const useBoardStore = defineStore('board', () => {
       })
     }
     
-    const getBoardDetail = (boardNo) => {
-      axios.get(`${REST_API_URL}/${boardNo}`, {
+    const getBoardDetail = async (boardNo) => {
+      await axios.get(`${REST_API_URL}/${boardNo}`, {
         headers: {
           'Authorization': sessionStorage.getItem('memberToken')
         }
@@ -72,5 +72,5 @@ export const useBoardStore = defineStore('board', () => {
       });
     }
 
-    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail };
+    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail, board };
 });
