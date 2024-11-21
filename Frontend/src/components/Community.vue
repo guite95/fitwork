@@ -104,6 +104,7 @@
         </div>
       </section>
     </div>
+    <Footer />
   </div>
 </template>
 
@@ -112,6 +113,7 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Header from "./Header.vue";
+import Footer from "./Footer.vue";
 import { useBoardStore } from "../stores/board";
 
 const router = useRouter();
@@ -156,8 +158,6 @@ function changeTab(tab) {
   selectedTab.value = tab; // 선택된 탭 업데이트
   router.push({ query: { tab } }); // URL 쿼리 업데이트
   currentPage.value = 1; // 페이지 초기화
-}
-
 function goToPage(page) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;

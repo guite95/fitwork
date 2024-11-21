@@ -109,12 +109,16 @@
         더보기
       </button>
     </section>
+
+    <!-- Footer 추가 -->
+    <Footer />
   </div>
 </template>
 
 <script setup>
 import { computed, ref } from "vue";
 import Header from "./Header.vue";
+import Footer from "./Footer.vue"; // Footer 컴포넌트 추가
 import { useRouter } from "vue-router";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, Pagination, Autoplay } from "swiper";
@@ -131,7 +135,7 @@ const memberDistrict = computed(() => {
   if (memberAddress.value) {
     const parts = memberAddress.value.split(' ');
     return parts[1];
-    //return parts.length > 1 ? parts[1] : ''; 
+    // return parts.length > 1 ? parts[1] : ''; 
   }
   return '';
 });

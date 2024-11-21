@@ -47,26 +47,40 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useMemberStore } from '@/stores/member';
+import Swal from 'sweetalert2';
+import '@/assets/swal_custom.css'
+
 
 const id = ref('');
 const password = ref('');
-const loginError = ref('');
 
 const memberStore = useMemberStore();
+const router = useRouter();
 
-const handleLogin = () => {
-    loginError.value = '';
-    memberStore.login(id.value, password.value)
-        // .then(() => {
-        //     // 로그인 성공 처리
-        // })
-        // .catch((error) => {
-        //     // 로그인 실패 시 오류 메시지 표시
-        //     loginError.value = '로그인에 실패했습니다. 다시 시도해 주세요.';
-        //     console.error('로그인 실패:', error);
-        // });
+const handleLogin = async () => {
+    try {
+        // 로그인 요청 처리
+        await memberStore.login(id.value, password.value);
+        router.push('/');
+    } catch (error) {
+        // 로그인 실패 시 SweetAlert 호출
+        console.error('로그인 실패:', error);
+        Swal.fire({
+            icon: 'error',
+            title: '로그인 실패',
+            text: '로그인에 실패했습니다. 다시 시도해 주세요.',
+            customClass: {
+                title: 'custom-swal-title',
+                text: 'custom-swal-text',
+                confirmButton: 'custom-swal-button' // 버튼에 적용할 클래스
+            },
+            buttonsStyling: false, // 버튼의 기본 스타일을 없애고 커스텀 스타일을 적용할 수 있게 합니다.
+        });
+    }
 };
+
 </script>
 
 <style scoped>
