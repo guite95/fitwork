@@ -74,7 +74,7 @@ const detail = async () => {
     resolve();
   }).then(() => {
     board.value = store.board;
-    imgSrc.value = `C:/SSAFY/final-prj/board${board.value.boardFile.path}/${board.value.boardFile.systemName}`
+    imgSrc.value = `http://192.168.210.83:8080/file${board.value.boardFile.path}${board.value.boardFile.systemName}`;
     console.log(imgSrc.value)
   });
 }
