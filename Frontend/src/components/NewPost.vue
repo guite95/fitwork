@@ -21,6 +21,7 @@
               type="text"
               placeholder="제목"
               class="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white placeholder-gray-400 font-title text-darkBlue"
+              required
             />
           </div>
 
@@ -31,6 +32,7 @@
               id="category"
               v-model="category"
               class="w-full px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white text-gray-500 font-title"
+              required
             >
               <option value="" disabled>게시판을 선택하세요</option>
               <option value="club">클럽 후기</option>
@@ -48,6 +50,7 @@
               rows="10"
               placeholder="본문을 적어주세요 😊"
               class="w-full px-4 py-3 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white placeholder-gray-400 resize-none font-title text-darkBlue"
+              required
             ></textarea>
           </div>
 
@@ -92,7 +95,7 @@
 import { ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useBoardStore } from "@/stores/board";
-import Header from "./Header.vue"; // 허더 컴포넌트
+import Header from "./Header.vue"; // 헤더 컴포넌트
 
 // Store
 const boardStore = useBoardStore();
@@ -146,7 +149,7 @@ function handleFileChange(event) {
   selectedFile.value = event.target.files[0];
 }
 
-function handleSubmit() {
+async function handleSubmit() {
   const formData = new FormData();
   formData.append("board", new Blob([JSON.stringify({
     title: title.value,
@@ -159,12 +162,19 @@ function handleSubmit() {
     formData.append("file", selectedFile.value);
   }
 
-  if (isEditMode.value && postId.value) {
-    // 수정 로직
-    boardStore.modifyBoard(postId.value, formData);
-  } else {
-    // 새 게시글 등록 로직
-    boardStore.writeBoard(formData);
+  try {
+    if (isEditMode.value && postId.value) {
+      // 수정 로직
+      await boardStore.modifyBoard(postId.value, formData);
+    } else {
+      // 새 게시글 등록 로직
+      await boardStore.writeBoard(formData);
+    }
+
+    // 글 작성/수정 성공 시 커뮤니티 게시판으로 이동
+    router.push("/community");
+  } catch (error) {
+    console.error("글 작성/수정 중 오류가 발생했습니다:", error);
   }
 }
 </script>

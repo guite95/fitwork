@@ -40,7 +40,7 @@
         </div>
 
         <!-- Search Bar and Write Button -->
-        <div class="flex justify-end items-center space-x-4 mb-4">
+        <div class="flex justify-between items-center space-x-4 mb-4">
           <!-- 글쓰기 버튼 -->
           <router-link to="/new-post">
             <button
@@ -49,9 +49,15 @@
             </button>
           </router-link>
 
-          <!-- 검색 바 -->
-          <input type="text" placeholder="검색"
-            class="w-1/4 px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue text-gray-700 font-title text-sm" />
+          <!-- 검색 바 및 검색 버튼 -->
+          <div class="flex space-x-2 items-center w-1/2 justify-end">
+            <input type="text" placeholder="검색" v-model="searchQuery"
+              class="w-full px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue text-gray-700 font-title text-sm" />
+            <button @click="handleSearch"
+              class="px-3 py-2 bg-lightBlue text-white rounded-2xl hover:bg-darkBlue transition duration-300 font-title text-sm">
+              검색
+            </button>
+          </div>
         </div>
 
         <!-- Table -->
@@ -64,7 +70,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="review in paginatedReviews" :key="review.boardNo"
+            <tr v-for="review in filteredPaginatedReviews" :key="review.boardNo"
               class="border-b border-gray-200 hover:bg-gray-50">
               <td class="py-3 text-darkBlue font-title text-left">
                 <router-link :to="`/community-details/${review.boardNo}`" class="hover:underline">
@@ -108,7 +114,6 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -136,19 +141,33 @@ watch(() => route.query.tab, (newTab) => {
   selectedTab.value = newTab || "club"; // 기본값: club
 }, { immediate: true });
 
-const itemsPerPage = ref(5);
+const itemsPerPage = ref(5); // 페이지 당 게시글 수를 5개로 설정
 const currentPage = ref(1);
+const searchQuery = ref("");
 
-const filteredReviews = computed(() =>
-  allReviews.value.filter((review) => review.category === selectedTab.value)
-);
-
-const paginatedReviews = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  return filteredReviews.value.slice(start, start + itemsPerPage.value);
+// 검색된 리뷰 목록
+const filteredReviews = computed(() => {
+  const filtered = allReviews.value
+    .filter((review) => review.category === selectedTab.value)
+    .filter((review) => review.title.includes(searchQuery.value));
+  
+  console.log("Filtered Reviews:", filtered); // 디버깅을 위한 로그
+  return filtered;
 });
 
-const totalPages = computed(() => Math.ceil(filteredReviews.value.length / itemsPerPage.value));
+const filteredPaginatedReviews = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const paginated = filteredReviews.value.slice(start, start + itemsPerPage.value);
+  
+  console.log("Paginated Reviews:", paginated); // 디버깅을 위한 로그
+  return paginated;
+});
+
+const totalPages = computed(() => {
+  const pages = Math.ceil(filteredReviews.value.length / itemsPerPage.value);
+  console.log("Total Pages:", pages); // 디버깅을 위한 로그
+  return pages;
+});
 
 const tabTitles = { club: "클럽 후기 🏃", class: "클래스 후기 🏋️‍♀️", chat: "잡담 💬" };
 const currentTabTitle = computed(() => tabTitles[selectedTab.value]);
@@ -158,16 +177,21 @@ function changeTab(tab) {
   selectedTab.value = tab; // 선택된 탭 업데이트
   router.push({ query: { tab } }); // URL 쿼리 업데이트
   currentPage.value = 1; // 페이지 초기화
-  function goToPage(page) {
-    if (page >= 1 && page <= totalPages.value) {
-      currentPage.value = page;
-    }
+}
 
+// 페이지 이동 함수
+function goToPage(page) {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
   }
 }
 
-</script>
+// 검색 버튼 핸들러
+function handleSearch() {
+  currentPage.value = 1; // 검색 시 페이지를 1로 초기화
+}
 
+</script>
 
 <style scoped>
 table {
