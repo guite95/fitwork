@@ -32,7 +32,9 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public Member getMemberInfo(String id) {
-		return memberRepository.selectMemberById(id);
+		Member member = memberRepository.selectMemberById(id);
+//		member.setPassword(null);
+		return member;
 	}
 
 	@Override

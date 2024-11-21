@@ -5,8 +5,8 @@
 <mapper namespace="com.fitwork.back.board.model.repository.BoardRepository">
 	<!-- 게시물 등록 -->
 	<insert id="insertBoard" parameterType="Board" useGeneratedKeys="true" keyProperty="boardNo">
-		INSERT INTO board(title, writer, content)
-		VALUES (#{title}, #{writer}, #{content})
+		INSERT INTO board(title, writer, category, content)
+		VALUES (#{title}, #{writer}, #{category}, #{content})
 	</insert>
 	
 	<!-- 게시물 파일 등록-->
