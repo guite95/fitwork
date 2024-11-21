@@ -65,37 +65,37 @@ export const useMemberStore = defineStore('member', () => {
                     "Authorization": sessionStorage.getItem('memberToken')
                 },
             })
-            .then((response) => {
-                const data = response.data;
-                
-                // Pinia 상태 업데이트
-                memberId.value = data.id;
-                memberName.value = data.name;
-                memberNickname.value = data.nickname;
-                memberGender.value = data.gender;
-                memberBirthDate.value = data.birthDate;
-                memberAge.value = data.age;
-                memberEmail.value = data.email;
-                memberPhoneNumber.value = data.phoneNumber;
-                memberAddress.value = data.address;
-                memberRole.value = data.memberRole;
-    
-                // 세션에 사용자 정보 저장
-                sessionStorage.setItem('memberId', data.id);
-                sessionStorage.setItem('memberName', data.name);
-                sessionStorage.setItem('memberNickname', data.nickname);
-                sessionStorage.setItem('memberGender', data.gender);
-                sessionStorage.setItem('memberBirthDate', data.birthDate);
-                sessionStorage.setItem('memberAge', data.age);
-                sessionStorage.setItem('memberEmail', data.email);
-                sessionStorage.setItem('memberPhoneNumber', data.phoneNumber);
-                sessionStorage.setItem('memberAddress', data.address);
-                sessionStorage.setItem('memberRole', data.memberRole);
+                .then((response) => {
+                    const data = response.data;
 
-            })
-            .catch((error) => {
-                console.error('사용자 정보를 불러오는 중 오류가 발생했습니다:', error);
-            });
+                    // Pinia 상태 업데이트
+                    memberId.value = data.id;
+                    memberName.value = data.name;
+                    memberNickname.value = data.nickname;
+                    memberGender.value = data.gender;
+                    memberBirthDate.value = data.birthDate;
+                    memberAge.value = data.age;
+                    memberEmail.value = data.email;
+                    memberPhoneNumber.value = data.phoneNumber;
+                    memberAddress.value = data.address;
+                    memberRole.value = data.memberRole;
+
+                    // 세션에 사용자 정보 저장
+                    sessionStorage.setItem('memberId', data.id);
+                    sessionStorage.setItem('memberName', data.name);
+                    sessionStorage.setItem('memberNickname', data.nickname);
+                    sessionStorage.setItem('memberGender', data.gender);
+                    sessionStorage.setItem('memberBirthDate', data.birthDate);
+                    sessionStorage.setItem('memberAge', data.age);
+                    sessionStorage.setItem('memberEmail', data.email);
+                    sessionStorage.setItem('memberPhoneNumber', data.phoneNumber);
+                    sessionStorage.setItem('memberAddress', data.address);
+                    sessionStorage.setItem('memberRole', data.memberRole);
+
+                })
+                .catch((error) => {
+                    console.error('사용자 정보를 불러오는 중 오류가 발생했습니다:', error);
+                });
         }
     };
 
@@ -113,7 +113,7 @@ export const useMemberStore = defineStore('member', () => {
     };
 
     const login = (id, password) => {
-        axios.post(`${REST_API_URL}/login`, { id, password })
+        return axios.post(`${REST_API_URL}/login`, { id, password })
             .then((response) => {
                 const token = response.headers['authorization'];
                 if (token) {
@@ -122,12 +122,15 @@ export const useMemberStore = defineStore('member', () => {
                     router.push({ name: 'home' }); // 홈으로 이동
                 } else {
                     console.error('로그인에 실패했습니다. 토큰이 없습니다.');
+                    return Promise.reject('로그인에 실패했습니다. 토큰이 없습니다.');
                 }
             })
             .catch((error) => {
                 console.error('로그인 요청 중 오류가 발생했습니다:', error);
+                return Promise.reject(error);
             });
     };
+
 
     loadMemberToken();
 

@@ -1,0 +1,29 @@
+/* 글씨체 변경을 위한 클래스 */
+.custom-swal-title {
+    font-family: 'LINESeedKR' !important; 
+    font-size: 1.2rem; 
+    color: #333; 
+}
+
+.custom-swal-text {
+    font-family: 'LINESeedKR' !important; 
+    font-size: 1.5rem; 
+    color: #555; 
+}
+
+/* OK 버튼 색상 변경을 위한 클래스 */
+.custom-swal-button {
+    background-color: #486284 !important; 
+    color: #fff !important;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-family: 'LINESeedKR'; 
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* 버튼에 호버 시 스타일 */
+.custom-swal-button:hover {
+    background-color: #93AAFD !important; /* 버튼 호버 색상 (예: 밝은 파랑) */
+}

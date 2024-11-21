@@ -9,15 +9,10 @@
 
       <!-- 검색 섹션 -->
       <div class="flex justify-end items-center mb-8 space-x-4 w-1/4 ml-auto">
-        <input
-          type="text"
-          placeholder="클래스 검색하기"
-          class="flex-grow px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-sm"
-        />
-        <button
-          @click="searchClasses"
-          class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm"
-        >
+        <input type="text" placeholder="클래스 검색하기"
+          class="flex-grow px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-sm" />
+        <button @click="searchClasses"
+          class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm">
           검색
         </button>
       </div>
@@ -27,13 +22,7 @@
         <h2 class="text-xl font-title text-lightBlue mb-4">
           20대 여성 <span class="text-darkBlue font-title">이 관심있는</span>
         </h2>
-        <Swiper
-          class="my-swiper"
-          :modules="[Navigation]"
-          :slides-per-view="3"
-          :space-between="20"
-          navigation
-        >
+        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
           <SwiperSlide v-for="(classItem, index) in nearbyClasses" :key="index">
             <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center">
               {{ classItem }}
@@ -45,13 +34,7 @@
       <!-- 인기 클래스 -->
       <div class="mb-12">
         <h2 class="text-xl font-title text-darkBlue mb-4">최근 인기 많은</h2>
-        <Swiper
-          class="my-swiper"
-          :modules="[Navigation]"
-          :slides-per-view="3"
-          :space-between="20"
-          navigation
-        >
+        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
           <SwiperSlide v-for="(classItem, index) in popularClasses" :key="index">
             <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center">
               {{ classItem }}
@@ -70,12 +53,14 @@
         </router-link>
       </div>
     </section>
+    <Footer />
   </div>
 </template>
 
 <script setup>
 import { computed, ref } from "vue";
 import Header from "./Header.vue";
+import Footer from "./Footer.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper";
 import { useMemberStore } from "../stores/member";
@@ -83,7 +68,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 const memberStore = useMemberStore();
-const memberRole = computed(() => memberStore.memberRole); 
+const memberRole = computed(() => memberStore.memberRole);
 
 // 추천 클래스와 인기 클래스 데이터
 const nearbyClasses = ref([
@@ -115,7 +100,8 @@ function searchClasses() {
 /* Swiper 네비게이션 버튼 커스터마이징 */
 :deep(.swiper-button-next),
 :deep(.swiper-button-prev) {
-  color: #64748b !important; /* greyBlue */
+  color: #64748b !important;
+  /* greyBlue */
   font-size: 1.2rem !important;
   font-weight: bold !important;
   opacity: 0.8;
