@@ -185,21 +185,21 @@ function navigateToCommunity() {
 }
 
 /* Swiper 페이지네이션 버튼 커스터마이징 */
-::v-deep .swiper-pagination-bullet {
+:deep(.swiper-pagination-bullet) {
   background: #ffffff !important; /* greyBlue */
   opacity: 0.7;
   transition: opacity 0.3s, transform 0.3s;
 }
 
-::v-deep .swiper-pagination-bullet-active {
+:deep(.swiper-pagination-bullet-active) {
   background: #1e40af !important; /* darkBlue */
   transform: scale(1.2);
   opacity: 1;
 }
 
 /* Swiper 네비게이션 버튼 커스터마이징 */
-::v-deep(.swiper-button-next),
-::v-deep(.swiper-button-prev) {
+:deep(.swiper-button-next),
+:deep(.swiper-button-prev) {
   color: #64748b !important; /* greyBlue */
   font-size: 1.2rem !important; /* 작게 */
   font-weight: bold !important; /* 두껍게 */
@@ -207,8 +207,8 @@ function navigateToCommunity() {
   transition: opacity 0.3s, transform 0.3s;
 }
 
-::v-deep(.swiper-button-next:hover),
-::v-deep(.swiper-button-prev:hover) {
+:deep(.swiper-button-next:hover),
+:deep(.swiper-button-prev:hover) {
   opacity: 1;
   transform: scale(1.1); /* 호버 시 크기 확대 */
 }

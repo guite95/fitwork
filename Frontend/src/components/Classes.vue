@@ -109,8 +109,8 @@ function searchClasses() {
 }
 
 /* Swiper 네비게이션 버튼 커스터마이징 */
-::v-deep(.swiper-button-next),s
-::v-deep(.swiper-button-prev) {
+:deep(.swiper-button-next),s
+:deep(.swiper-button-prev) {
   color: #64748b !important; /* greyBlue */
   font-size: 1.2rem !important;
   font-weight: bold !important;
@@ -118,8 +118,8 @@ function searchClasses() {
   transition: opacity 0.3s, transform 0.3s;
 }
 
-::v-deep(.swiper-button-next:hover),
-::v-deep(.swiper-button-prev:hover) {
+:deep(.swiper-button-next:hover),
+:deep(.swiper-button-prev:hover) {
   opacity: 1;
   transform: scale(1.1);
 }
