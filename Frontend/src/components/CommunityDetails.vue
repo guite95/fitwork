@@ -27,9 +27,16 @@
       </div>
 
       <!-- Post Details -->
-      <div class="flex justify-start items-center text-gray-500 text-sm font-title mb-6">
-        <span>조회수 {{ board.viewCnt }}</span>
-        <span class="ml-3">{{ board.regDate }}</span>
+      <div class="flex justify-between items-center text-gray-500 text-sm font-title mb-6">
+        <div>
+          <span>조회수 {{ board.viewCnt }}</span>
+          <span class="ml-3">{{ board.regDate }}</span>
+        </div>
+        <!-- 수정 및 삭제 버튼 (본인 글일 경우에만 표시) -->
+        <div v-if="isAuthor" class="flex space-x-4">
+          <button @click="handleEdit" class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-greyBlue transition duration-300 text-sm font-title">수정</button>
+          <button @click="handleDelete" class="px-4 py-2 bg-darkBlue text-white rounded-full hover:bg-greyBlue transition duration-300 text-sm font-title">삭제</button>
+        </div>
       </div>
 
       <!-- Comments Section -->
@@ -48,17 +55,21 @@
         </ul>
       </div>
     </div>
+    <Footer />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import Header from './Header.vue';
-import { useRoute } from 'vue-router';
+import Footer from "./Footer.vue";
+import { useRoute, useRouter } from 'vue-router';
 import { useBoardStore } from '@/stores/board';
+import Swal from 'sweetalert2';
 
 // Router
 const route = useRoute();
+const router = useRouter();
 
 // Store
 const store = useBoardStore();
@@ -68,16 +79,56 @@ const imgSrc = ref('');
 // 게시글 번호 가져오기
 const boardNo = route.params.boardNo;
 
+// 사용자가 본인인지 확인하는 상태
+const isAuthor = computed(() => {
+  const currentUser = sessionStorage.getItem('memberNickname');
+  return board.value.writer === currentUser;
+});
+
+// 게시글 상세 정보 가져오기
 const detail = async () => {
-  return new Promise( async (resolve) => {
+  return new Promise(async (resolve) => {
     await store.getBoardDetail(boardNo);
     resolve();
   }).then(() => {
     board.value = store.board;
     imgSrc.value = `http://192.168.210.83:8080/file${board.value.boardFile.path}${board.value.boardFile.systemName}`;
     console.log(imgSrc.value)
+    }
   });
-}
+};
+
+// 수정 버튼 클릭 핸들러
+const handleEdit = () => {
+  router.push({ name: 'new-post', state: { ...board.value } });
+};
+
+// 삭제 버튼 클릭 핸들러
+const handleDelete = () => {
+  Swal.fire({
+    title: '정말 삭제하시겠습니까?',
+    text: '이 작업은 되돌릴 수 없습니다.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '네, 삭제합니다',
+    cancelButtonText: '취소'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      store.deleteBoard(boardNo)
+        .then(() => {
+          Swal.fire('삭제 완료!', '게시글이 삭제되었습니다.', 'success').then(() => {
+            router.push('/community');
+          });
+        })
+        .catch((error) => {
+          console.error('게시글 삭제 중 오류가 발생했습니다:', error);
+          Swal.fire('오류', '게시글 삭제 중 문제가 발생했습니다. 다시 시도해주세요.', 'error');
+        });
+    }
+  });
+};
 
 // 컴포넌트가 마운트될 때 게시글 상세 정보 가져오기
 onMounted(() => {
