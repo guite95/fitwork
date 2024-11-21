@@ -123,12 +123,18 @@
   
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Header from "./Header.vue";
+import { useBoardStore } from "../stores/board";
 
 const router = useRouter();
 const route = useRoute();
+const store = useBoardStore();
+
+onMounted(() => {
+  store.getBoardList();
+})
 
 const allReviews = ref([
     { id: 1, title: "어제 유성천에서 모여서 뛴 후기!", author: "달려라하늬", views: 26, createdAt: "2024.11.18 10:21", category: "club" },

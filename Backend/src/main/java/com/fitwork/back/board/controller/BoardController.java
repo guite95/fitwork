@@ -87,8 +87,8 @@ public class BoardController {
 	 * @throws IOException 
 	 * @throws IllegalStateException 
 	 */
-	@PostMapping
-	public ResponseEntity<String> write(@RequestPart Board board, @RequestPart MultipartFile file) throws IllegalStateException, IOException {
+	@PostMapping("/write")
+	public ResponseEntity<String> write(@RequestPart Board board, @RequestPart(required = false) MultipartFile file) throws IllegalStateException, IOException {
 		
 		try {
 			String oriName = file.getOriginalFilename();
