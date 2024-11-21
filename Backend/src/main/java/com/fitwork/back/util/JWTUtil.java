@@ -19,7 +19,7 @@ public class JWTUtil {
 
 	// 12.3버전
     //accessToken 만료시간 설정
-	public static final long ACCESS_TOKEN_VALIDATION_SECOND = 1000L*60*60; //1시간
+	public static final long ACCESS_TOKEN_VALIDATION_SECOND = 1000L*60*60*12; //1시간
     public static final String AUTHORIZATION_HEADER = "Authorization"; //헤더 이름
 
     // SecretKey 생성
@@ -60,12 +60,4 @@ public class JWTUtil {
         return null;
     }
 
-//    public String determineRedirectURI(HttpServletRequest httpServletRequest, String memberURI, String nonMemberURI) {
-//        String token = getAccessToken(httpServletRequest);
-//        if (token == null) {
-//            return nonMemberURI; // 비회원용 URI로 리다이렉트
-//        } else {
-//            return memberURI; // 회원용 URI로 리다이렉트
-//        }
-//    }
 }

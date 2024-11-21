@@ -13,6 +13,7 @@ public class Board {
 	private int boardNo;
 	private String title;
 	private String writer;
+	private String category;
 	private String content;
 	private String regDate;
 	private int viewCnt;

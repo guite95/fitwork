@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS board (
 	board_no INT AUTO_INCREMENT,
     title VARCHAR(200),
     writer VARCHAR(50),
+    category VARCHAR(30),
     content VARCHAR(10000),
     reg_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     view_cnt INT DEFAULT 0,
