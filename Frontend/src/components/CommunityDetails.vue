@@ -95,7 +95,7 @@ const detail = async () => {
     imgSrc.value = `http://192.168.210.83:8080/file${board.value.boardFile.path}${board.value.boardFile.systemName}`;
     console.log(imgSrc.value)
     }
-  });
+  );
 };
 
 // 수정 버튼 클릭 핸들러
