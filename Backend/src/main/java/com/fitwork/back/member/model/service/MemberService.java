@@ -32,4 +32,6 @@ public interface MemberService {
 	 */
 	public boolean modifyMemberInfo(Member member);
 	
+	public boolean isExistId(String id);
+	
 }

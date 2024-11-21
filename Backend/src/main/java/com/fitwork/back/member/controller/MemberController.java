@@ -82,5 +82,15 @@ public class MemberController {
 	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원 삭제에 실패했습니다.");
 	}
 
+	@GetMapping("/check/{id}")
+	public ResponseEntity<Boolean> isExistId(@PathVariable String id) {
+		try {
+			boolean isExist = memberService.isExistId(id);
+			return ResponseEntity.status(HttpStatus.OK).body(isExist);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 	
 }

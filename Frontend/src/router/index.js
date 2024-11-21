@@ -68,11 +68,11 @@ const routes = [
     component: Community,
   },
   {
-    path: '/new-post',
+    path: '/new-post/:boardNo?', // boardNo는 선택적 파라미터입니다.
     name: 'newpost',
     component: NewPost,
-    props: (route) => ({ state: route.state || {} }), // state를 props로 전달
-  },
+    props: true, // props를 통해 boardNo를 컴포넌트에 전달합니다.
+  },  
   {
     path: '/community-details/:boardNo',
     name: 'communitydetails',
