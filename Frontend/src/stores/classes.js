@@ -5,8 +5,8 @@ import router from '@/router';
 import Swal from 'sweetalert2';
 import '@/assets/swal_custom.css';  // 커스텀 CSS를 사용한다는 가정하에 추가
 
-// const REST_API_URL = `http://192.168.210.83:8080/api-board`;
-const REST_API_URL = `http://localhost:8080/api-board`;
+// const REST_API_URL = `http://192.168.210.83:8080/api-class`;
+const REST_API_URL = `http://localhost:8080/api-class`;
 
 export const useBoardStore = defineStore('board', () => {
     

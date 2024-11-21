@@ -3,8 +3,8 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import router from '@/router';
 
-// const REST_API_URL = `http://localhost:8080/api-member`;
-const REST_API_URL = `http://192.168.210.83:8080/api-member`;
+const REST_API_URL = `http://localhost:8080/api-member`;
+// const REST_API_URL = `http://192.168.210.83:8080/api-member`;
 
 export const useMemberStore = defineStore('member', () => {
     const memberToken = ref(null);
