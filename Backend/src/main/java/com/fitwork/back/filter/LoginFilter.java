@@ -42,7 +42,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 			
 			return authenticationManager.authenticate(authToken);
 		} catch (IOException e) {
-			System.out.println("오류발생");
 			e.printStackTrace();
 		}
 		
@@ -65,14 +64,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 			String role = auth.getAuthority();
 			
 			String token = jwtUtil.createJwt(id, role);
-			System.out.println("JWT발급 확인");
 			response.addHeader("Authorization", "Bearer " + token);
-			System.out.println("헤더에 추가");
 		} catch (Exception e) {
-			System.out.println("문제발생");
 			e.printStackTrace();
 		}
-		System.out.println("완전히 끝남");
 	}
 	
 	// 로그인 실패 시 실행하는 메서드

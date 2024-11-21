@@ -43,7 +43,7 @@ public class SecurityConfig {
 		
 		httpSecurity
 				.authorizeHttpRequests((auth) -> auth
-						.requestMatchers("/api-member/login", "/", "/join").permitAll()
+						.requestMatchers("/api-member/**", "/").permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.anyRequest().authenticated());
 		

@@ -18,10 +18,9 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public boolean joinMember(Member member) {
-		System.out.println("회원가입 서비스 진입 확인");
 		String id = member.getId();
-		System.out.println("아이디 확인");
-		if (memberRepository.isMemberExist(id)) {
+		boolean isExist = memberRepository.isMemberExist(id);
+		if (!isExist) {
 			member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
 			
 			memberRepository.insertMember(member);
