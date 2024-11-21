@@ -27,11 +27,6 @@
       </div>
 
       <!-- Post Details -->
-<<<<<<< HEAD
-      <div class="flex justify-start items-center text-gray-500 text-sm font-title mb-6">
-        <span>조회수 {{ board.viewCnt }}</span>
-        <span class="ml-3">{{ board.regDate }}</span>
-=======
       <div class="flex justify-between items-center text-gray-500 text-sm font-title mb-6">
         <div>
           <span>조회수 {{ board.viewCnt }}</span>
@@ -48,7 +43,6 @@
               class="px-4 py-2 bg-darkBlue text-white rounded-full hover:bg-lightBlue transition duration-300 text-sm font-title">삭제</button>
           </div>
         </div>
->>>>>>> 9588dc9645365b594b51ca16697fa07dd34ca421
       </div>
 
 
@@ -96,10 +90,6 @@ const detail = async () => {
     board.value = store.board;
     imgSrc.value = `http://localhost:8080/file${board.value.boardFile.path}${board.value.boardFile.systemName}`;
     console.log(imgSrc.value)
-<<<<<<< HEAD
-  });
-}
-=======
   }
   );
 };
@@ -141,7 +131,6 @@ const handleDelete = () => {
     }
   });
 };
->>>>>>> 9588dc9645365b594b51ca16697fa07dd34ca421
 
 // 돌아가기 버튼 클릭 핸들러
 const navigateBack = () => {
