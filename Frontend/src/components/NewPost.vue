@@ -33,9 +33,9 @@
               class="w-full px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white text-gray-500 font-title"
             >
               <option value="" disabled>게시판을 선택하세요</option>
-              <option value="club-review">클럽 후기</option>
-              <option value="class-review">클래스 후기</option>
-              <option value="general">잡담</option>
+              <option value="club">클럽 후기</option>
+              <option value="class">클래스 후기</option>
+              <option value="chat">잡담</option>
             </select>
           </div>
 
@@ -148,9 +148,12 @@ function handleFileChange(event) {
 
 function handleSubmit() {
   const formData = new FormData();
-  formData.append("title", title.value);
-  formData.append("content", content.value);
-  formData.append("category", category.value);
+  formData.append("board", new Blob([JSON.stringify({
+    title: title.value,
+    writer: sessionStorage.getItem('memberNickname'),
+    content: content.value,
+    category: category.value,
+  })], {type: "application/json"}));
 
   if (selectedFile.value) {
     formData.append("file", selectedFile.value);

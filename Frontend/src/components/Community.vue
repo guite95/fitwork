@@ -64,19 +64,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(review, index) in paginatedReviews" :key="index"
+            <tr v-for="review in paginatedReviews" :key="review.boardNo"
               class="border-b border-gray-200 hover:bg-gray-50">
               <td class="py-3 text-darkBlue font-title text-left">
-                <router-link :to="`/community-details/${review.id}`" class="hover:underline">
+                <router-link :to="`/community-details/${review.boardNo}`" class="hover:underline">
                   {{ review.title }}
                 </router-link>
-                <p class="text-greyBlue text-sm">{{ review.author }}</p>
+                <p class="text-greyBlue text-sm">{{ review.writer }}</p>
               </td>
               <td class="py-3 text-greyBlue font-title text-center text-sm">
-                {{ review.views }}
+                {{ review.viewCnt }}
               </td>
               <td class="py-3 text-darkBlue font-title text-center text-sm">
-                {{ review.createdAt }}
+                {{ review.regDate }}
               </td>
             </tr>
           </tbody>
@@ -120,15 +120,13 @@ const router = useRouter();
 const route = useRoute();
 const store = useBoardStore();
 
-onMounted(() => {
-  store.getBoardList();
-})
+// onMounted 시점에 store의 boardList 데이터를 가져오는 액션 호출
+onMounted(async () => {
+  await store.getBoardList(); // 게시글 목록 가져오는 액션 호출
+});
 
-const allReviews = ref([
-  { id: 1, title: "어제 유성천에서 모여서 뛴 후기!", author: "달려라하늬", views: 26, createdAt: "2024.11.18 10:21", category: "club" },
-  { id: 2, title: "유성 필라테스 1일 체험", author: "운동하는피카츄", views: 15, createdAt: "2024.11.19 08:30", category: "class" },
-  { id: 3, title: "요즘 러닝화 추천해주세요", author: "러닝초보", views: 8, createdAt: "2024.11.19 12:00", category: "chat" },
-]);
+// allReviews를 store의 boardList로 설정
+const allReviews = computed(() => store.boardList);
 
 // 탭 선택 상태
 const selectedTab = ref(route.query.tab || "club");
@@ -160,8 +158,13 @@ function changeTab(tab) {
   selectedTab.value = tab; // 선택된 탭 업데이트
   router.push({ query: { tab } }); // URL 쿼리 업데이트
   currentPage.value = 1; // 페이지 초기화
+function goToPage(page) {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
 }
 </script>
+
 
 <style scoped>
 table {
