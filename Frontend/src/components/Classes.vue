@@ -61,8 +61,8 @@
       </div>
 
       <!-- 새로운 클래스 만들기 -->
-      <div class="text-center">
-        <p class="text-xl mb-4 text-darkBlue font-title">마음에 드는 클래스가 없다면 ...</p>
+      <div v-if="memberRole === 'ROLE_INSTRUCTOR'" class="text-center">
+        <p class="text-xl mb-4 text-darkBlue font-title"> <span class="text-lightBlue font-title">강사</span>이신가요?</p>
         <router-link to="/register-classes">
           <button class="px-6 py-3 bg-lightBlue text-white font-title rounded-md hover:bg-darkBlue">
             👉 새로운 클래스 만들기
@@ -74,12 +74,16 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import Header from "./Header.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper";
+import { useMemberStore } from "../stores/member";
 import "swiper/css";
 import "swiper/css/navigation";
+
+const memberStore = useMemberStore();
+const memberRole = computed(() => memberStore.memberRole); 
 
 // 추천 클래스와 인기 클래스 데이터
 const nearbyClasses = ref([
@@ -109,7 +113,7 @@ function searchClasses() {
 }
 
 /* Swiper 네비게이션 버튼 커스터마이징 */
-:deep(.swiper-button-next),s
+:deep(.swiper-button-next),
 :deep(.swiper-button-prev) {
   color: #64748b !important; /* greyBlue */
   font-size: 1.2rem !important;

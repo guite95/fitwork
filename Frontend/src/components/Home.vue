@@ -30,8 +30,8 @@
     <!-- 클럽 및 클래스 섹션 -->
     <section class="px-80 py-12 bg-gray-50">
       <h2 class="text-2xl font-title text-lightBlue mb-8">
-        {{ name }}<span class="text-darkBlue">님을 위한 </span>
-        <span class="text-lightBlue">유성구</span> <span class="text-darkBlue">근처의</span>
+        {{ memberName }} <span class="text-darkBlue">님을 위한 </span>
+        <span class="text-lightBlue"> {{ memberDistrict }} </span> <span class="text-darkBlue">근처의</span>
       </h2>
 
       <!-- 운동 클럽 캐러셀 -->
@@ -113,16 +113,29 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import Header from "./Header.vue";
 import { useRouter } from "vue-router";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, Pagination, Autoplay } from "swiper";
+import { useMemberStore } from "../stores/member";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-const name = ref("김싸피");
+const memberStore = useMemberStore();
+const memberName = computed(() => memberStore.memberName); 
+const memberAddress = computed(() => memberStore.memberAddress);
+
+const memberDistrict = computed(() => {
+  if (memberAddress.value) {
+    const parts = memberAddress.value.split(' ');
+    return parts[1];
+    //return parts.length > 1 ? parts[1] : ''; 
+  }
+  return '';
+});
+
 const router = useRouter();
 
 const banners = ref([

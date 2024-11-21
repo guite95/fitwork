@@ -45,7 +45,7 @@
         <div class="flex items-center space-x-4">
             <!-- Welcome Message -->
             <span v-if="isLoggedIn" class="hidden md:inline text-darkBlue font-title">
-                안녕하세요, <span class="text-lightBlue"><strong>{{ name }}</strong></span> 님
+                안녕하세요, <span class="text-lightBlue"><strong>{{ memberName }}</strong></span> 님
             </span>
             <!-- Login/Logout Button -->
             <button 
@@ -95,20 +95,21 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { useMemberStore } from "../stores/member";
 
 // State
-const isLoggedIn = ref(true); // 로그인 여부
-const name = ref("김싸피");
 const route = useRoute(); // 현재 경로 가져오기
+const memberStore = useMemberStore();
+const memberName = computed(() => memberStore.memberName); 
+const isLoggedIn = computed(() => !!memberStore.memberToken); // 로그인 여부 상태
 
 // Methods
 function handleAuthAction() {
     if (isLoggedIn.value) {
         // 로그아웃 처리
-        isLoggedIn.value = false;
-        name.value = ""; // 로그아웃 시 이름 초기화
+        memberStore.clearMemberToken(); // Pinia store의 토큰을 초기화
     } else {
         // 로그인 페이지로 이동
         window.location.href = "/sign-in";
@@ -116,7 +117,7 @@ function handleAuthAction() {
 }
 
 function isActive(path) {
-    return route.path === path; // 현재 경로와 비교하여 활성 상태 확인
+    return route.path === path || (path !== '/' && route.path.startsWith(path));
 }
 </script>
 

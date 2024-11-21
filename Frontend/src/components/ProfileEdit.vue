@@ -57,7 +57,7 @@
 
             <div>
                 <div class="flex items-center space-x-2">
-                    <input id="address" type="text" placeholder="상세 주소"
+                    <input id="addressdetail" type="text" placeholder="상세 주소"
                         class="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white font-title text-darkBlue" />
                 </div>
             </div>
@@ -75,7 +75,10 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
+import { useMemberStore } from "../stores/member";
+
+const memberStore = useMemberStore();
 
 const phone = ref(""); // Phone number
 const password = ref(""); // Password input
