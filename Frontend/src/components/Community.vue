@@ -158,11 +158,14 @@ function changeTab(tab) {
   selectedTab.value = tab; // 선택된 탭 업데이트
   router.push({ query: { tab } }); // URL 쿼리 업데이트
   currentPage.value = 1; // 페이지 초기화
-function goToPage(page) {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page;
+  function goToPage(page) {
+    if (page >= 1 && page <= totalPages.value) {
+      currentPage.value = page;
+    }
+
   }
 }
+
 </script>
 
 
