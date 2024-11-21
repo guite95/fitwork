@@ -33,11 +33,18 @@
           <span class="ml-3">{{ board.regDate }}</span>
         </div>
         <!-- 수정 및 삭제 버튼 (본인 글일 경우에만 표시) -->
-        <div v-if="isAuthor" class="flex space-x-4">
-          <button @click="handleEdit" class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-greyBlue transition duration-300 text-sm font-title">수정</button>
-          <button @click="handleDelete" class="px-4 py-2 bg-darkBlue text-white rounded-full hover:bg-greyBlue transition duration-300 text-sm font-title">삭제</button>
+        <div class="flex space-x-2">
+          <button @click="navigateBack"
+            class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-greyBlue transition duration-300 text-sm font-title">돌아가기</button>
+          <div v-if="isAuthor" class="flex space-x-2">
+            <button @click="handleEdit"
+              class="px-4 py-2 bg-greyBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">수정</button>
+            <button @click="handleDelete"
+              class="px-4 py-2 bg-darkBlue text-white rounded-full hover:bg-lightBlue transition duration-300 text-sm font-title">삭제</button>
+          </div>
         </div>
       </div>
+
 
       <!-- Comments Section -->
       <div class="border-t pt-6">
@@ -94,14 +101,20 @@ const detail = async () => {
     board.value = store.board;
     imgSrc.value = `http://192.168.210.83:8080/file${board.value.boardFile.path}${board.value.boardFile.systemName}`;
     console.log(imgSrc.value)
-    }
+  }
   );
 };
 
 // 수정 버튼 클릭 핸들러
-const handleEdit = () => {
-  router.push({ name: 'new-post', state: { ...board.value } });
-};
+function handleEdit() {
+  router.push({
+    name: 'newpost',
+    params: {
+      boardNo: boardNo, // boardNo를 수정 페이지로 전달
+    },
+  });
+}
+
 
 // 삭제 버튼 클릭 핸들러
 const handleDelete = () => {
@@ -110,8 +123,8 @@ const handleDelete = () => {
     text: '이 작업은 되돌릴 수 없습니다.',
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
+    confirmButtonColor: '#486284',
+    cancelButtonColor: '#7B95B7',
     confirmButtonText: '네, 삭제합니다',
     cancelButtonText: '취소'
   }).then((result) => {
@@ -128,6 +141,11 @@ const handleDelete = () => {
         });
     }
   });
+};
+
+// 돌아가기 버튼 클릭 핸들러
+const navigateBack = () => {
+  router.push('/community');
 };
 
 // 컴포넌트가 마운트될 때 게시글 상세 정보 가져오기

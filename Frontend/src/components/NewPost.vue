@@ -92,7 +92,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useBoardStore } from "@/stores/board";
 import Header from "./Header.vue"; // 헤더 컴포넌트
@@ -113,26 +113,32 @@ const postId = ref(null); // 게시글 ID
 const fileInput = ref(null);
 const selectedFile = ref(null);
 
-// Watch route query for edit mode
-watch(
-  () => route.state,
-  (newState) => {
-    if (newState && newState.title && newState.content && newState.category) {
-      title.value = newState.title;
-      content.value = newState.content;
-      category.value = newState.category;
-      postId.value = newState.id || null;
-      isEditMode.value = true;
-    } else {
-      title.value = "";
-      content.value = "";
-      category.value = "";
-      postId.value = null;
-      isEditMode.value = false;
-    }
-  },
-  { immediate: true }
-);
+// 컴포넌트가 마운트될 때 route의 state 데이터를 확인하고 폼에 반영
+onMounted(() => {
+  const boardNo = route.params.boardNo;
+
+  if (boardNo) {
+    // 수정 모드일 경우 기존 게시글 정보 가져오기
+    boardStore.getBoardDetail(boardNo).then((post) => {
+      if (post) {
+        title.value = post.title;
+        content.value = post.content;
+        category.value = post.category;
+        postId.value = boardNo;
+        isEditMode.value = true;
+      }
+    });
+  } else {
+    // 새 글 작성 모드일 경우
+    title.value = "";
+    content.value = "";
+    category.value = "";
+    postId.value = null;
+    isEditMode.value = false;
+  }
+});
+
+
 
 // Methods
 function navigateBack() {
@@ -177,6 +183,7 @@ async function handleSubmit() {
     console.error("글 작성/수정 중 오류가 발생했습니다:", error);
   }
 }
+
 </script>
 
 <style scoped>

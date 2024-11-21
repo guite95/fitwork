@@ -52,9 +52,9 @@
           <!-- 검색 바 및 검색 버튼 -->
           <div class="flex space-x-2 items-center w-1/2 justify-end">
             <input type="text" placeholder="검색" v-model="searchQuery"
-              class="w-full px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue text-gray-700 font-title text-sm" />
+              class="w-50 px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue text-gray-700 font-title text-sm" />
             <button @click="handleSearch"
-              class="px-3 py-2 bg-lightBlue text-white rounded-2xl hover:bg-darkBlue transition duration-300 font-title text-sm">
+              class="w-3- px-3 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 font-title text-sm">
               검색
             </button>
           </div>
@@ -97,8 +97,8 @@
               &laquo;
             </button>
             <button v-for="page in totalPages" :key="page" @click="goToPage(page)"
-              class="px-3 py-1 bg-lightBlue/30 rounded-md text-darkBlue hover:bg-lightBlue hover:text-white font-title text-sm"
-              :class="{ 'bg-lightBlue text-white': currentPage.value === page }">
+              class="px-3 py-1 rounded-md font-title text-sm"
+              :class="currentPage.value === page ? 'bg-greyBlue text-white' : 'bg-lightBlue/30 text-darkBlue hover:bg-lightBlue hover:text-white'">
               {{ page }}
             </button>
             <button @click="goToPage(currentPage.value + 1)"
@@ -141,33 +141,23 @@ watch(() => route.query.tab, (newTab) => {
   selectedTab.value = newTab || "club"; // 기본값: club
 }, { immediate: true });
 
-const itemsPerPage = ref(5); // 페이지 당 게시글 수를 5개로 설정
+const itemsPerPage = ref(5);
 const currentPage = ref(1);
 const searchQuery = ref("");
 
 // 검색된 리뷰 목록
 const filteredReviews = computed(() => {
-  const filtered = allReviews.value
+  return allReviews.value
     .filter((review) => review.category === selectedTab.value)
     .filter((review) => review.title.includes(searchQuery.value));
-  
-  console.log("Filtered Reviews:", filtered); // 디버깅을 위한 로그
-  return filtered;
 });
 
 const filteredPaginatedReviews = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
-  const paginated = filteredReviews.value.slice(start, start + itemsPerPage.value);
-  
-  console.log("Paginated Reviews:", paginated); // 디버깅을 위한 로그
-  return paginated;
+  return filteredReviews.value.slice(start, start + itemsPerPage.value);
 });
 
-const totalPages = computed(() => {
-  const pages = Math.ceil(filteredReviews.value.length / itemsPerPage.value);
-  console.log("Total Pages:", pages); // 디버깅을 위한 로그
-  return pages;
-});
+const totalPages = computed(() => Math.ceil(filteredReviews.value.length / itemsPerPage.value));
 
 const tabTitles = { club: "클럽 후기 🏃", class: "클래스 후기 🏋️‍♀️", chat: "잡담 💬" };
 const currentTabTitle = computed(() => tabTitles[selectedTab.value]);
