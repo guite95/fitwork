@@ -159,6 +159,10 @@ public class BoardController {
 			
 			Board tmp = boardService.selectOne(boardNo);
 			
+			if (tmp.getBoardFile() != null) {
+				boardService.deleteFile(tmp.getBoardFile().getFileNo());
+			}
+			
 			if (file != null) {
 				String oriName = file.getOriginalFilename();
 				

@@ -77,7 +77,7 @@ public class ClassesController {
 		}
 	}
 
-	@GetMapping("/location/{location}")
+	@GetMapping("/list/location/{location}")
 	public ResponseEntity<Object> getNearbyClasses(@PathVariable String location) {
 		try {
 			List<Classes> list = classesService.classByLocation(location);
@@ -88,7 +88,7 @@ public class ClassesController {
 		}
 	}
 
-	@GetMapping("/category/{category}")
+	@GetMapping("/list/category/{category}")
 	public ResponseEntity<Object> getCategoryClasses(@PathVariable String category) {
 		try {
 			List<Classes> list = classesService.classByCategory(category);
@@ -99,7 +99,7 @@ public class ClassesController {
 		}
 	}
 
-	@GetMapping("/gender/{gender}")
+	@GetMapping("/list/gender/{gender}")
 	public ResponseEntity<Object> getGenderClasses(@PathVariable String gender) {
 		try {
 			List<Classes> list = classesService.classByGender(gender);
