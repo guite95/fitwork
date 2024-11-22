@@ -1,12 +1,12 @@
 <template>
     <div>
         <h1 class="text-2xl font-title text-darkBlue mb-6">회원정보 조회/수정</h1>
-        <form class="space-y-6">
+        <form class="space-y-6" @submit.prevent="handleSubmit">
             <!-- 현재 비밀번호 -->
             <div>
                 <label for="current-password" class="block text-darkBlue font-title mb-2">현재 비밀번호</label>
-                <input id="current-password" type="password" placeholder="현재 비밀번호"
-                    class="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white font-title text-darkBlue" />
+                <input id="current-password" type="password" v-model="currentPassword" placeholder="현재 비밀번호"
+                    class="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white font-title text-darkBlue" required />
             </div>
 
             <!-- 새 비밀번호 -->
@@ -31,7 +31,7 @@
             <!-- 닉네임 -->
             <div>
                 <label for="nickname" class="block text-darkBlue font-title mb-2">닉네임</label>
-                <input id="nickname" type="text" placeholder="닉네임"
+                <input id="nickname" type="text" v-model="nickname" placeholder="닉네임"
                     class="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white font-title text-darkBlue" />
             </div>
 
@@ -39,6 +39,13 @@
             <div>
                 <label for="phone" class="block text-darkBlue font-title mb-2">전화번호</label>
                 <input id="phone" type="text" v-model="phone" @input="formatPhoneNumber" placeholder="010-0000-0000"
+                    class="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white font-title text-darkBlue" />
+            </div>
+
+            <!-- 이메일 -->
+            <div>
+                <label for="email" class="block text-darkBlue font-title mb-2">이메일</label>
+                <input id="email" type="email" v-model="email" placeholder="이메일"
                     class="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white font-title text-darkBlue" />
             </div>
 
@@ -55,18 +62,18 @@
                 </div>
             </div>
 
+            <!-- 상세 주소 -->
             <div>
                 <div class="flex items-center space-x-2">
-                    <input id="addressdetail" type="text" placeholder="상세 주소"
+                    <input id="addressdetail" type="text" v-model="addressDetail" placeholder="상세 주소"
                         class="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white font-title text-darkBlue" />
                 </div>
             </div>
 
-
             <!-- 수정 완료 버튼 -->
             <div class="flex justify-end">
                 <button type="submit"
-                    class="px-6 py-3 bg-lightBlue text-white font-title rounded-full hover:bg-darkBlue transition duration-300">
+                    class="px-6 py-2 bg-lightBlue text-white font-title rounded-full hover:bg-darkBlue transition duration-300">
                     수정 완료
                 </button>
             </div>
@@ -75,21 +82,38 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useMemberStore } from "../stores/member";
 
 const memberStore = useMemberStore();
 
+const currentPassword = ref(""); // Current password input
 const phone = ref(""); // Phone number
-const password = ref(""); // Password input
-const rePassword = ref(""); // Re-enter password input
+const password = ref(""); // New password input
+const rePassword = ref(""); // Re-enter new password input
 const passwordError = ref(false); // Error state for mismatched passwords
 const address = ref(""); // Address input
+const addressDetail = ref(""); // Detailed address input
+const nickname = ref(""); // Nickname input
+const email = ref(""); // Email input
 
 // Watch for changes in password and rePassword
 watch([password, rePassword], ([newPassword, newRePassword]) => {
     passwordError.value = newPassword !== newRePassword && newRePassword.length > 0;
 });
+
+// Load member info from session storage
+onMounted(() => {
+    loadMemberFromSession();
+});
+
+function loadMemberFromSession() {
+    nickname.value = sessionStorage.getItem('memberNickname') || '';
+    phone.value = sessionStorage.getItem('memberPhoneNumber') || '';
+    address.value = sessionStorage.getItem('memberAddress') || '';
+    addressDetail.value = sessionStorage.getItem('memberAddressDetail') || '';
+    email.value = sessionStorage.getItem('memberEmail') || '';
+}
 
 // Format phone number
 function formatPhoneNumber(event) {
@@ -105,12 +129,32 @@ function formatPhoneNumber(event) {
 
 // 주소 검색 함수
 function openAddressSearch() {
-  new daum.Postcode({
-    oncomplete: function (data) {
-      // 도로명 주소 선택
-      address.value = data.roadAddress || data.jibunAddress;
-    },
-  }).open();
+    new daum.Postcode({
+        oncomplete: function (data) {
+            // 도로명 주소 선택
+            address.value = data.roadAddress || data.jibunAddress;
+        },
+    }).open();
+}
+
+// Handle form submission
+async function handleSubmit() {
+    try {
+        // Update member info
+        const updatedInfo = {
+            nickname: nickname.value,
+            phoneNumber: phone.value,
+            email: email.value,
+            address: address.value,
+            addressDetail: addressDetail.value,
+            password: password.value || null,
+            currentPassword: currentPassword.value,
+        };
+
+        await memberStore.modifyMember(updatedInfo); // 서버로 수정된 정보 전송
+    } catch (error) {
+        console.error("회원 정보 수정 중 오류가 발생했습니다:", error);
+    }
 }
 </script>
 

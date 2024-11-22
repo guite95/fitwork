@@ -39,74 +39,87 @@
           </h1>
         </div>
 
-        <!-- Search Bar and Write Button -->
-        <div class="flex justify-between items-center space-x-4 mb-4">
-          <!-- 글쓰기 버튼 -->
-          <router-link to="/new-post">
-            <button
-              class="px-4 py-2 bg-lightBlue text-white font-title rounded-full hover:bg-darkBlue transition duration-300 text-sm">
-              글쓰기
+        <!-- 로그인 확인 -->
+        <div v-if="!isLoggedIn" class="text-center text-darkBlue font-title mt-20">
+          <p>게시글을 보려면 로그인이 필요합니다.</p>
+          <router-link to="/sign-in">
+            <button class="mt-4 px-6 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300">
+              로그인
             </button>
           </router-link>
-
-          <!-- 검색 바 및 검색 버튼 -->
-          <div class="flex space-x-2 items-center w-1/2 justify-end">
-            <input type="text" placeholder="검색" v-model="searchQuery"
-              class="w-50 px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue text-gray-700 font-title text-sm" />
-            <button @click="handleSearch"
-              class="w-3- px-3 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 font-title text-sm">
-              검색
-            </button>
-          </div>
         </div>
 
-        <!-- Table -->
-        <table class="w-full border-t border-gray-300 table-fixed">
-          <thead>
-            <tr class="border-b border-gray-300">
-              <th class="py-3 text-greyBlue font-title text-left table-title">제목</th>
-              <th class="py-3 text-greyBlue font-title text-center table-views">조회수</th>
-              <th class="py-3 text-greyBlue font-title text-center table-date">작성시간</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="review in filteredPaginatedReviews" :key="review.boardNo"
-              class="border-b border-gray-200 hover:bg-gray-50">
-              <td class="py-3 text-darkBlue font-title text-left">
-                <router-link :to="`/community-details/${review.boardNo}`" class="hover:underline">
-                  {{ review.title }}
-                </router-link>
-                <p class="text-greyBlue text-sm">{{ review.writer }}</p>
-              </td>
-              <td class="py-3 text-greyBlue font-title text-center text-sm">
-                {{ review.viewCnt }}
-              </td>
-              <td class="py-3 text-darkBlue font-title text-center text-sm">
-                {{ review.regDate }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <!-- 게시글 목록 -->
+        <div v-else>
+          <!-- Search Bar and Write Button -->
+          <div class="flex justify-between items-center space-x-4 mb-4">
+            <!-- 글쓰기 버튼 -->
+            <router-link to="/new-post">
+              <button
+                class="px-4 py-2 bg-lightBlue text-white font-title rounded-full hover:bg-darkBlue transition duration-300 text-sm">
+                글쓰기
+              </button>
+            </router-link>
 
-        <!-- Pagination -->
-        <div class="flex justify-center mt-6">
-          <nav class="flex space-x-2">
-            <button @click="goToPage(currentPage.value - 1)"
-              class="px-3 py-1 bg-white rounded-md text-gray-500 hover:bg-lightBlue hover:text-white font-title text-sm"
-              :disabled="currentPage.value === 1">
-              &laquo;
-            </button>
-            <button v-for="page in totalPages" :key="page" @click="goToPage(page)"
-              class="px-3 py-1 rounded-md font-title text-sm"
-              :class="currentPage.value === page ? 'bg-greyBlue text-white' : 'bg-lightBlue/30 text-darkBlue hover:bg-lightBlue hover:text-white'">
-              {{ page }}
-            </button>
-            <button @click="goToPage(currentPage.value + 1)"
-              class="px-3 py-1 bg-white rounded-md text-gray-500 hover:bg-lightBlue hover:text-white font-title text-sm"
-              :disabled="currentPage.value === totalPages">
-              &raquo;
-            </button>
-          </nav>
+            <!-- 검색 바 및 검색 버튼 -->
+            <div class="flex space-x-2 items-center w-1/2 justify-end">
+              <input type="text" placeholder="검색" v-model="searchQuery"
+                class="w-50 px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue text-gray-700 font-title text-sm" />
+              <button @click="handleSearch"
+                class="w-3- px-3 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 font-title text-sm">
+                검색
+              </button>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <table class="w-full border-t border-gray-300 table-fixed">
+            <thead>
+              <tr class="border-b border-gray-300">
+                <th class="py-3 text-greyBlue font-title text-left table-title">제목</th>
+                <th class="py-3 text-greyBlue font-title text-center table-views">조회수</th>
+                <th class="py-3 text-greyBlue font-title text-center table-date">작성시간</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="review in filteredPaginatedReviews" :key="review.boardNo"
+                class="border-b border-gray-200 hover:bg-gray-50">
+                <td class="py-3 text-darkBlue font-title text-left">
+                  <router-link :to="`/community-details/${review.boardNo}`" class="hover:underline">
+                    {{ review.title }}
+                  </router-link>
+                  <p class="text-greyBlue text-sm">{{ review.writer }}</p>
+                </td>
+                <td class="py-3 text-greyBlue font-title text-center text-sm">
+                  {{ review.viewCnt }}
+                </td>
+                <td class="py-3 text-darkBlue font-title text-center text-sm">
+                  {{ review.regDate }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <div class="flex justify-center mt-6">
+            <nav class="flex space-x-2">
+              <button @click="goToPage(currentPage.value - 1)"
+                class="px-3 py-1 bg-white rounded-md text-gray-500 hover:bg-lightBlue hover:text-white font-title text-sm"
+                :disabled="currentPage.value === 1">
+                &laquo;
+              </button>
+              <button v-for="page in totalPages" :key="page" @click="goToPage(page)"
+                class="px-3 py-1 rounded-md font-title text-sm"
+                :class="currentPage.value === page ? 'bg-greyBlue text-white' : 'bg-lightBlue/30 text-darkBlue hover:bg-lightBlue hover:text-white'">
+                {{ page }}
+              </button>
+              <button @click="goToPage(currentPage.value + 1)"
+                class="px-3 py-1 bg-white rounded-md text-gray-500 hover:bg-lightBlue hover:text-white font-title text-sm"
+                :disabled="currentPage.value === totalPages">
+                &raquo;
+              </button>
+            </nav>
+          </div>
         </div>
       </section>
     </div>
@@ -120,17 +133,23 @@ import { useRouter, useRoute } from "vue-router";
 import Header from "./Header.vue";
 import Footer from "./Footer.vue";
 import { useBoardStore } from "../stores/board";
+import { useMemberStore } from "../stores/member";
 
 // Pinia 스토어 사용
 const router = useRouter();
 const route = useRoute();
 const store = useBoardStore();
+const memberStore = useMemberStore();
 
+// 로그인 여부 확인
+const isLoggedIn = computed(() => memberStore.isLoggedIn);
 
+// 게시글 목록 로드
 onMounted(async () => {
-  await store.getBoardList(); // 게시글 목록 가져오기
+  if (isLoggedIn.value) {
+    await store.getBoardList(); // 게시글 목록 가져오기
+  }
 });
-
 
 // allReviews를 store의 boardList로 설정
 const allReviews = computed(() => store.boardList);
@@ -187,7 +206,6 @@ function handleSearch() {
   currentPage.value = 1; // 검색 시 페이지를 1로 초기화
 }
 </script>
-
 
 <style scoped>
 table {

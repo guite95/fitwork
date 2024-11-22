@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import router from '@/router';
 import Swal from 'sweetalert2';
-import '@/assets/swal_custom.css';  // 커스텀 CSS를 사용한다는 가정하에 추가
+import '@/assets/swal_custom.css';  
 
 const REST_API_URL = `http://192.168.210.83:8080/api-board`;
 
@@ -175,5 +175,69 @@ export const useBoardStore = defineStore('board', () => {
         });
     };
 
-    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail, deleteBoard, board };
+    const addComment = async (boardNo, commentData) => {
+        return await axios.post(`${REST_API_URL}/comment/${boardNo}`, commentData, {
+            headers: {
+                'Authorization': sessionStorage.getItem('memberToken'),
+                'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            Swal.fire({
+                icon: 'success',
+                title: '댓글 등록 완료',
+                text: '댓글이 성공적으로 등록되었습니다.',
+                customClass: {
+                    title: 'custom-swal-title',
+                    text: 'custom-swal-text',
+                    confirmButton: 'custom-swal-button',
+                },
+                buttonsStyling: false,
+            });
+            return response; // 성공 시 response 반환
+        })
+        .catch((err) => {
+            console.error(err);
+            Swal.fire({
+                icon: 'error',
+                title: '댓글 등록 오류',
+                text: '댓글을 등록하는 중 오류가 발생했습니다. 다시 시도해 주세요.',
+                customClass: {
+                    title: 'custom-swal-title',
+                    text: 'custom-swal-text',
+                    confirmButton: 'custom-swal-button',
+                },
+                buttonsStyling: false,
+            });
+            throw err; // 오류 발생 시 예외 던지기
+        });
+    };
+
+    const getComments = (boardNo) => {
+        return axios.get(`${REST_API_URL}/comment/${boardNo}`, {
+            headers: {
+                'Authorization': sessionStorage.getItem('memberToken'),
+            }
+        })
+        .then((response) => {
+            board.value.comments = response.data;
+            console.log(board.value.comments)
+        })
+        .catch((err) => {
+            console.error(err);
+            Swal.fire({
+                icon: 'error',
+                title: '댓글 불러오기 오류',
+                text: '댓글을 불러오는 중 오류가 발생했습니다. 다시 시도해 주세요.',
+                customClass: {
+                    title: 'custom-swal-title',
+                    text: 'custom-swal-text',
+                    confirmButton: 'custom-swal-button',
+                },
+                buttonsStyling: false,
+            });
+        });
+    };
+
+    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail, deleteBoard, board, addComment, getComments };
 });

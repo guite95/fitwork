@@ -14,11 +14,9 @@
       </div>
 
       <!-- Post Image -->
-      <div class="mb-6">
-        <div class="w-full bg-gray-200 h-64 rounded-lg flex items-center justify-center">
-          <!-- 이미지가 있을 경우 표시 -->
-          <img v-if="board.boardFile" :src="imgSrc" alt="Post Image" class="w-full h-full object-cover rounded-lg" />
-        </div>
+      <div class="mb-6 flex justify-center">
+        <!-- 이미지가 있을 경우 표시 -->
+        <img v-if="board.boardFile" :src="imgSrc" alt="Post Image" class="rounded-lg object-contain" />
       </div>
 
       <!-- Post Content -->
@@ -53,18 +51,31 @@
 
       <!-- Comments Section -->
       <div class="border-t pt-6">
-        <h2 class="text-lg font-title text-darkBlue mb-4">댓글</h2>
+        <h2 class="text-lg font-title text-greyBlue mb-4">댓글</h2>
         <ul class="space-y-4">
-          <li v-for="(comment, index) in board.comments" :key="index">
+          <li v-for="(comment, index) in comments" :key="index">
             <div class="flex justify-between">
-              <p class="text-gray-700 text-sm font-title">{{ comment.content }}</p>
+              <p class="text-darkBlue text-sm font-title">{{ index + 1 }}. {{ comment.content }}</p>
               <div class="text-gray-500 text-xs font-title">
-                <span class="font-title text-darkBlue">{{ comment.author }}</span>
-                <span class="ml-2">{{ comment.createdAt }}</span>
+                <span class="font-title text-greyBlue text-sm">{{ comment.writer }}</span>
+                <span class="ml-8">{{ comment.createdAt }}</span>
+                <span class="ml-8">{{ comment.regDate }}</span>
               </div>
             </div>
           </li>
         </ul>
+      </div>
+
+      <!-- Add Comment Section -->
+      <div class="border-t pt-6 mt-6">
+        <div class="flex space-x-4 items-center">
+          <input type="text" v-model="newComment" placeholder="댓글을 작성하세요"
+            class="w-full px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue text-darkBlue font-title text-sm" />
+          <button @click="addComment"
+            class="w-1/6 px-4 py-2 bg-lightBlue text-white font-title rounded-full hover:bg-darkBlue transition duration-300 text-sm">
+            댓글 추가
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -87,6 +98,8 @@ const store = useBoardStore();
 const memberStore = useMemberStore();
 const board = ref({});
 const imgSrc = ref('');
+const newComment = ref('');
+const comments = ref([]);
 
 // 게시글 번호 가져오기
 const boardNo = route.params.boardNo;
@@ -103,8 +116,12 @@ const detail = async () => {
 
     // 첨부파일이 있는 경우에만 imgSrc 설정
     if (board.value.boardFile) {
-      imgSrc.value = `http://localhost:8080/file${board.value.boardFile.path}/${board.value.boardFile.systemName}`;
+      imgSrc.value = `http://192.168.210.83:8080/file${board.value.boardFile.path}/${board.value.boardFile.systemName}`;
     }
+
+    // 댓글 불러오기
+    await store.getComments(boardNo);
+    comments.value = board.value.comments;
   } catch (error) {
     console.error('게시글 상세 정보 불러오기 오류:', error);
   }
@@ -152,6 +169,34 @@ const handleDelete = () => {
   });
 };
 
+// 댓글 추가 핸들러
+const addComment = () => {
+  if (newComment.value.trim() === '') {
+    Swal.fire({
+      icon: 'warning',
+      title: '댓글 내용이 비어있습니다.',
+      text: '댓글을 입력해주세요.',
+    });
+    return;
+  }
+
+  // 서버로 댓글 추가 요청
+  store
+    .addComment(boardNo, { content: newComment.value, writer: memberStore.memberNickname, boardNo: boardNo })
+    .then(() => {
+      // 댓글 추가 성공 시 로컬 상태 업데이트
+      comments.value.push({
+        content: newComment.value,
+        writer: memberStore.memberNickname,
+        createdAt: new Date().toLocaleString(),
+      });
+      newComment.value = '';
+    })
+    .catch((error) => {
+      console.error('댓글 추가 중 오류 발생:', error);
+    });
+};
+
 // 돌아가기 버튼 클릭 핸들러
 const navigateBack = () => {
   router.push('/community');
@@ -162,6 +207,5 @@ onMounted(() => {
   detail();
 });
 </script>
-
 
 <style scoped></style>
