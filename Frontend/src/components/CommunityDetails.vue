@@ -35,16 +35,21 @@
         <!-- 수정 및 삭제 버튼 (본인 글일 경우에만 표시) -->
         <div class="flex space-x-2">
           <button @click="navigateBack"
-            class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-greyBlue transition duration-300 text-sm font-title">돌아가기</button>
+            class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-greyBlue transition duration-300 text-sm font-title">
+            돌아가기
+          </button>
           <div v-if="isAuthor" class="flex space-x-2">
             <button @click="handleEdit"
-              class="px-4 py-2 bg-greyBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">수정</button>
+              class="px-4 py-2 bg-greyBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
+              수정
+            </button>
             <button @click="handleDelete"
-              class="px-4 py-2 bg-darkBlue text-white rounded-full hover:bg-lightBlue transition duration-300 text-sm font-title">삭제</button>
+              class="px-4 py-2 bg-darkBlue text-white rounded-full hover:bg-lightBlue transition duration-300 text-sm font-title">
+              삭제
+            </button>
           </div>
         </div>
       </div>
-
 
       <!-- Comments Section -->
       <div class="border-t pt-6">
@@ -66,32 +71,43 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import Header from './Header.vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useBoardStore } from '@/stores/board';
+import { useMemberStore } from '../stores/member';
+import Swal from 'sweetalert2';
 
 // Router
 const route = useRoute();
+const router = useRouter();
 
 // Store
 const store = useBoardStore();
+const memberStore = useMemberStore();
 const board = ref({});
 const imgSrc = ref('');
 
 // 게시글 번호 가져오기
 const boardNo = route.params.boardNo;
 
+// 작성자와 현재 로그인한 사용자가 일치하는지 확인
+const isAuthor = computed(() => {
+  return board.value.writer && memberStore.memberNickname && board.value.writer === memberStore.memberNickname; // board.writer와 현재 사용자 이름 비교
+});
+
 const detail = async () => {
-  return new Promise( async (resolve) => {
+  try {
     await store.getBoardDetail(boardNo);
-    resolve();
-  }).then(() => {
     board.value = store.board;
-    imgSrc.value = `http://localhost:8080/file${board.value.boardFile.path}/${board.value.boardFile.systemName}`;
-    console.log(imgSrc.value)
+
+    // 첨부파일이 있는 경우에만 imgSrc 설정
+    if (board.value.boardFile) {
+      imgSrc.value = `http://localhost:8080/file${board.value.boardFile.path}/${board.value.boardFile.systemName}`;
+    }
+  } catch (error) {
+    console.error('게시글 상세 정보 불러오기 오류:', error);
   }
-  );
 };
 
 // 수정 버튼 클릭 핸들러
@@ -104,7 +120,6 @@ function handleEdit() {
   });
 }
 
-
 // 삭제 버튼 클릭 핸들러
 const handleDelete = () => {
   Swal.fire({
@@ -115,18 +130,23 @@ const handleDelete = () => {
     confirmButtonColor: '#486284',
     cancelButtonColor: '#7B95B7',
     confirmButtonText: '네, 삭제합니다',
-    cancelButtonText: '취소'
+    cancelButtonText: '취소',
   }).then((result) => {
     if (result.isConfirmed) {
-      store.deleteBoard(boardNo)
+      store
+        .deleteBoard(boardNo)
         .then(() => {
           Swal.fire('삭제 완료!', '게시글이 삭제되었습니다.', 'success').then(() => {
             router.push('/community');
           });
         })
         .catch((error) => {
-          console.error('게시글 삭제 중 오류가 발생했습니다:', error);
-          Swal.fire('오류', '게시글 삭제 중 문제가 발생했습니다. 다시 시도해주세요.', 'error');
+          Swal.fire({
+            icon: 'error',
+            title: '삭제 실패',
+            text: '게시글 삭제 중 문제가 발생했습니다. 다시 시도해주세요.',
+          });
+          console.error('게시글 삭제 중 오류 발생:', error);
         });
     }
   });
@@ -142,5 +162,6 @@ onMounted(() => {
   detail();
 });
 </script>
+
 
 <style scoped></style>

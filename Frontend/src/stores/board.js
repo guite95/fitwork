@@ -138,5 +138,42 @@ export const useBoardStore = defineStore('board', () => {
         });
     };
 
-    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail, board };
+    const deleteBoard = (boardNo) => {
+        return axios.delete(`${REST_API_URL}/${boardNo}`, {
+            headers: {
+                'Authorization': sessionStorage.getItem('memberToken'),
+            }
+        })
+        .then((response) => {
+            Swal.fire({
+                icon: 'success',
+                title: '삭제 완료',
+                text: '게시글이 성공적으로 삭제되었습니다.',
+                customClass: {
+                    title: 'custom-swal-title',
+                    text: 'custom-swal-text',
+                    confirmButton: 'custom-swal-button',
+                },
+                buttonsStyling: false,
+            });
+            return response; // 성공 시 response 반환
+        })
+        .catch((err) => {
+            console.error(err);
+            Swal.fire({
+                icon: 'error',
+                title: '삭제 오류',
+                text: '게시글을 삭제하는 중 오류가 발생했습니다. 다시 시도해 주세요.',
+                customClass: {
+                    title: 'custom-swal-title',
+                    text: 'custom-swal-text',
+                    confirmButton: 'custom-swal-button',
+                },
+                buttonsStyling: false,
+            });
+            throw err; // 오류 발생 시 예외 던지기
+        });
+    };
+
+    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail, deleteBoard, board };
 });

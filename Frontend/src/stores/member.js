@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import router from '@/router';
@@ -112,24 +112,27 @@ export const useMemberStore = defineStore('member', () => {
         memberRole.value = sessionStorage.getItem('memberRole');
     };
 
-    const login = (id, password) => {
-        return axios.post(`${REST_API_URL}/login`, { id, password })
-            .then((response) => {
-                const token = response.headers['authorization'];
-                if (token) {
-                    setMemberToken(token);
-                    loadMemberInfo(id); // 로그인 성공 후 사용자 정보 로드
-                    router.push({ name: 'home' }); // 홈으로 이동
-                } else {
-                    console.error('로그인에 실패했습니다. 토큰이 없습니다.');
-                    return Promise.reject('로그인에 실패했습니다. 토큰이 없습니다.');
-                }
-            })
-            .catch((error) => {
-                console.error('로그인 요청 중 오류가 발생했습니다:', error);
-                return Promise.reject(error);
-            });
-    };
+    const login = async (id, password) => {
+        try {
+          const response = await axios.post(`${REST_API_URL}/login`, { id, password });
+          const token = response.headers['authorization'];
+      
+          if (token) {
+            setMemberToken(token);
+            await loadMemberInfo(id); // 사용자 정보 로드 후 리다이렉트
+            router.push({ name: 'home' }); // 홈으로 이동
+          } else {
+            console.error('로그인에 실패했습니다. 토큰이 없습니다.');
+            throw new Error('로그인에 실패했습니다. 토큰이 없습니다.');
+          }
+        } catch (error) {
+          console.error('로그인 요청 중 오류가 발생했습니다:', error);
+          throw error;
+        }
+      };
+      
+
+    const isLoggedIn = computed(() => !!memberToken.value);
 
 
     loadMemberToken();
@@ -146,6 +149,7 @@ export const useMemberStore = defineStore('member', () => {
         memberPhoneNumber,
         memberAddress,
         memberRole,
+        isLoggedIn,
         setMemberToken,
         clearMemberToken,
         login,

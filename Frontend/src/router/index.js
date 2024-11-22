@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useMemberStore } from '../stores/member';
 import Home from '../components/Home.vue'; // Home 컴포넌트 임포트
 import Clubs from '../components/Clubs.vue'
 import Classes from '../components/Classes.vue'
@@ -14,6 +15,9 @@ import CommunityDetails from '../components/CommunityDetails.vue';
 import MyPage from '../components/MyPage.vue';
 import ProfileEdit from '../components/ProfileEdit.vue';
 import Applications from '../components/Applications.vue';
+import Swal from 'sweetalert2';
+import '@/assets/swal_custom.css'
+
 
 // 라우트 설정
 const routes = [
@@ -66,6 +70,7 @@ const routes = [
     path: '/community',
     name: 'community',
     component: Community,
+    meta: { requiresAuth: true },
   },
   {
     path: '/new-post/:boardNo?', // boardNo는 선택적 파라미터입니다.
@@ -111,5 +116,30 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+router.beforeEach((to, from, next) => {
+  const memberStore = useMemberStore();
+
+  if (!memberStore.isLoggedIn && to.meta.requiresAuth) {
+    Swal.fire({
+      icon: 'info',
+      title: '로그인이 필요합니다',
+      text: '로그인 페이지로 이동합니다.',
+      customClass: {
+        title: 'custom-swal-title',
+        text: 'custom-swal-text',
+        confirmButton: 'custom-swal-button',
+      },
+      buttonsStyling: false,
+      confirmButtonColor: '#486284',
+      confirmButtonText: '확인',
+    }).then(() => {
+      next({ path: "/sign-in", query: { redirect: to.fullPath } }); // 리다이렉트 경로 전달
+    });
+  } else {
+    next();
+  }
+});
+
 
 export default router;

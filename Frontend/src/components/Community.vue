@@ -121,14 +121,16 @@ import Header from "./Header.vue";
 import Footer from "./Footer.vue";
 import { useBoardStore } from "../stores/board";
 
+// Pinia 스토어 사용
 const router = useRouter();
 const route = useRoute();
 const store = useBoardStore();
 
-// onMounted 시점에 store의 boardList 데이터를 가져오는 액션 호출
+
 onMounted(async () => {
-  await store.getBoardList(); // 게시글 목록 가져오는 액션 호출
+  await store.getBoardList(); // 게시글 목록 가져오기
 });
+
 
 // allReviews를 store의 boardList로 설정
 const allReviews = computed(() => store.boardList);
@@ -137,9 +139,13 @@ const allReviews = computed(() => store.boardList);
 const selectedTab = ref(route.query.tab || "club");
 
 // URL 쿼리 변화 감지
-watch(() => route.query.tab, (newTab) => {
-  selectedTab.value = newTab || "club"; // 기본값: club
-}, { immediate: true });
+watch(
+  () => route.query.tab,
+  (newTab) => {
+    selectedTab.value = newTab || "club"; // 기본값: club
+  },
+  { immediate: true }
+);
 
 const itemsPerPage = ref(5);
 const currentPage = ref(1);
@@ -180,8 +186,8 @@ function goToPage(page) {
 function handleSearch() {
   currentPage.value = 1; // 검색 시 페이지를 1로 초기화
 }
-
 </script>
+
 
 <style scoped>
 table {
