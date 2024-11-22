@@ -105,8 +105,8 @@
 	
 	<!-- 댓글 등록 -->
 	<insert id="insertComment" parameterType="Comment">
-		INSERT INTO comment(writer, content)
-		VALUES(#{writer}, #{content})
+		INSERT INTO comment(writer, content, board_no)
+		VALUES(#{writer}, #{content}, #{boardNo})
 	</insert>
 	
 	<!-- 게시물 댓글 조회 -->

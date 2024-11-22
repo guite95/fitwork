@@ -55,6 +55,11 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public boolean modifyMemberInfo(Member member) {
 		if (memberRepository.isMemberExist(member.getId())) {
+			if (member.getPassword() != null) {
+				member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
+			} else {
+				member.setPassword(memberRepository.selectMemberById(member.getId()).getPassword());
+			}
 	        memberRepository.updateMemberInfo(member);
 	        return true;
 	    }
