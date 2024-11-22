@@ -14,6 +14,7 @@ public class Club {
 	private String leader;
 	private String clubName;
 	private String category;
+	private String tag;
 	private String location;
 	private String description;
 	private String headCount;

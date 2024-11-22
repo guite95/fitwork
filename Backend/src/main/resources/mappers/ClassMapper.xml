@@ -20,7 +20,7 @@
 	<select id="selectClassByLocation" parameterType="String" resultType="Classes">
 		SELECT *
 		FROM class
-		WHERE location = #{location}
+		WHERE location LIKE concat('%',#{location},'%')
 	</select>
 	
 	<!-- 카테고리별 클래스 조회 -->
@@ -84,8 +84,8 @@
 
 	<!-- 클래스 정보 등록 -->
 	<insert id="insertClass" parameterType="Classes" useGeneratedKeys="true" keyProperty="classNo">
-		INSERT INTO class(leader, class_name, category, location, description, price)
-		VALUES(#{leader}, #{className}, #{category}, #{location}, #{description}, #{price})
+		INSERT INTO class(leader, class_name, category, tag, location, description, price)
+		VALUES(#{leader}, #{className}, #{category}, #{tag}, #{location}, #{description}, #{price})
 	</insert>
 	
 	<!-- 클래스 이미지 등록-->

@@ -98,7 +98,7 @@
 	<!-- 게시물 수정 -->
 	<update id="updateBoard" parameterType="Board">
 		UPDATE board
-		SET title = #{title}, content = #{content}
+		SET title = #{title}, category = #{category}, content = #{content}
 		WHERE board_no = #{boardNo}
 	</update>
 	
