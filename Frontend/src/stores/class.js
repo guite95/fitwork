@@ -20,7 +20,11 @@ export const useClassStore = defineStore('class', () => {
     const fetchClassList = async () => {
         loading.value = true;
         try {
-            const response = await axios.get(`${REST_API_URL}/list/all`);
+            const response = await axios.get(`${REST_API_URL}/list/all`, {
+                headers: {
+                    'Authorization': sessionStorage.getItem('memberToken'),
+                }
+            });
             classList.value = response.data;
         } catch (error) {
             Swal.fire('에러', '클래스 목록을 불러오는 중 문제가 발생했습니다.', 'error');
@@ -33,7 +37,11 @@ export const useClassStore = defineStore('class', () => {
     const fetchClassesByLocation = async (location) => {
         loading.value = true;
         try {
-            const response = await axios.get(`${REST_API_URL}/location/${location}`);
+            const response = await axios.get(`${REST_API_URL}/location/${location}`, {
+                headers: {
+                    'Authorization': sessionStorage.getItem('memberToken'),
+                }
+            });
             filteredClasses.value = response.data;
         } catch (error) {
             Swal.fire('에러', '위치별 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
@@ -46,7 +54,11 @@ export const useClassStore = defineStore('class', () => {
     const fetchClassesByCategory = async (category) => {
         loading.value = true;
         try {
-            const response = await axios.get(`${REST_API_URL}/category/${category}`);
+            const response = await axios.get(`${REST_API_URL}/category/${category}`, {
+                headers: {
+                    'Authorization': sessionStorage.getItem('memberToken'),
+                }
+            });
             filteredClasses.value = response.data;
         } catch (error) {
             Swal.fire('에러', '카테고리별 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
@@ -59,7 +71,11 @@ export const useClassStore = defineStore('class', () => {
     const fetchClassesByGender = async (gender) => {
         loading.value = true;
         try {
-            const response = await axios.get(`${REST_API_URL}/gender/${gender}`);
+            const response = await axios.get(`${REST_API_URL}/gender/${gender}`, {
+                headers: {
+                    'Authorization': sessionStorage.getItem('memberToken'),
+                }
+            });
             filteredClasses.value = response.data;
         } catch (error) {
             Swal.fire('에러', '성별 필터 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
@@ -78,7 +94,10 @@ export const useClassStore = defineStore('class', () => {
 
         try {
             await axios.post(`${REST_API_URL}/register/class`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+                headers: {
+                    Authorization: sessionStorage.getItem('memberToken'),
+                    'Content-Type': 'multipart/form-data'
+                },
             });
             Swal.fire('성공', '클래스가 성공적으로 등록되었습니다.', 'success');
         } catch (error) {
@@ -89,7 +108,12 @@ export const useClassStore = defineStore('class', () => {
     // 클래스 수정
     const modifyClass = async (classNo, updatedClass) => {
         try {
-            await axios.put(`${REST_API_URL}/modify/${classNo}`, updatedClass);
+            await axios.put(`${REST_API_URL}/modify/${classNo}`, updatedClass, {
+                headers: {
+                    'Authorization': sessionStorage.getItem('memberToken'),
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
             Swal.fire('성공', '클래스 정보가 수정되었습니다.', 'success');
         } catch (error) {
             Swal.fire('에러', '클래스를 수정하는 중 문제가 발생했습니다.', 'error');
@@ -99,7 +123,11 @@ export const useClassStore = defineStore('class', () => {
     // 클래스 삭제
     const deleteClass = async (classNo) => {
         try {
-            await axios.delete(`${REST_API_URL}/delete/${classNo}`);
+            await axios.delete(`${REST_API_URL}/delete/${classNo}`, {
+                headers: {
+                    'Authorization': sessionStorage.getItem('memberToken'),
+                }
+            });
             Swal.fire('성공', '클래스가 삭제되었습니다.', 'success');
         } catch (error) {
             Swal.fire('에러', '클래스를 삭제하는 중 문제가 발생했습니다.', 'error');
@@ -109,7 +137,11 @@ export const useClassStore = defineStore('class', () => {
     // 클래스 등록 거절
     const refuseClassRegistration = async (userId, classNo) => {
         try {
-            await axios.delete(`${REST_API_URL}/register/refuse/${userId}/${classNo}`);
+            await axios.delete(`${REST_API_URL}/register/refuse/${userId}/${classNo}`, {
+                headers: {
+                    'Authorization': sessionStorage.getItem('memberToken'),
+                }
+            });
             Swal.fire('성공', '클래스 등록이 거절되었습니다.', 'success');
         } catch (error) {
             Swal.fire('에러', '클래스 등록을 거절하는 중 문제가 발생했습니다.', 'error');
