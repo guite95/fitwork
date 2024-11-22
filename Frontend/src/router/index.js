@@ -17,6 +17,7 @@ import ProfileEdit from '../components/ProfileEdit.vue';
 import Applications from '../components/Applications.vue';
 import Swal from 'sweetalert2';
 import '@/assets/swal_custom.css'
+import ClubsDetail from '../components/ClubsDetail.vue';
 
 
 // 라우트 설정
@@ -103,6 +104,11 @@ const routes = [
         path: 'applications',
         name: 'applications',
         component: Applications,
+      },
+      {
+        path: "/clubs/:clubId",
+        name: "clubsdetail",
+        component: ClubsDetail,
       },
     ],
   },
