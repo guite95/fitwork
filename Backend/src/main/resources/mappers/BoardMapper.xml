@@ -30,8 +30,6 @@
 		<if test="orderBy == null">
 			ORDER BY board_no DESC
 		</if>
-		
-		LIMIT #{offset}, #{listSize}
 	</select>
 	
 	<!-- 페이징 처리를 위한 전체 게시물 수 반환 -->

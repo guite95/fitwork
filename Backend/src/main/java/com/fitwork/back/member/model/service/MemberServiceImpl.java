@@ -29,6 +29,12 @@ public class MemberServiceImpl implements MemberService {
 		
 		return false;
 	}
+	
+	@Override
+	public boolean isExistId(String id) {
+		boolean isExist = memberRepository.isMemberExist(id);
+		return isExist;
+	}
 
 	@Override
 	public Member getMemberInfo(String id) {

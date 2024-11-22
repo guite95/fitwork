@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,8 +34,10 @@ import com.fitwork.back.board.model.service.BoardService;
 public class BoardController {
   
 	private final BoardService boardService;
-	public BoardController(BoardService boardService) {
+	private final ResourceLoader resourceLoader;
+	public BoardController(BoardService boardService, ResourceLoader resourceLoader) {
 		this.boardService = boardService;
+		this.resourceLoader = resourceLoader;
 	}
 	
 	/**
@@ -43,10 +47,9 @@ public class BoardController {
 	 */
 	@GetMapping("/list")
 	public ResponseEntity<Object> list(BoardSearch boardSearch) {
-		System.out.println("리스트 요청 확인");
 		
 		try {
-			Map<String, Object> result = boardService.list(boardSearch);
+			List<Board> result = boardService.list(boardSearch);
 			
 			return ResponseEntity.status(HttpStatus.OK).body(result);
 		} catch (Exception e) {
@@ -91,25 +94,29 @@ public class BoardController {
 	public ResponseEntity<String> write(@RequestPart Board board, @RequestPart(required = false) MultipartFile file) throws IllegalStateException, IOException {
 		
 		try {
-			String oriName = file.getOriginalFilename();
-			
-			if (oriName != null && oriName.length() > 0) {
-				SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
-				String subDir = sdf.format(new Date());
+			if (file != null) {
+				String oriName = file.getOriginalFilename();
 				
-				File dir = new File("c:/SSAFY/final-prj/board/img" + subDir); // 디렉토리 경로를 나타내는 파일 객체
-				dir.mkdirs();
-				
-				String systemName = UUID.randomUUID().toString() + oriName;
-				
-				file.transferTo(new File(dir, systemName)); // 메모리의 파일 정보를 특정 위치에 저장
-				
-				BoardFile boardFile = new BoardFile();
-				boardFile.setPath(subDir);
-				boardFile.setOriName(oriName);
-				boardFile.setSystemName(systemName);
-				
-				board.setBoardFile(boardFile);
+				if (oriName != null && oriName.length() > 0) {
+					SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
+					String subDir = sdf.format(new Date());
+					
+					
+					
+					File dir = new File("c:/SSAFY/final-prj/board/img" + subDir); // 디렉토리 경로를 나타내는 파일 객체
+					dir.mkdirs();
+					
+					String systemName = UUID.randomUUID().toString() + oriName;
+					
+					file.transferTo(new File(dir, systemName)); // 메모리의 파일 정보를 특정 위치에 저장
+					
+					BoardFile boardFile = new BoardFile();
+					boardFile.setPath(subDir);
+					boardFile.setOriName(oriName);
+					boardFile.setSystemName(systemName);
+					
+					board.setBoardFile(boardFile);
+				}
 			}
 			boardService.addBoard(board);
 			
@@ -147,7 +154,7 @@ public class BoardController {
 	 * @return
 	 */
 	@PutMapping("/modify/{boardNo}")
-	public ResponseEntity<String> modify(@PathVariable int boardNo, @RequestPart Board board, @RequestPart MultipartFile file) {
+	public ResponseEntity<String> modify(@PathVariable int boardNo, @RequestPart Board board, @RequestPart(required = false) MultipartFile file) {
 		try {
 			
 			String oriName = file.getOriginalFilename();

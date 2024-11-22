@@ -62,21 +62,17 @@
         </ul>
       </div>
     </div>
-    <Footer />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import Header from './Header.vue';
-import Footer from "./Footer.vue";
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useBoardStore } from '@/stores/board';
-import Swal from 'sweetalert2';
 
 // Router
 const route = useRoute();
-const router = useRouter();
 
 // Store
 const store = useBoardStore();
@@ -86,20 +82,13 @@ const imgSrc = ref('');
 // 게시글 번호 가져오기
 const boardNo = route.params.boardNo;
 
-// 사용자가 본인인지 확인하는 상태
-const isAuthor = computed(() => {
-  const currentUser = sessionStorage.getItem('memberNickname');
-  return board.value.writer === currentUser;
-});
-
-// 게시글 상세 정보 가져오기
 const detail = async () => {
-  return new Promise(async (resolve) => {
+  return new Promise( async (resolve) => {
     await store.getBoardDetail(boardNo);
     resolve();
   }).then(() => {
     board.value = store.board;
-    imgSrc.value = `http://192.168.210.83:8080/file${board.value.boardFile.path}${board.value.boardFile.systemName}`;
+    imgSrc.value = `http://localhost:8080/file${board.value.boardFile.path}/${board.value.boardFile.systemName}`;
     console.log(imgSrc.value)
   }
   );
