@@ -1,13 +1,15 @@
 package com.fitwork.back.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class CorsMvcConfig implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer {
 	
 	@Override
 	public void addCorsMappings(@NonNull CorsRegistry registry) {
@@ -21,7 +23,12 @@ public class CorsMvcConfig implements WebMvcConfigurer {
 	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("file/**").addResourceLocations("file:///C:/SSAFY/final-prj/board/img/");
+		registry.addResourceHandler("file/**").addResourceLocations("file:///C://SSAFY/final-prj/board/img/");
+	}
+	
+	@Bean
+	WebSecurityCustomizer webSecurityCustomizer() {
+	    return (web) -> web.ignoring().requestMatchers("/assets/**", "/js/**", "/img/**", "/uploads/**", "file/**");
 	}
 	
 }
