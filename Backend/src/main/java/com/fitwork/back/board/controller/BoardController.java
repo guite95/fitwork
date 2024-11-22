@@ -159,10 +159,6 @@ public class BoardController {
 			
 			Board tmp = boardService.selectOne(boardNo);
 			
-			System.out.println(boardNo);
-			System.out.println(board.toString());
-			System.out.println(file.toString());
-			
 			if (file != null) {
 				String oriName = file.getOriginalFilename();
 				
@@ -191,7 +187,6 @@ public class BoardController {
 			tmp.setTitle(board.getTitle());
 			tmp.setCategory(board.getCategory());
 			tmp.setContent(board.getContent());
-			System.out.println("서비스로 수정요청");
 			boardService.modifyBoard(tmp);
 			
 			return ResponseEntity.status(HttpStatus.OK).body("수정완료");
@@ -242,8 +237,11 @@ public class BoardController {
 	 * @param comment
 	 * @return
 	 */
-	@PostMapping("/comment")
-	public ResponseEntity<String> writeComment(@RequestBody Comment comment) {
+	@PostMapping("/comment/{boardNo}")
+	public ResponseEntity<String> writeComment(@PathVariable int boardNo, @RequestBody Comment comment) {
+		System.out.println(boardNo);
+		System.out.println(comment.toString());
+		comment.setBoardNo(boardNo);
 		try {
 			boardService.addComment(comment);
 			return ResponseEntity.status(HttpStatus.CREATED).body("댓글이 등록되었습니다");
@@ -258,8 +256,8 @@ public class BoardController {
 	 * @param boardNo
 	 * @return
 	 */
-	@GetMapping("/comment")
-	public ResponseEntity<Object> getBoardComment(int boardNo) {
+	@GetMapping("/comment/{boardNo}")
+	public ResponseEntity<Object> getBoardComment(@PathVariable int boardNo) {
 		try {
 			List<Comment> commentList = boardService.commentList(boardNo);
 			if (commentList == null) {
@@ -272,32 +270,32 @@ public class BoardController {
 		}
 	}
 	
-	/**
-	 * 회원이 쓴 댓글 조회
-	 * @param nickname
-	 * @return
-	 */
-	@GetMapping("/comment/{nickname}")
-	public ResponseEntity<Object> getMemberComment(@PathVariable String nickname) {
-		try {
-			List<Comment> commentList = boardService.userComment(nickname);
-			if (commentList == null) {
-				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("작성한 댓글이 없습니다");
-			}
-			return ResponseEntity.status(HttpStatus.OK).body(commentList);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
-		}
-	}
+//	/**
+//	 * 회원이 쓴 댓글 조회
+//	 * @param nickname
+//	 * @return
+//	 */
+//	@GetMapping("/comment/member/{nickname}")
+//	public ResponseEntity<Object> getMemberComment(@PathVariable String nickname) {
+//		try {
+//			List<Comment> commentList = boardService.userComment(nickname);
+//			if (commentList == null) {
+//				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("작성한 댓글이 없습니다");
+//			}
+//			return ResponseEntity.status(HttpStatus.OK).body(commentList);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
+//		}
+//	}
 	
 	/**
 	 * 댓글 수정
 	 * @param comment
 	 * @return
 	 */
-	@PutMapping("/comment")
-	public ResponseEntity<String> modifyComment(@RequestBody Comment comment) {
+	@PutMapping("/comment/{commentNo}")
+	public ResponseEntity<String> modifyComment(@PathVariable int commentNo, @RequestBody Comment comment) {
 		try {
 			boardService.modifyComment(comment);
 			return ResponseEntity.status(HttpStatus.OK).body("댓글이 수정되었습니다");

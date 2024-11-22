@@ -70,8 +70,6 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public void modifyBoard(Board board) {
-		System.out.println("수정요청 받음");
-		System.out.println(board.toString());
 		board.setModified(true);
 		board.getBoardFile().setBoardNo(board.getBoardNo());
 		boardRepository.insertFile(board.getBoardFile());
