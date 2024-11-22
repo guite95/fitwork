@@ -26,9 +26,9 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addResourceHandler("file/**").addResourceLocations("file:///C://SSAFY/final-prj/board/img/");
 	}
 	
-	@Bean
-	WebSecurityCustomizer webSecurityCustomizer() {
-	    return (web) -> web.ignoring().requestMatchers("/assets/**", "/js/**", "/img/**", "/uploads/**", "file/**");
-	}
+//	@Bean
+//	WebSecurityCustomizer webSecurityCustomizer() {
+//	    return (web) -> web.ignoring().requestMatchers("file/**");
+//	}
 	
 }

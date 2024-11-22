@@ -20,7 +20,7 @@
     <select id="selectClubByLocation" parameterType="String" resultType="Club">
         SELECT *
         FROM club
-        WHERE location = #{location}
+        WHERE location LIKE concat('%',#{location},'%')
     </select>
     
     <!-- 카테고리별 클럽 조회 -->
@@ -84,8 +84,8 @@
 
     <!-- 클럽 정보 등록 -->
     <insert id="insertClub" parameterType="Club" useGeneratedKeys="true" keyProperty="clubNo">
-        INSERT INTO club(leader, club_name, category, location, description, price)
-        VALUES(#{leader}, #{clubName}, #{category}, #{location}, #{description}, #{price})
+        INSERT INTO club(leader, club_name, category, tag, location, description, price)
+        VALUES(#{leader}, #{clubName}, #{category}, #{tag}, #{location}, #{description}, #{price})
     </insert>
     
     <!-- 클럽 이미지 등록 -->

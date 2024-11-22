@@ -157,30 +157,42 @@ public class BoardController {
 	public ResponseEntity<String> modify(@PathVariable int boardNo, @RequestPart Board board, @RequestPart(required = false) MultipartFile file) {
 		try {
 			
-			String oriName = file.getOriginalFilename();
+			Board tmp = boardService.selectOne(boardNo);
 			
-			if (oriName != null && oriName.length() > 0) {
-				SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
-				String subDir = sdf.format(new Date());
+			System.out.println(boardNo);
+			System.out.println(board.toString());
+			System.out.println(file.toString());
+			
+			if (file != null) {
+				String oriName = file.getOriginalFilename();
 				
-				File dir = new File("c:/SSAFY/final-prj/board/img" + subDir); // 디렉토리 경로를 나타내는 파일 객체
-				dir.mkdirs();
-				
-				String systemName = UUID.randomUUID().toString() + oriName;
-				
-				file.transferTo(new File(dir, systemName)); // 메모리의 파일 정보를 특정 위치에 저장
-				
-				BoardFile boardFile = new BoardFile();
-				boardFile.setPath(subDir);
-				boardFile.setOriName(oriName);
-				boardFile.setSystemName(systemName);
-				
-				board.setBoardFile(boardFile);
-			} else {
-				board.setBoardFile(null);
+				if (oriName != null && oriName.length() > 0) {
+					SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
+					String subDir = sdf.format(new Date());
+					
+					
+					
+					File dir = new File("c:/SSAFY/final-prj/board/img" + subDir); // 디렉토리 경로를 나타내는 파일 객체
+					dir.mkdirs();
+					
+					String systemName = UUID.randomUUID().toString() + oriName;
+					
+					file.transferTo(new File(dir, systemName)); // 메모리의 파일 정보를 특정 위치에 저장
+					
+					BoardFile boardFile = new BoardFile();
+					boardFile.setPath(subDir);
+					boardFile.setOriName(oriName);
+					boardFile.setSystemName(systemName);
+					
+					tmp.setBoardFile(boardFile);
+				}
 			}
 			
-			boardService.modifyBoard(board);
+			tmp.setTitle(board.getTitle());
+			tmp.setCategory(board.getCategory());
+			tmp.setContent(board.getContent());
+			System.out.println("서비스로 수정요청");
+			boardService.modifyBoard(tmp);
 			
 			return ResponseEntity.status(HttpStatus.OK).body("수정완료");
 		} catch (Exception e) {

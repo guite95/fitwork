@@ -14,6 +14,7 @@ public class Classes {
 	private String leader;
 	private String className;
 	private String category;
+	private String tag;
 	private String location;
 	private String description;
 	private int headCount;
