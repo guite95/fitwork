@@ -91,6 +91,8 @@ public class ClassesServiceImpl implements ClassesService {
 
 	@Override
 	public void modifyClassInfo(Classes classes) {
+		classes.getClassesFile().setClassNo(classes.getClassNo());
+		classesRepository.insertClassFile(classes.getClassesFile());
 		classesRepository.updateClassInfo(classes);
 	}
 	
