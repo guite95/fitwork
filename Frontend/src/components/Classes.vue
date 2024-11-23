@@ -12,7 +12,7 @@
         <input v-model="searchQuery" type="text" placeholder="클래스 검색하기"
           class="flex-grow px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-sm" />
         <button @click="searchClasses"
-          class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm">
+          class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm whitespace-nowrap">
           검색
         </button>
       </div>
@@ -90,7 +90,7 @@ onMounted(async () => {
 
 const loaded = () => {
   new Promise(async () => {
-    await classStore.fetchClassList(); // 전체 클래스 데이터 가져오기
+    await classStore.getClassList(); // 전체 클래스 데이터 가져오기
     nearbyClasses.value = classStore.classList; // 전체 클래스를 추천 클래스 리스트에 반영
   })
 }

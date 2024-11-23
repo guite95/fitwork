@@ -18,7 +18,7 @@
         <div>
           <span class="ml-3"><span class="text-greyBlue">태그: </span> {{ club.tag }}</span>
           <span class="ml-3"><span class="text-greyBlue">지역: </span> {{ club.location }}</span>
-          <span class="ml-3"><span class="text-greyBlue">신청 인원: </span> {{ club.headCount }}</span>
+          <span class="ml-3"><span class="text-greyBlue">신청 인원: </span> {{ club.headCount }} 명</span>
         </div>
       </div>
 
@@ -114,10 +114,8 @@ const loadClubDetails = async () => {
     await store.getClubDetail(clubNo);
     club.value = store.clubDetail;
 
-    console.log(club.value.clubFile)
-
-    if (club.value.clubfile) {
-      imgSrc.value = `http://localhost:8080/file-club${club.value.clubFile.path}/${club.value.clubFile.systemName}`;
+    if (club.value.clubFile) {
+      imgSrc.value = `http://localhost:8080/file/club${club.value.clubFile.path}/${club.value.clubFile.systemName}`;
     }
 
     comments.value = club.value.comments || [];

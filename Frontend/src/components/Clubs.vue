@@ -12,7 +12,7 @@
         <input v-model="searchQuery" type="text" placeholder="클럽 검색하기"
           class="flex-grow px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-sm" />
         <button @click="searchClubs"
-          class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm">
+          class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm whitespace-nowrap">
           검색
         </button>
       </div>
@@ -23,10 +23,13 @@
           20대 여성 <span class="text-darkBlue font-title">이 관심있는</span>
         </h2>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
-          <SwiperSlide v-for="club in recommendedClubs" :key="club.clubNo">
-            <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center">
-              {{ club.clubName }}
-            </div>
+          <SwiperSlide v-for="club in filteredRecommendedClubs" :key="club.clubNo">
+            <!-- Wrap the club display with router-link -->
+            <router-link :to="{ name: 'clubsdetail', params: { clubNo: club.clubNo } }">
+              <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition">
+                {{ club.clubName }}
+              </div>
+            </router-link>
           </SwiperSlide>
         </Swiper>
       </div>
@@ -36,9 +39,12 @@
         <h2 class="text-xl font-title text-darkBlue mb-4">최근 인기 많은</h2>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
           <SwiperSlide v-for="club in popularClubs" :key="club.clubNo">
-            <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center">
-              {{ club.clubName }}
-            </div>
+            <!-- Wrap the club display with router-link -->
+            <router-link :to="{ name: 'clubsdetail', params: { clubNo: club.clubNo } }">
+              <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition">
+                {{ club.clubName }}
+              </div>
+            </router-link>
           </SwiperSlide>
         </Swiper>
       </div>
@@ -64,15 +70,18 @@ import Footer from "./Footer.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper";
 import { useMemberStore } from "../stores/member";
-import { useClubStore } from "../stores/club"; // Pinia의 club.js 가져오기
+import { useClubStore } from "../stores/club";
+import { useRouter } from "vue-router";
+import Swal from "sweetalert2";
 import "swiper/css";
 import "swiper/css/navigation";
 
 // Member Store 및 Club Store
 const memberStore = useMemberStore();
-const clubStore = useClubStore(); // club.js 사용
+const clubStore = useClubStore();
 
-const memberRole = computed(() => memberStore.memberRole);
+// Router instance
+const router = useRouter();
 
 // 검색 쿼리 상태
 const searchQuery = ref("");
@@ -87,7 +96,6 @@ onMounted(async () => {
 });
 
 const filteredRecommendedClubs = computed(() => {
-  console.log("필터 전 추천게시물", recommendedClubs.value)
   if (!recommendedClubs.value) return [];
   return recommendedClubs.value.filter((c) => c.clubName.includes(searchQuery.value));
 });
@@ -104,7 +112,7 @@ async function searchClubs() {
     return;
   }
   // 추천 클럽 중 검색어 포함된 것만 필터링
-  filteredRecommendedClubs.value = clubStore.clubList.filter((c) =>
+  filteredRecommendedClubs.value = recommendedClubs.value.filter((c) =>
     c.clubName.includes(searchQuery.value)
   );
 }

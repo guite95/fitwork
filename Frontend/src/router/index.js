@@ -18,6 +18,7 @@ import Applications from '../components/Applications.vue';
 import Swal from 'sweetalert2';
 import '@/assets/swal_custom.css'
 import ClubsDetail from '../components/ClubsDetail.vue';
+import ClassesDetail from '../components/ClassesDetail.vue';
 
 
 // 라우트 설정
@@ -115,6 +116,13 @@ const routes = [
     component: ClubsDetail,
     props: true,
   },
+  {
+    path: "/classes/:classNo",
+    name: "classesdetail",
+    component: ClassesDetail,
+    props: true,
+  },
+
 
 
   // 다른 경로 추가 가능
