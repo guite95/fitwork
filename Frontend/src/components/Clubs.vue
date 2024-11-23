@@ -45,7 +45,7 @@
 
       <!-- 새로운 클럽 만들기 -->
       <div class="text-center">
-        <p class="text-xl mb-4 text-darkBlue font-title"> <span class="text-lightBlue font-title">강사</span>이신가요?</p>
+        <p class="text-xl mb-4 text-darkBlue font-title"> 마음에 드는 클럽이 없다면... </p>
         <router-link to="/register-clubs">
           <button class="px-6 py-3 bg-lightBlue text-white font-title rounded-md hover:bg-darkBlue">
             👉 새로운 클럽 만들기

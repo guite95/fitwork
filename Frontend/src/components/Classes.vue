@@ -20,7 +20,7 @@
       <!-- 추천 클래스 -->
       <div class="mb-12">
         <h2 class="text-xl font-title text-lightBlue mb-4">
-          20대 여성 <span class="text-darkBlue font-title">이 관심있는</span>
+          유성구 <span class="text-darkBlue font-title">근처의</span>
         </h2>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
           <SwiperSlide v-for="(classItem, index) in filteredNearbyClasses" :key="index">
@@ -33,7 +33,7 @@
 
       <!-- 인기 클래스 -->
       <div class="mb-12">
-        <h2 class="text-xl font-title text-darkBlue mb-4">최근 인기 많은</h2>
+        <h2 class="text-xl font-title text-darkBlue mb-4">평점 높은</h2>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
           <SwiperSlide v-for="(classItem, index) in popularClasses" :key="index">
             <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center">
