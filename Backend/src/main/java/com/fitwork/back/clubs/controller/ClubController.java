@@ -207,7 +207,7 @@ public class ClubController {
     }
 
     @PutMapping("/modify/{clubNo}")
-    public ResponseEntity<Object> modifyClub(@PathVariable int clubNo, @RequestBody Club club, @RequestPart(required = false) MultipartFile file) {
+    public ResponseEntity<Object> modifyClub(@PathVariable int clubNo, @RequestPart Club club, @RequestPart(required = false) MultipartFile file) {
         try {
         	Club tmp = clubService.clubDetail(clubNo);
         	

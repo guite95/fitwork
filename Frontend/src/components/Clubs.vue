@@ -23,7 +23,7 @@
           20대 여성 <span class="text-darkBlue font-title">이 관심있는</span>
         </h2>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
-          <SwiperSlide v-for="club in RecommendedClubs" :key="club.clubNo">
+          <SwiperSlide v-for="club in recommendedClubs" :key="club.clubNo">
             <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center">
               {{ club.clubName }}
             </div>

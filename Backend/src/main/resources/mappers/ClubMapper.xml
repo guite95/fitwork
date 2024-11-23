@@ -121,7 +121,7 @@
     <!-- 클럽 정보 수정 -->
     <update id="updateClubInfo" parameterType="Club">
         UPDATE club
-        SET club_name = #{clubName}, location = #{location}, description = #{description}, price = #{price}
+        SET club_name = #{clubName}, location = #{location}, tag = #{tag}, description = #{description}
         WHERE club_no = #{clubNo}
     </update>
     
