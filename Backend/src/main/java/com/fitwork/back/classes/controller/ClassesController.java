@@ -47,7 +47,7 @@ public class ClassesController {
 	private ResponseEntity<Object> handleClassListResponse(List<Classes> list) {
 	    String message = classesService.checkIfClassIsEmpty(list);
 	    if (message != null) {
-	        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
+	        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(List.of());
 	    }
 	    return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
