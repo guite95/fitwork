@@ -5,21 +5,23 @@ import router from '@/router';
 import Swal from 'sweetalert2';
 import '@/assets/swal_custom.css';
 
-const REST_API_URL = `http://192.168.210.83:8080/api-board`;
+// const REST_API_URL = `http://192.168.210.83:8080/api-board`;
+const REST_API_URL = `http://localhost:8080/api-board`;
 
 export const useBoardStore = defineStore('board', () => {
 
     const boardList = ref([]);
     const board = ref({});
 
-    const getBoardList = () => {
-        axios.get(`${REST_API_URL}/list`, {
+    const getBoardList = async () => {
+        await axios.get(`${REST_API_URL}/list`, {
             headers: {
                 'Authorization': sessionStorage.getItem('memberToken'),
             }
         })
             .then((response) => {
                 boardList.value = response.data;
+                console.log(boardList.value)
             })
             .catch((err) => {
                 console.error(err);
