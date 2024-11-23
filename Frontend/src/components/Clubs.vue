@@ -82,27 +82,14 @@ const recommendedClubs = ref([]);
 
 // 컴포넌트 로드 시 클럽 데이터 가져오기
 onMounted(async () => {
-  await loaded();
-  console.log("최초 로드시점 후 클럽 게시물", clubStore.clubList)
-  // await clubStore.fetchClubList(); // 전체 클럽 데이터 가져오기
-  // recommendedClubs.value = clubStore.clubList; // 전체 클럽을 추천 클럽 리스트에 반영
+  await clubStore.getClubList(); // 전체 클럽 데이터 가져오기
+  recommendedClubs.value = clubStore.clubList; // 전체 클럽을 추천 클럽 리스트에 반영
 });
-
-const loaded = () => {
-  new Promise(async () => {
-    await clubStore.getClubList(); // 전체 클럽 데이터 가져오기
-    recommendedClubs.value = clubStore.clubList; // 전체 클럽을 추천 클럽 리스트에 반영
-    console.log("추천 게시물 :", recommendedClubs.value)
-  })
-}
 
 const filteredRecommendedClubs = computed(() => {
   console.log("필터 전 추천게시물", recommendedClubs.value)
-  // console.log(Array.isArray(recommendedClubs.value))
   if (!recommendedClubs.value) return [];
-  // console.log("추천 게시물이 배열일때")
-  return recommendedClubs.value.filter((c) => c && c.name && c.name.includes(searchQuery.value));
-  // return recommendedClubs.value.filter((c) => c.name.includes(searchQuery.value));
+  return recommendedClubs.value.filter((c) => c.clubName.includes(searchQuery.value));
 });
 
 const popularClubs = computed(() => {
@@ -118,7 +105,7 @@ async function searchClubs() {
   }
   // 추천 클럽 중 검색어 포함된 것만 필터링
   filteredRecommendedClubs.value = clubStore.clubList.filter((c) =>
-    c.name.includes(searchQuery.value)
+    c.clubName.includes(searchQuery.value)
   );
 }
 </script>

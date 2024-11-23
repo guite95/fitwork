@@ -15,6 +15,13 @@
         FROM club
         WHERE club_no = #{clubNo}
     </select>
+    
+    <!-- 클럽 파일 선택 -->
+    <select id="selectClubFileByClubNo" parameterType="int">
+    	SELECT *
+    	FROM club_file
+    	WHERE club_no = #{clubNo}
+    </select>
 
     <!-- 위치별 클럽 조회 -->
     <select id="selectClubByLocation" parameterType="String" resultType="Club">

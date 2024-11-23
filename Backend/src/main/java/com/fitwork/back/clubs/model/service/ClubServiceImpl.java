@@ -23,7 +23,13 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public Club clubDetail(int clubNo) {
-        return clubRepository.selectClubByClubNo(clubNo);
+    	Club club = clubRepository.selectClubByClubNo(clubNo);
+    	
+    	ClubFile clubFile = clubRepository.selectClubFileByClubNo(clubNo);
+    	
+    	if (clubFile != null) club.setClubFile(clubFile);
+    	
+    	return club;
     }
 
     @Override
