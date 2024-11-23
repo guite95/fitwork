@@ -116,20 +116,27 @@ export const useClubStore = defineStore('club', () => {
     }
   };
 
-  // 클럽 수정
-  const modifyClub = async (clubNo, updatedClub) => {
-    try {
-      await axios.put(`${REST_API_URL}/modify/${clubNo}`, updatedClub, {
-        headers: {
-          'Authorization': sessionStorage.getItem('memberToken'),
-          'Content-Type': 'application/json',
-        },
-      });
-      customSwal.fire('성공', '클럽 정보가 수정되었습니다.', 'success');
-    } catch (error) {
-      customSwal.fire('에러', '클럽을 수정하는 중 문제가 발생했습니다.', 'error');
+// 클럽 수정
+const modifyClub = async (clubNo, updatedClub, file) => {
+  try {
+    const formData = new FormData();
+    formData.append('club', new Blob([JSON.stringify(updatedClub)], { type: 'application/json' }));
+    if (file) {
+      formData.append('file', file);
     }
-  };
+
+    await axios.put(`${REST_API_URL}/modify/${clubNo}`, formData, {
+      headers: {
+        'Authorization': sessionStorage.getItem('memberToken'),
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    customSwal.fire('성공', '클럽 정보가 수정되었습니다.', 'success');
+  } catch (error) {
+    customSwal.fire('에러', '클럽을 수정하는 중 문제가 발생했습니다.', 'error');
+  }
+};
+
 
   // 클럽 삭제
   const deleteClub = async (clubNo) => {

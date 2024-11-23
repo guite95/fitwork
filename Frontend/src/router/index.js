@@ -38,14 +38,16 @@ const routes = [
     component: Classes,
   },
   {
-    path: '/register-clubs',
+    path: '/register-clubs/:clubNo?',
     name: 'registerclubs',
     component: RegisterClubs,
+    props: true,
   },
   {
-    path: '/register-classes',
+    path: '/register-classes/:classNo?',
     name: 'registerclasses',
     component: RegisterClasses,
+    props: true,
   },
   {
     path: '/sign-in',
@@ -108,9 +110,10 @@ const routes = [
     ],
   },
   {
-    path: "/clubs/:clubId",
+    path: "/clubs/:clubNo",
     name: "clubsdetail",
     component: ClubsDetail,
+    props: true,
   },
 
 

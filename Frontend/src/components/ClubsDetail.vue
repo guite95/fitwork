@@ -14,7 +14,7 @@
       </div>
 
       <!-- Club Details -->
-      <div class="flex justify-between items-center text-gray-500 text-sm font-title mb-6">
+      <div class="flex justify-between items-center text-darkBlue text-sm font-title mb-6">
         <div>
           <span class="ml-3"><span class="text-greyBlue">태그: </span> {{ club.tag }}</span>
           <span class="ml-3"><span class="text-greyBlue">지역: </span> {{ club.location }}</span>

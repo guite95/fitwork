@@ -186,18 +186,20 @@ const cities = ref([
 
 // 컴포넌트가 마운트될 때 route의 state 데이터를 확인하고 폼에 반영
 onMounted(() => {
-  const clubNo = route.params.clubNo;
+  clubNo.value = route.params.clubNo;
 
-  if (clubNo) {
+  if (clubNo.value) {
     // 수정 모드일 경우 기존 클럽 정보 가져오기
-    clubStore.getClubDetail(clubNo).then(() => {
-      const club = clubStore.club;
+    clubStore.getClubDetail(clubNo.value).then(() => {
+      const club = clubStore.clubDetail;
       if (club) {
+        console.log("edit")
         title.value = club.clubName;
         tags.value = club.tag;
         description.value = club.description;
         [selectedCity.value, selectedDistrict.value] = club.location.split(" ");
-        clubNo.value = clubNo;
+        // 클럽 번호 유지
+        clubNo.value = route.params.clubNo;
         isEditMode.value = true;
       }
     });
@@ -231,7 +233,7 @@ function removeSelectedFile() {
 
 function navigateToClubs() {
   if (isEditMode.value && clubNo.value) {
-    router.push(`/club-details/${clubNo.value}`);
+    router.push(`/clubs/${clubNo.value}`);
   } else {
     router.push("/clubs");
   }
