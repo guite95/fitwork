@@ -7,6 +7,16 @@ import '@/assets/swal_custom.css'; // 커스텀 CSS 사용
 const REST_API_URL = `http://localhost:8080/api-class`;
 // const REST_API_URL = `http://192.168.210.83:8080/api-class`;
 
+// 커스텀 스타일 적용
+const customSwal = Swal.mixin({
+    customClass: {
+      title: 'custom-swal-title',
+      text: 'custom-swal-text',
+      confirmButton: 'custom-swal-button',
+    },
+    buttonsStyling: false,
+  });
+
 export const useClassStore = defineStore('class', () => {
     // 상태 선언
     const classList = ref([]);
@@ -21,14 +31,15 @@ export const useClassStore = defineStore('class', () => {
     const fetchClassList = async () => {
         loading.value = true;
         try {
-            const response = await axios.get(`${REST_API_URL}/list/all`, {
+            await axios.get(`${REST_API_URL}/list/all`, {
                 headers: {
                     'Authorization': sessionStorage.getItem('memberToken'),
                 }
-            });
-            classList.value = response.data;
+            }).then((response) => {
+                classList.value = response.data;
+            })
         } catch (error) {
-            Swal.fire('에러', '클래스 목록을 불러오는 중 문제가 발생했습니다.', 'error');
+            customSwal.fire('에러', '클래스 목록을 불러오는 중 문제가 발생했습니다.', 'error');
         } finally {
             loading.value = false;
         }
@@ -45,7 +56,7 @@ export const useClassStore = defineStore('class', () => {
             });
             filteredClasses.value = response.data;
         } catch (error) {
-            Swal.fire('에러', '위치별 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
+            customSwal.fire('에러', '위치별 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
         } finally {
             loading.value = false;
         }
@@ -62,7 +73,7 @@ export const useClassStore = defineStore('class', () => {
             });
             filteredClasses.value = response.data;
         } catch (error) {
-            Swal.fire('에러', '카테고리별 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
+            customSwal.fire('에러', '카테고리별 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
         } finally {
             loading.value = false;
         }
@@ -79,7 +90,7 @@ export const useClassStore = defineStore('class', () => {
             });
             filteredClasses.value = response.data;
         } catch (error) {
-            Swal.fire('에러', '성별 필터 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
+            customSwal.fire('에러', '성별 필터 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
         } finally {
             loading.value = false;
         }
@@ -100,9 +111,9 @@ export const useClassStore = defineStore('class', () => {
                     'Content-Type': 'multipart/form-data'
                 },
             });
-            Swal.fire('성공', '클래스가 성공적으로 등록되었습니다.', 'success');
+            customSwal.fire('성공', '클래스가 성공적으로 등록되었습니다.', 'success');
         } catch (error) {
-            Swal.fire('에러', '클래스를 등록하는 중 문제가 발생했습니다.', 'error');
+            customSwal.fire('에러', '클래스를 등록하는 중 문제가 발생했습니다.', 'error');
         }
     };
 
@@ -115,9 +126,9 @@ export const useClassStore = defineStore('class', () => {
                     'Content-Type': 'multipart/form-data'
                 },
             });
-            Swal.fire('성공', '클래스 정보가 수정되었습니다.', 'success');
+            customSwal.fire('성공', '클래스 정보가 수정되었습니다.', 'success');
         } catch (error) {
-            Swal.fire('에러', '클래스를 수정하는 중 문제가 발생했습니다.', 'error');
+            customSwal.fire('에러', '클래스를 수정하는 중 문제가 발생했습니다.', 'error');
         }
     };
 
@@ -129,9 +140,9 @@ export const useClassStore = defineStore('class', () => {
                     'Authorization': sessionStorage.getItem('memberToken'),
                 }
             });
-            Swal.fire('성공', '클래스가 삭제되었습니다.', 'success');
+            customSwal.fire('성공', '클래스가 삭제되었습니다.', 'success');
         } catch (error) {
-            Swal.fire('에러', '클래스를 삭제하는 중 문제가 발생했습니다.', 'error');
+            customSwal.fire('에러', '클래스를 삭제하는 중 문제가 발생했습니다.', 'error');
         }
     };
 
@@ -143,9 +154,9 @@ export const useClassStore = defineStore('class', () => {
                     'Authorization': sessionStorage.getItem('memberToken'),
                 }
             });
-            Swal.fire('성공', '클래스 등록이 거절되었습니다.', 'success');
+            customSwal.fire('성공', '클래스 등록이 거절되었습니다.', 'success');
         } catch (error) {
-            Swal.fire('에러', '클래스 등록을 거절하는 중 문제가 발생했습니다.', 'error');
+            customSwal.fire('에러', '클래스 등록을 거절하는 중 문제가 발생했습니다.', 'error');
         }
     };
 

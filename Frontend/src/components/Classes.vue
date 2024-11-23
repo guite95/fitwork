@@ -79,18 +79,32 @@ const searchQuery = ref("");
 
 // 추천 클래스와 인기 클래스 데이터
 const nearbyClasses = ref([]);
-const popularClasses = computed(() => classStore.classList.filter((c) => c.isPopular)); // 인기 클래스 필터
-
-// 검색 결과 필터링
-const filteredNearbyClasses = computed(() =>
-  nearbyClasses.value.filter((c) => c.name.includes(searchQuery.value))
-);
 
 // 컴포넌트 로드 시 클래스 데이터 가져오기
 onMounted(async () => {
-  await classStore.fetchClassList(); // 전체 클래스 데이터 가져오기
-  nearbyClasses.value = classStore.classList; // 전체 클래스를 추천 클래스 리스트에 반영
+  loaded();
+  console.log(classStore.classList)
+  // await classStore.fetchClassList(); // 전체 클래스 데이터 가져오기
+  // nearbyClasses.value = classStore.classList; // 전체 클래스를 추천 클래스 리스트에 반영
 });
+
+const loaded = () => {
+  new Promise(async () => {
+    await classStore.fetchClassList(); // 전체 클래스 데이터 가져오기
+    nearbyClasses.value = classStore.classList; // 전체 클래스를 추천 클래스 리스트에 반영
+  })
+}
+
+const filteredNearbyClasses = computed(() => {
+    if (!Array.isArray(nearbyClasses.value)) return [];
+    return nearbyClasses.value.filter((c) => c.name.includes(searchQuery.value));
+});
+
+const popularClasses = computed(() => {
+    if (!Array.isArray(classStore.classList)) return [];
+    return classStore.classList.filter((c) => c.isPopular);
+});
+
 
 // 검색 버튼 클릭 이벤트
 async function searchClasses() {
