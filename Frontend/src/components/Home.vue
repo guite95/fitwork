@@ -163,7 +163,6 @@ function navigateToCommunity() {
 const fetchPopularPosts = async () => {
   try {
     await boardStore.getBoardList(); // 게시글 리스트 가져오기 (await 사용으로 데이터 로드 완료 보장)
-
     // boardList가 유효한 상태인지 확인 후 처리
     if (Array.isArray(boardStore.boardList) && boardStore.boardList.length > 0) {
       // 조회수 기준으로 내림차순 정렬 후 상위 4개만 가져오기

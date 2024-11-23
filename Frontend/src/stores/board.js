@@ -13,14 +13,15 @@ export const useBoardStore = defineStore('board', () => {
     const boardList = ref([]);
     const board = ref({});
 
-    const getBoardList = () => {
-        axios.get(`${REST_API_URL}/list`, {
+    const getBoardList = async () => {
+        await axios.get(`${REST_API_URL}/list`, {
             headers: {
                 'Authorization': sessionStorage.getItem('memberToken'),
             }
         })
             .then((response) => {
                 boardList.value = response.data;
+                console.log(boardList.value)
             })
             .catch((err) => {
                 console.error(err);

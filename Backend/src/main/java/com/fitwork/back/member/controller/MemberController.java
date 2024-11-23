@@ -82,6 +82,11 @@ public class MemberController {
 	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원 삭제에 실패했습니다.");
 	}
 
+	/**
+	 * 아이디 중복체크
+	 * @param id
+	 * @return
+	 */
 	@GetMapping("/check/{id}")
 	public ResponseEntity<Boolean> isExistId(@PathVariable String id) {
 		try {
