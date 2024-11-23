@@ -34,7 +34,7 @@
             <div class="bg-white shadow-md rounded-lg p-4">
               <!-- 이미지 추가 -->
               <img src="/images/dumbbell.jpg" alt="Club Image" class="w-full h-40 object-cover rounded-md mb-4" />
-              <p class="text-gray-800 font-medium text-sm">{{ club }}</p>
+              <p class="text-gray-800 font-medium text-sm">{{ club.clubName }}</p>
             </div>
           </SwiperSlide>
         </Swiper>
@@ -124,29 +124,9 @@ const banners = ref([
   "/images/home5.png",
 ]);
 
-const clubs = ref([
-  "[러닝] 11/10 유성 런닝 모집해요!",
-  "[크로스핏] 수업 같이 들을 20대",
-  "[클라이밍] 여성 클럽원 모집해요",
-  "[러닝] 11/10 유성 런닝 모집해요!",
-  "[크로스핏] 수업 같이 들을 20대",
-  "[클라이밍] 여성 클럽원 모집해요",
-  "[러닝] 11/10 유성 런닝 모집해요!",
-  "[크로스핏] 수업 같이 들을 20대",
-  "[클라이밍] 여성 클럽원 모집해요",
-]);
+const clubs = ref([]);
 
-const classes = ref([
-  "[헬스] 박씨피 트레이너",
-  "[댄스] 넥스트 댄스 스쿨 리정 안무가",
-  "[크로스핏] 하이크로스 일일수강",
-  "[헬스] 박씨피 트레이너",
-  "[댄스] 넥스트 댄스 스쿨 리정 안무가",
-  "[크로스핏] 하이크로스 일일수강",
-  "[헬스] 박씨피 트레이너",
-  "[댄스] 넥스트 댄스 스쿨 리정 안무가",
-  "[크로스핏] 하이크로스 일일수강",
-]);
+const classes = ref([]);
 
 const popularPosts = ref([]);
 
@@ -186,15 +166,45 @@ const fetchPopularPosts = async () => {
 
 const fetchPopolarClub = async () => {
   try {
-    await clubStore.getClubsByLocation(sessionStorage.getItem(""))
-  } catch {
+    await clubStore.getClubsByLocation(memberDistrict.value)
+    console.log(Array.isArray(clubStore.filteredClubs))
+    if (Array.isArray(clubStore.filteredClubs) && clubStore.filteredClubs.length > 0) {
+      clubs.value = clubStore.filteredClubs
+      .slice()
+      .sort((a, b) => b.headCount - a.headCount)
+      .slice(0, 10);
+      console.log("인근 인기 클럽 로딩 성공", clubs.value);
+    } else {
+      console.log("클럽 목록이 비어있습니다");
+    }
+  } catch (error) {
+    console.error("인근 인기 클럽 불러오기 오류 : ", error);
+  }
+}
 
+const fetchPopolarClass = async () => {
+  try {
+    await classStore.getClassesByLocation(memberDistrict.value)
+    console.log(Array.isArray(classStore.filteredClasses))
+    if (Array.isArray(classStore.filteredClasses) && classStore.filteredClasses.length > 0) {
+      classes.value = classStore.filteredClasses
+      .slice()
+      .sort((a, b) => b.headCount - a.headCount)
+      .slice(0, 10);
+      console.log("인근 인기 클래스 로딩 성공", classes.value);
+    } else {
+      console.log("클래스 목록이 비어있습니다");
+    }
+  } catch (error) {
+    console.error("인근 인기 클래스 불러오기 오류 : ", error);
   }
 }
 
 // 컴포넌트 마운트 시 게시글과 인기글 가져오기
 onMounted(async () => {
   await fetchPopularPosts(); // 컴포넌트가 마운트될 때 게시글과 인기글 가져오기
+  await fetchPopolarClub();
+  await fetchPopolarClass();
 });
 
 // Watch for route changes to reload data

@@ -49,12 +49,9 @@ export const useClubStore = defineStore('club', () => {
   const getClubsByLocation = async (location) => {
     loading.value = true;
     try {
-      const response = await axios.get(`${REST_API_URL}/location/${location}`, {
-        headers: {
-          'Authorization': sessionStorage.getItem('memberToken'),
-        },
-      });
+      const response = await axios.get(`${REST_API_URL}/list/location/${location}`);
       filteredClubs.value = response.data;
+      console.log(filteredClubs.value)
     } catch (error) {
       customSwal.fire('에러', '위치별 클럽를 불러오는 중 문제가 발생했습니다.', 'error');
     } finally {
@@ -66,7 +63,7 @@ export const useClubStore = defineStore('club', () => {
   const getClubsByCategory = async (category) => {
     loading.value = true;
     try {
-      const response = await axios.get(`${REST_API_URL}/category/${category}`, {
+      const response = await axios.get(`${REST_API_URL}/list/category/${category}`, {
         headers: {
           'Authorization': sessionStorage.getItem('memberToken'),
         },
@@ -83,7 +80,7 @@ export const useClubStore = defineStore('club', () => {
   const getClubsByGender = async (gender) => {
     loading.value = true;
     try {
-      const response = await axios.get(`${REST_API_URL}/gender/${gender}`, {
+      const response = await axios.get(`${REST_API_URL}/list/gender/${gender}`, {
         headers: {
           'Authorization': sessionStorage.getItem('memberToken'),
         },
