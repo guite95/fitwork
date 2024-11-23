@@ -125,6 +125,12 @@
         WHERE club_no = #{clubNo}
     </update>
     
+    <!-- 클럽 파일 삭제 -->
+    <delete id="deleteClubFile" parameterType="int">
+    	DELETE FROM club_file
+    	WHERE file_no = #{fileNo}
+    </delete>
+    
     <!-- 클럽 정보 삭제 -->
     <delete id="deleteClub" parameterType="int">
         DELETE FROM club

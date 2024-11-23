@@ -23,9 +23,9 @@
           20대 여성 <span class="text-darkBlue font-title">이 관심있는</span>
         </h2>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
-          <SwiperSlide v-for="(club, index) in filteredRecommendedClubs" :key="index">
+          <SwiperSlide v-for="club in RecommendedClubs" :key="club.clubNo">
             <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center">
-              {{ club.name }}
+              {{ club.clubName }}
             </div>
           </SwiperSlide>
         </Swiper>
@@ -35,9 +35,9 @@
       <div class="mb-12">
         <h2 class="text-xl font-title text-darkBlue mb-4">최근 인기 많은</h2>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
-          <SwiperSlide v-for="(club, index) in popularClubs" :key="index">
+          <SwiperSlide v-for="club in popularClubs" :key="club.clubNo">
             <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center">
-              {{ club.name }}
+              {{ club.clubName }}
             </div>
           </SwiperSlide>
         </Swiper>
@@ -82,20 +82,27 @@ const recommendedClubs = ref([]);
 
 // 컴포넌트 로드 시 클럽 데이터 가져오기
 onMounted(async () => {
+  await loaded();
+  console.log("최초 로드시점 후 클럽 게시물", clubStore.clubList)
   // await clubStore.fetchClubList(); // 전체 클럽 데이터 가져오기
   // recommendedClubs.value = clubStore.clubList; // 전체 클럽을 추천 클럽 리스트에 반영
 });
 
 const loaded = () => {
   new Promise(async () => {
-    await clubStore.fetchClubList(); // 전체 클럽 데이터 가져오기
+    await clubStore.getClubList(); // 전체 클럽 데이터 가져오기
     recommendedClubs.value = clubStore.clubList; // 전체 클럽을 추천 클럽 리스트에 반영
+    console.log("추천 게시물 :", recommendedClubs.value)
   })
 }
 
 const filteredRecommendedClubs = computed(() => {
-  if (!Array.isArray(recommendedClubs.value)) return [];
-  return recommendedClubs.value.filter((c) => c.name.includes(searchQuery.value));
+  console.log("필터 전 추천게시물", recommendedClubs.value)
+  // console.log(Array.isArray(recommendedClubs.value))
+  if (!recommendedClubs.value) return [];
+  // console.log("추천 게시물이 배열일때")
+  return recommendedClubs.value.filter((c) => c && c.name && c.name.includes(searchQuery.value));
+  // return recommendedClubs.value.filter((c) => c.name.includes(searchQuery.value));
 });
 
 const popularClubs = computed(() => {
