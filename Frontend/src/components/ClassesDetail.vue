@@ -5,36 +5,37 @@
   
       <!-- Main Content -->
       <div class="max-w-4xl mx-auto py-8">
-        <!-- Club Title -->
+        <!-- Class Title -->
         <div class="border-b pb-4 mb-6">
           <h1 class="text-2xl font-title text-darkBlue">
-            {{ club.clubName }}
+            {{ classData.className }}
           </h1>
-          <p class="text-darkBlue text-sm font-title"><span class="text-greyBlue">리더: </span> {{ club.leader }}</p>
+          <p class="text-darkBlue text-sm font-title"><span class="text-greyBlue">리더: </span> {{ classData.leader }}</p>
         </div>
   
-        <!-- Club Details -->
+        <!-- Class Details -->
         <div class="flex justify-between items-center text-darkBlue text-sm font-title mb-6">
           <div>
-            <span class="ml-3"><span class="text-greyBlue">태그: </span> {{ club.tag }}</span>
-            <span class="ml-3"><span class="text-greyBlue">지역: </span> {{ club.location }}</span>
-            <span class="ml-3"><span class="text-greyBlue">신청 인원: </span> {{ club.headCount }}</span>
+            <span class="ml-3"><span class="text-greyBlue">태그: </span> {{ classData.tag }}</span>
+            <span class="ml-3"><span class="text-greyBlue">지역: </span> {{ classData.location }}</span>
+            <span class="ml-3"><span class="text-greyBlue">신청 인원: </span> {{ classData.headCount }} 명</span>
+            <span class="ml-3"><span class="text-greyBlue">가격: </span> {{ classData.price }} 만원</span>
           </div>
         </div>
   
-        <!-- Club Image -->
+        <!-- Class Image -->
         <div class="mb-6 flex justify-center">
-          <img v-if="club.clubFile" :src="imgSrc" alt="Club Image" class="rounded-lg object-contain" />
+          <img v-if="classData.classesFile" :src="imgSrc" alt="Class Image" class="rounded-lg object-contain" />
         </div>
   
-        <!-- Club Description -->
+        <!-- Class Description -->
         <div class="mb-6 text-gray-700 font-title text-base">
-          {{ club.description }}
+          {{ classData.description }}
         </div>
   
         <!-- Navigation Button -->
         <div class="flex justify-end items-center text-sm font-title mb-6">
-          <!-- 수정 및 삭제 버튼 (본인 글일 경우에만 표시) -->
+          <!-- Edit and Delete Buttons (Visible only to the author) -->
           <div class="flex space-x-2">
             <button @click="navigateBack"
               class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-greyBlue transition duration-300 text-sm font-title">
@@ -88,41 +89,43 @@
   import { ref, onMounted, computed } from "vue";
   import Header from "./Header.vue";
   import { useRoute, useRouter } from "vue-router";
-  import { useClubStore } from "@/stores/club";
+  import { useClassStore } from "@/stores/class";
   import { useMemberStore } from "@/stores/member";
   import Swal from "sweetalert2";
   
   const route = useRoute();
   const router = useRouter();
-  const store = useClubStore();
+  const store = useClassStore();
   const memberStore = useMemberStore();
   
-  const club = ref({});
+  const classData = ref({});
   const comments = ref([]);
   const newComment = ref("");
-  const imgSrc = ref('');
+  const imgSrc = ref("");
   
-  // 작성자와 현재 로그인한 사용자가 일치하는지 확인
+  // Check if the current user is the author
   const isAuthor = computed(() => {
-    return club.value.leader && memberStore.memberNickname && club.value.leader === memberStore.memberNickname;
+    return (
+      classData.value.leader &&
+      memberStore.memberNickname &&
+      classData.value.leader === memberStore.memberNickname
+    );
   });
   
-  const clubNo = route.params.clubNo;
+  const classNo = route.params.classNo;
   
-  const loadClubDetails = async () => {
+  const loadClassDetails = async () => {
     try {
-      await store.getClubDetail(clubNo);
-      club.value = store.clubDetail;
+      await store.getClassDetail(classNo);
+      classData.value = store.classDetail;
   
-      console.log(club.value.clubFile)
-      
-      if (club.value.clubfile) {
-        imgSrc.value = `http://localhost:8080/file${club.value.clubFile.path}/${club.value.clubFile.systemName}`;
+      if (classData.value.classesFile) {
+        imgSrc.value = `http://localhost:8080/file${classData.value.classesFile.path}/${classData.value.classesFile.systemName}`;
       }
   
-      comments.value = club.value.comments || [];
+      comments.value = classData.value.comments || [];
     } catch (error) {
-      console.error("클럽 상세 정보 로드 실패:", error);
+      console.error("클래스 상세 정보 로드 실패:", error);
     }
   };
   
@@ -137,7 +140,7 @@
     }
   
     store
-      .addComment(clubNo, { content: newComment.value })
+      .addComment(classNo, { content: newComment.value })
       .then(() => {
         comments.value.push({
           content: newComment.value,
@@ -153,15 +156,14 @@
   
   const handleEdit = () => {
     router.push({
-      name: 'registerclubs',
+      name: "registerclasses",
       params: {
-        clubNo: clubNo, // clubId를 수정 페이지로 전달
+        classNo: classNo, // Pass classNo to the edit page
       },
     });
   };
   
   const handleDelete = () => {
-    // 삭제 로직 추가
     Swal.fire({
       title: "정말로 삭제하시겠습니까?",
       icon: "warning",
@@ -172,24 +174,24 @@
     }).then((result) => {
       if (result.isConfirmed) {
         store
-          .deleteClub(clubNo)
+          .deleteClass(classNo)
           .then(() => {
-            Swal.fire("삭제 완료!", "클럽이 삭제되었습니다.", "success");
+            Swal.fire("삭제 완료!", "클래스가 삭제되었습니다.", "success");
             navigateBack();
           })
           .catch((error) => {
-            console.error("클럽 삭제 실패:", error);
+            console.error("클래스 삭제 실패:", error);
           });
       }
     });
   };
   
   const navigateBack = () => {
-    router.push("/clubs");
+    router.push("/classes");
   };
   
   onMounted(() => {
-    loadClubDetails();
+    loadClassDetails();
   });
   </script>
   
