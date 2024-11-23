@@ -105,12 +105,12 @@ const routes = [
         name: 'applications',
         component: Applications,
       },
-      {
-        path: "/clubs/:clubId",
-        name: "clubsdetail",
-        component: ClubsDetail,
-      },
     ],
+  },
+  {
+    path: "/clubs/:clubId",
+    name: "clubsdetail",
+    component: ClubsDetail,
   },
 
 

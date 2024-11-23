@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import '@/assets/swal_custom.css'; // 커스텀 CSS 사용
 
 // const REST_API_URL = `http://192.168.210.83:8080/api-club`;
-const REST_API_URL = `http://lovalhost:8080/api-club`;
+const REST_API_URL = `http://localhost:8080/api-club`;
 
 // 커스텀 스타일 적용
 const customSwal = Swal.mixin({
@@ -18,7 +18,7 @@ const customSwal = Swal.mixin({
 });
 
 export const useClubStore = defineStore('club', () => {
-  // 상태 선언
+  // 상황 선정
   const clubList = ref([]);
   const clubDetail = ref(null);
   const filteredClubs = ref([]);
@@ -27,8 +27,8 @@ export const useClubStore = defineStore('club', () => {
   const leaderedClubs = ref([]);
   const loading = ref(false);
 
-  // 전체 클럽 목록 가져오기
-  const fetchClubList = async () => {
+  // 전체 클럽 목록 검색
+  const getClubList = async () => {
     loading.value = true;
     try {
       const response = await axios.get(`${REST_API_URL}/list/all`, {
@@ -45,7 +45,7 @@ export const useClubStore = defineStore('club', () => {
   };
 
   // 위치별 클럽 검색
-  const fetchClubsByLocation = async (location) => {
+  const getClubsByLocation = async (location) => {
     loading.value = true;
     try {
       const response = await axios.get(`${REST_API_URL}/location/${location}`, {
@@ -55,14 +55,14 @@ export const useClubStore = defineStore('club', () => {
       });
       filteredClubs.value = response.data;
     } catch (error) {
-      customSwal.fire('에러', '위치별 클럽을 불러오는 중 문제가 발생했습니다.', 'error');
+      customSwal.fire('에러', '위치별 클럽를 불러오는 중 문제가 발생했습니다.', 'error');
     } finally {
       loading.value = false;
     }
   };
 
   // 카테고리별 클럽 검색
-  const fetchClubsByCategory = async (category) => {
+  const getClubsByCategory = async (category) => {
     loading.value = true;
     try {
       const response = await axios.get(`${REST_API_URL}/category/${category}`, {
@@ -72,14 +72,14 @@ export const useClubStore = defineStore('club', () => {
       });
       filteredClubs.value = response.data;
     } catch (error) {
-      customSwal.fire('에러', '카테고리별 클럽을 불러오는 중 문제가 발생했습니다.', 'error');
+      customSwal.fire('에러', '카테고리별 클럽를 불러오는 중 문제가 발생했습니다.', 'error');
     } finally {
       loading.value = false;
     }
   };
 
   // 성별 필터 클럽 검색
-  const fetchClubsByGender = async (gender) => {
+  const getClubsByGender = async (gender) => {
     loading.value = true;
     try {
       const response = await axios.get(`${REST_API_URL}/gender/${gender}`, {
@@ -89,14 +89,14 @@ export const useClubStore = defineStore('club', () => {
       });
       filteredClubs.value = response.data;
     } catch (error) {
-      customSwal.fire('에러', '성별 필터 클럽을 불러오는 중 문제가 발생했습니다.', 'error');
+      customSwal.fire('에러', '성별 필터 클럽를 불러오는 중 문제가 발생했습니다.', 'error');
     } finally {
       loading.value = false;
     }
   };
 
-// 새로운 클럽 등록
-const createClub = async (clubData, file) => {
+  // 새로운 클럽 등록
+  const createClub = async (clubData, file) => {
     const formData = new FormData();
     formData.append('club', new Blob([JSON.stringify(clubData)], { type: 'application/json' }));
     if (file) {
@@ -115,7 +115,6 @@ const createClub = async (clubData, file) => {
       customSwal.fire('에러', '클럽을 등록하는 중 문제가 발생했습니다.', 'error');
     }
   };
-  
 
   // 클럽 수정
   const modifyClub = async (clubNo, updatedClub) => {
@@ -160,6 +159,23 @@ const createClub = async (clubData, file) => {
     }
   };
 
+  // 클럽 세부 정보 검색
+  const getClubDetail = async (clubNo) => {
+    loading.value = true;
+    try {
+      const response = await axios.get(`${REST_API_URL}/${clubNo}`, {
+        headers: {
+          'Authorization': sessionStorage.getItem('memberToken'),
+        },
+      });
+      clubDetail.value = response.data;
+    } catch (error) {
+      customSwal.fire('에러', '클럽 세부 정보를 불러오는 중 문제가 발생했습니다.', 'error');
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     clubList,
     clubDetail,
@@ -168,13 +184,14 @@ const createClub = async (clubData, file) => {
     userMemberedClubs,
     leaderedClubs,
     loading,
-    fetchClubList,
-    fetchClubsByLocation,
-    fetchClubsByCategory,
-    fetchClubsByGender,
+    getClubList,
+    getClubsByLocation,
+    getClubsByCategory,
+    getClubsByGender,
     createClub,
     modifyClub,
     deleteClub,
     refuseClubRegistration,
+    getClubDetail,
   };
 });

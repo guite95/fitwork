@@ -6,22 +6,24 @@
     <!-- Content -->
     <section class="flex justify-center items-center py-12 px-4 bg-gray-50">
       <div class="w-full max-w-3xl bg-lightBlue/10 p-8 rounded-2xl shadow-md">
-        <h1 class="text-2xl font-title text-darkBlue mb-8">클럽 등록</h1>
+        <h1 class="text-2xl font-title text-darkBlue mb-8">
+          {{ isEditMode ? "클럽 수정" : "클럽 등록" }}
+        </h1>
 
         <!-- Form -->
-        <form class="space-y-6" @submit.prevent="registerClub">
+        <form class="space-y-6" @submit.prevent="handleSubmit">
           <!-- Title Input -->
           <div>
             <label for="title" class="block text-darkBlue font-title mb-2">제목</label>
             <input id="title" v-model="title" type="text" placeholder="제목"
-              class="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white placeholder-gray-400 font-title text-darkBlue" />
+              class="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white placeholder-gray-400 font-title text-darkBlue" required />
           </div>
 
           <!-- City Dropdown -->
           <div>
             <label for="city" class="block text-darkBlue font-title mb-2">지역</label>
             <select id="city" v-model="selectedCity" @change="updateDistricts"
-              class="w-full px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white text-gray-500 font-title">
+              class="w-full px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white text-gray-500 font-title" required>
               <option value="" disabled>시를 선택하세요</option>
               <option v-for="city in cities" :key="city.name" :value="city.name">
                 {{ city.name }}
@@ -32,7 +34,7 @@
           <!-- District Dropdown -->
           <div>
             <select id="district" v-model="selectedDistrict" :disabled="!districts.length"
-              class="w-full px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white text-gray-500 font-title">
+              class="w-full px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white text-gray-500 font-title" required>
               <option value="" disabled>구를 선택하세요</option>
               <option v-for="district in districts" :key="district" :value="district">
                 {{ district }}
@@ -51,17 +53,32 @@
           <div>
             <label for="description" class="block text-darkBlue font-title mb-2">클럽 소개</label>
             <textarea id="description" v-model="description" rows="10" placeholder="클럽 소개글을 적어주세요 😊"
-              class="w-full px-4 py-3 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white placeholder-gray-400 resize-none font-title text-darkBlue"></textarea>
+              class="w-full px-4 py-3 rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white placeholder-gray-400 resize-none font-title text-darkBlue" required></textarea>
           </div>
 
           <!-- File Input -->
           <div>
-            <input type="file" ref="fileInput" class="hidden" @change="handleFileChange" />
-            <button type="button" @click="triggerFileInput"
-              class="px-6 py-3 bg-white border border-lightBlue text-lightBlue font-title rounded-full hover:bg-lightBlue/10">
-              파일 추가
-            </button>
-            <span v-if="fileName" class="text-sm text-darkBlue ml-2">{{ fileName }}</span>
+            <label for="fileUpload" class="block text-darkBlue font-title mb-2">파일 추가</label>
+            <div class="flex items-center">
+              <!-- Hidden File Input -->
+              <input id="fileUpload" type="file" ref="fileInput" class="hidden pointer-events-none" tabindex="-1"
+                @change="handleFileChange" />
+
+              <!-- Custom Button -->
+              <button type="button" @click="triggerFileUpload"
+                class="px-4 py-3 bg-lightBlue text-white font-title rounded-full hover:bg-darkBlue transition duration-300 text-sm">
+                파일 선택
+              </button>
+
+              <!-- Selected File Name Display and Remove Button -->
+              <div v-if="fileName" class="flex items-center ml-4">
+                <span class="text-gray-600 font-title">{{ fileName }}</span>
+                <button type="button" @click="removeSelectedFile"
+                  class="ml-2 text-gray-500 hover:text-red-500 transition duration-300" aria-label="파일 삭제">
+                  ✖
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Buttons -->
@@ -74,7 +91,7 @@
 
             <!-- Submit Button -->
             <button type="submit" class="px-6 py-3 bg-lightBlue text-white font-title rounded-full hover:bg-darkBlue">
-              등록
+              {{ isEditMode ? "수정 완료" : "등록" }}
             </button>
           </div>
         </form>
@@ -83,16 +100,33 @@
   </div>
 </template>
 
-
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useClubStore } from "../stores/club";
 import Header from "./Header.vue";
 
+// Store
 const clubStore = useClubStore();
 
-// Data
+// Router
+const router = useRouter();
+const route = useRoute();
+
+// State
+const isEditMode = ref(false);
+const title = ref("");
+const tags = ref("");
+const description = ref("");
+const selectedCity = ref("");
+const selectedDistrict = ref("");
+const districts = ref([]);
+const fileInput = ref(null);
+const file = ref(null);
+const fileName = ref("");
+const clubNo = ref(null);
+
+// Cities Data
 const cities = ref([
   {
     name: "서울",
@@ -150,19 +184,28 @@ const cities = ref([
   },
 ]);
 
-// State
-const selectedCity = ref("");
-const selectedDistrict = ref("");
-const districts = ref([]);
-const title = ref("");
-const tags = ref("");
-const description = ref("");
-const fileInput = ref(null);
-const file = ref(null);
-const fileName = ref("");
+// 컴포넌트가 마운트될 때 route의 state 데이터를 확인하고 폼에 반영
+onMounted(() => {
+  const clubNo = route.params.clubNo;
 
-// Router
-const router = useRouter();
+  if (clubNo) {
+    // 수정 모드일 경우 기존 클럽 정보 가져오기
+    clubStore.getClubDetail(clubNo).then(() => {
+      const club = clubStore.club;
+      if (club) {
+        title.value = club.clubName;
+        tags.value = club.tag;
+        description.value = club.description;
+        [selectedCity.value, selectedDistrict.value] = club.location.split(" ");
+        clubNo.value = clubNo;
+        isEditMode.value = true;
+      }
+    });
+  } else {
+    // 새 클럽 등록 모드일 경우
+    resetForm();
+  }
+});
 
 // Methods
 function updateDistricts() {
@@ -171,7 +214,7 @@ function updateDistricts() {
   selectedDistrict.value = ""; // 도시 변경 시 자치구 초기화
 }
 
-function triggerFileInput() {
+function triggerFileUpload() {
   fileInput.value.click();
 }
 
@@ -180,41 +223,59 @@ function handleFileChange(event) {
   fileName.value = file.value ? file.value.name : "";
 }
 
-function navigateToClubs() {
-  router.push("/clubs");
+function removeSelectedFile() {
+  file.value = null;
+  fileName.value = "";
+  fileInput.value.value = ""; // 파일 input 필드를 초기화
 }
 
-async function registerClub() {
-  if (!title.value || !selectedCity.value || !selectedDistrict.value || !description.value) {
-    alert("모든 필드를 입력해주세요.");
-    return;
+function navigateToClubs() {
+  if (isEditMode.value && clubNo.value) {
+    router.push(`/club-details/${clubNo.value}`);
+  } else {
+    router.push("/clubs");
   }
+}
 
-  // Club 객체 데이터 구성
+function resetForm() {
+  title.value = "";
+  tags.value = "";
+  description.value = "";
+  selectedCity.value = "";
+  selectedDistrict.value = "";
+  file.value = null;
+  fileName.value = "";
+  clubNo.value = null;
+  isEditMode.value = false;
+}
+
+async function handleSubmit() {
   const clubData = {
-    clubNo: null, // 초기값 null
-    leader: sessionStorage.getItem("memberNickname"), // 로그인된 사용자의 닉네임
-    clubName: title.value, // 클럽 이름 = 입력된 제목
-    category: null, // 초기값 null
-    tag: tags.value, // 입력된 태그
-    location: `${selectedCity.value} ${selectedDistrict.value}`, // 시 + 구
-    description: description.value, // 입력된 소개글
-    headCount: null, // 초기값 null
-    clubFile: null, // 파일은 별도로 추가
+    clubNo: clubNo.value,
+    leader: sessionStorage.getItem("memberNickname"),
+    clubName: title.value,
+    category: null,
+    tag: tags.value,
+    location: `${selectedCity.value} ${selectedDistrict.value}`,
+    description: description.value,
+    headCount: null,
+    clubFile: null,
   };
 
   try {
-    // Pinia store의 createClub 메서드 호출
-    await clubStore.createClub(clubData, file.value);
-    router.push("/clubs"); // 운동 클럽 페이지로 이동
+    if (isEditMode.value && clubNo.value) {
+      // 수정 로직
+      await clubStore.modifyClub(clubNo.value, clubData, file.value);
+    } else {
+      // 새 클럽 등록 로직
+      await clubStore.createClub(clubData, file.value);
+    }
+    router.push("/clubs"); // 클럽 페이지로 이동
   } catch (error) {
-    console.error("클럽 등록 실패:", error);
+    console.error("클럽 등록/수정 실패:", error);
   }
 }
-
-
 </script>
-
 
 <style scoped>
 /* 필요 시 추가 스타일 */
