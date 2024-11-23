@@ -36,6 +36,8 @@ public interface ClubService {
     
     public void modifyClubInfo(Club club);
     
+    public void deleteClubFile(int fileNo);
+    
     public void deleteClubInfo(int clubNo);
     
 }

@@ -92,6 +92,10 @@ public class ClubServiceImpl implements ClubService {
     public void modifyClubInfo(Club club) {
         clubRepository.updateClubInfo(club);
     }
+    
+    public void deleteClubFile(int fileNo) {
+    	clubRepository.deleteClubFile(fileNo);
+    }
 
     @Override
     public void deleteClubInfo(int clubNo) {

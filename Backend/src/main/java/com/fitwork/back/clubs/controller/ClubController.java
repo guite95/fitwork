@@ -176,7 +176,6 @@ public class ClubController {
     @PostMapping("/register/club")
     public ResponseEntity<Object> registClub(@RequestPart Club club, @RequestPart(required = false) MultipartFile file) {
         try {
-        	System.out.println(club.toString());
         	if (file != null) {
         		String oriName = file.getOriginalFilename();
         		
@@ -208,10 +207,44 @@ public class ClubController {
     }
 
     @PutMapping("/modify/{clubNo}")
-    public ResponseEntity<Object> modifyClub(@PathVariable int clubNo, @RequestBody Club club) {
+    public ResponseEntity<Object> modifyClub(@PathVariable int clubNo, @RequestBody Club club, @RequestPart(required = false) MultipartFile file) {
         try {
-            club.setClubNo(clubNo);
-            clubService.modifyClubInfo(club);
+        	Club tmp = clubService.clubDetail(clubNo);
+        	
+        	if (file != null) {
+        		if (tmp.getClubFile() != null) {
+        			clubService.deleteClubFile(tmp.getClubFile().getFileNo());
+        		}
+        		
+        		String oriName = file.getOriginalFilename();
+        		
+        		if (oriName != null && oriName.length() > 0) {
+        			SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
+        			String subDir = sdf.format(new Date());
+        			
+        			File dir = new File("c://SSAFY/final-prj/clubs/img" + subDir);
+        			dir.mkdirs();
+        			
+        			String systemName = UUID.randomUUID().toString() + oriName;
+        			
+        			file.transferTo(new File(dir, systemName));
+        			
+        			ClubFile clubFile = new ClubFile();
+        			clubFile.setPath(subDir);
+        			clubFile.setOriName(oriName);
+        			clubFile.setSystemName(systemName);
+        			
+        			club.setClubFile(clubFile);
+        		}
+        		
+        	}
+        	
+        	tmp.setClubName(club.getClubName());
+        	tmp.setLocation(club.getLocation());
+        	tmp.setTag(club.getTag());
+        	tmp.setDescription(club.getDescription());
+        	
+            clubService.modifyClubInfo(tmp);
             return ResponseEntity.status(HttpStatus.OK).body("클럽 정보가 수정되었습니다.");
         } catch (Exception e) {
             return handleException(e);

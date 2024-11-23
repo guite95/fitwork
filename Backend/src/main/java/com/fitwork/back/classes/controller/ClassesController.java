@@ -208,6 +208,9 @@ public class ClassesController {
     public ResponseEntity<Object> modifyClass(@PathVariable int classNo, @RequestBody Classes classes) {
         try {
             classes.setClassNo(classNo);
+            
+            
+            
             classesService.modifyClassInfo(classes);
             return ResponseEntity.status(HttpStatus.OK).body("클래스 정보가 수정되었습니다.");
         } catch (Exception e) {

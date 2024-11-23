@@ -36,5 +36,7 @@ public interface ClubRepository {
     
     public void updateClubInfo(Club club);
     
+    public void deleteClubFile(int fileNo);
+    
     public void deleteClub(int clubNo);
 }
