@@ -24,7 +24,7 @@
 
       <!-- Club Image -->
       <div class="mb-6 flex justify-center">
-        <img v-if="club.clubFile" :src="club.clubFile" alt="Club Image" class="rounded-lg object-contain" />
+        <img v-if="club.clubFile" :src="imgSrc" alt="Club Image" class="rounded-lg object-contain" />
       </div>
 
       <!-- Club Description -->
@@ -100,6 +100,7 @@ const memberStore = useMemberStore();
 const club = ref({});
 const comments = ref([]);
 const newComment = ref("");
+const imgSrc = ref('');
 
 // 작성자와 현재 로그인한 사용자가 일치하는지 확인
 const isAuthor = computed(() => {
@@ -112,6 +113,13 @@ const loadClubDetails = async () => {
   try {
     await store.getClubDetail(clubNo);
     club.value = store.clubDetail;
+
+    console.log(club.value.clubFile)
+    
+    if (club.value.clubfile) {
+      imgSrc.value = `http://localhost:8080/file${club.value.clubFile.path}/${club.value.clubFile.systemName}`;
+    }
+
     comments.value = club.value.comments || [];
   } catch (error) {
     console.error("클럽 상세 정보 로드 실패:", error);
