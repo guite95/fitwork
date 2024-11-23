@@ -77,7 +77,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/location/{location}")
+    @GetMapping("/list/location/{location}")
     public ResponseEntity<Object> getNearbyClubs(@PathVariable String location) {
         try {
             List<Club> list = clubService.clubByLocation(location);
@@ -88,7 +88,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/category/{category}")
+    @GetMapping("/list/category/{category}")
     public ResponseEntity<Object> getCategoryClubs(@PathVariable String category) {
         try {
             List<Club> list = clubService.clubByCategory(category);
@@ -99,7 +99,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/gender/{gender}")
+    @GetMapping("/list/gender/{gender}")
     public ResponseEntity<Object> getGenderClubs(@PathVariable String gender) {
         try {
             List<Club> list = clubService.clubByGender(gender);
@@ -176,26 +176,29 @@ public class ClubController {
     @PostMapping("/register/club")
     public ResponseEntity<Object> registClub(@RequestPart Club club, @RequestPart(required = false) MultipartFile file) {
         try {
-            String oriName = file.getOriginalFilename();
-
-            if (oriName != null && oriName.length() > 0) {
-                SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
-                String subDir = sdf.format(new Date());
-
-                File dir = new File("c://SSAFY/final-prj/clubs/img" + subDir);
-                dir.mkdirs();
-
-                String systemName = UUID.randomUUID().toString() + oriName;
-
-                file.transferTo(new File(dir, systemName));
-
-                ClubFile clubFile = new ClubFile();
-                clubFile.setPath(subDir);
-                clubFile.setOriName(oriName);
-                clubFile.setSystemName(systemName);
-
-                club.setClubFile(clubFile);
-            }
+        	System.out.println(club.toString());
+        	if (file != null) {
+        		String oriName = file.getOriginalFilename();
+        		
+        		if (oriName != null && oriName.length() > 0) {
+        			SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
+        			String subDir = sdf.format(new Date());
+        			
+        			File dir = new File("c://SSAFY/final-prj/clubs/img" + subDir);
+        			dir.mkdirs();
+        			
+        			String systemName = UUID.randomUUID().toString() + oriName;
+        			
+        			file.transferTo(new File(dir, systemName));
+        			
+        			ClubFile clubFile = new ClubFile();
+        			clubFile.setPath(subDir);
+        			clubFile.setOriName(oriName);
+        			clubFile.setSystemName(systemName);
+        			
+        			club.setClubFile(clubFile);
+        		}
+        	}
 
             clubService.registClub(club);
             return ResponseEntity.status(HttpStatus.CREATED).body("클럽이 성공적으로 등록되었습니다.");

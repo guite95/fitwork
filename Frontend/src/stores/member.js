@@ -1,7 +1,9 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import router from '@/router';
+import Swal from 'sweetalert2';
+import '@/assets/swal_custom.css';
 
 const REST_API_URL = `http://localhost:8080/api-member`;
 // const REST_API_URL = `http://192.168.210.83:8080/api-member`;
@@ -112,25 +114,78 @@ export const useMemberStore = defineStore('member', () => {
         memberRole.value = sessionStorage.getItem('memberRole');
     };
 
-    const login = (id, password) => {
-        return axios.post(`${REST_API_URL}/login`, { id, password })
-            .then((response) => {
-                const token = response.headers['authorization'];
-                if (token) {
-                    setMemberToken(token);
-                    loadMemberInfo(id); // 로그인 성공 후 사용자 정보 로드
-                    router.push({ name: 'home' }); // 홈으로 이동
-                } else {
-                    console.error('로그인에 실패했습니다. 토큰이 없습니다.');
-                    return Promise.reject('로그인에 실패했습니다. 토큰이 없습니다.');
-                }
-            })
-            .catch((error) => {
-                console.error('로그인 요청 중 오류가 발생했습니다:', error);
-                return Promise.reject(error);
-            });
+    const login = async (id, password) => {
+        try {
+            const response = await axios.post(`${REST_API_URL}/login`, { id, password });
+            const token = response.headers['authorization'];
+
+            if (token) {
+                setMemberToken(token);
+                await loadMemberInfo(id); // 사용자 정보 로드 후 리다이렉트
+                router.push({ name: 'home' }); // 홈으로 이동
+            } else {
+                console.error('로그인에 실패했습니다. 토큰이 없습니다.');
+                throw new Error('로그인에 실패했습니다. 토큰이 없습니다.');
+            }
+        } catch (error) {
+            console.error('로그인 요청 중 오류가 발생했습니다:', error);
+            throw error;
+        }
     };
 
+    const modifyMember = async (updatedInfo) => {
+        if (memberToken.value && memberId.value) {
+            try {
+                await axios.put(`${REST_API_URL}/${memberId.value}`, updatedInfo, {
+                    headers: {
+                        "Authorization": sessionStorage.getItem('memberToken'),
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                // Pinia 상태 및 세션에 업데이트된 사용자 정보 반영
+                memberNickname.value = updatedInfo.nickname;
+                memberPhoneNumber.value = updatedInfo.phoneNumber;
+                memberEmail.value = updatedInfo.email;
+                memberAddress.value = updatedInfo.address;
+
+                sessionStorage.setItem('memberNickname', updatedInfo.nickname);
+                sessionStorage.setItem('memberPhoneNumber', updatedInfo.phoneNumber);
+                sessionStorage.setItem('memberEmail', updatedInfo.email);
+                sessionStorage.setItem('memberAddress', updatedInfo.address);
+
+                // Swal 알림 - 수정 성공
+                Swal.fire({
+                    icon: 'success',
+                    title: '수정 완료',
+                    text: '회원 정보가 성공적으로 수정되었습니다.',
+                    customClass: {
+                        title: 'custom-swal-title',
+                        text: 'custom-swal-text',
+                        confirmButton: 'custom-swal-button',
+                    },
+                    buttonsStyling: false,
+                });
+            } catch (error) {
+                console.error('회원 정보 수정 중 오류가 발생했습니다:', error);
+
+                // Swal 알림 - 수정 실패
+                Swal.fire({
+                    icon: 'error',
+                    title: '수정 실패',
+                    text: '회원 정보 수정에 실패했습니다. 다시 시도해주세요.',
+                    customClass: {
+                        title: 'custom-swal-title',
+                        text: 'custom-swal-text',
+                        confirmButton: 'custom-swal-button',
+                    },
+                    buttonsStyling: false,
+                });
+            }
+        }
+    }
+
+    const isLoggedIn = computed(() => !!memberToken.value);
 
     loadMemberToken();
 
@@ -146,8 +201,10 @@ export const useMemberStore = defineStore('member', () => {
         memberPhoneNumber,
         memberAddress,
         memberRole,
+        isLoggedIn,
         setMemberToken,
         clearMemberToken,
         login,
+        modifyMember,
     };
 });

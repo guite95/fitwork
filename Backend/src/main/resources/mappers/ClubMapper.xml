@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fitwork.back.club.model.repository.ClubRepository">
+<mapper namespace="com.fitwork.back.clubs.model.repository.ClubRepository">
     <!-- 전체 클럽 조회 -->
     <select id="selectAllClub" resultType="Club">
         SELECT *
@@ -20,7 +20,7 @@
     <select id="selectClubByLocation" parameterType="String" resultType="Club">
         SELECT *
         FROM club
-        WHERE location = #{location}
+        WHERE location LIKE concat('%',#{location},'%')
     </select>
     
     <!-- 카테고리별 클럽 조회 -->
@@ -84,8 +84,8 @@
 
     <!-- 클럽 정보 등록 -->
     <insert id="insertClub" parameterType="Club" useGeneratedKeys="true" keyProperty="clubNo">
-        INSERT INTO club(leader, club_name, category, location, description, price)
-        VALUES(#{leader}, #{clubName}, #{category}, #{location}, #{description}, #{price})
+        INSERT INTO club(leader, club_name, category, tag, location, description)
+        VALUES(#{leader}, #{clubName}, #{category}, #{tag}, #{location}, #{description})
     </insert>
     
     <!-- 클럽 이미지 등록 -->
