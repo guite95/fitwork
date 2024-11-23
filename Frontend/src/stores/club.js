@@ -38,8 +38,6 @@ export const useClubStore = defineStore('club', () => {
       }).then((response) => {
         clubList.value = response.data;
       })
-
-      console.log("전체 게시물", clubList.value)
     } catch (error) {
       customSwal.fire('에러', '클럽 목록을 불러오는 중 문제가 발생했습니다.', 'error');
     } finally {

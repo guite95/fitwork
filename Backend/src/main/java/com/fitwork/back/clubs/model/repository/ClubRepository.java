@@ -10,6 +10,8 @@ public interface ClubRepository {
     
     public Club selectClubByClubNo(int clubNo);
     
+    public ClubFile selectClubFileByClubNo(int clubNo);
+    
     public List<Club> selectClubByLocation(String location);
     
     public List<Club> selectClubByCategory(String category);
