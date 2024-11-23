@@ -94,9 +94,13 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, Pagination, Autoplay } from "swiper";
 import { useMemberStore } from "../stores/member";
 import { useBoardStore } from "../stores/board";
+import { useClubStore } from "../stores/club";
+import { useClassStore } from "../stores/class"
 
 const memberStore = useMemberStore();
 const boardStore = useBoardStore();
+const clubStore = useClubStore();
+const classStore = useClassStore();
 const memberName = computed(() => memberStore.memberName);
 const memberAddress = computed(() => memberStore.memberAddress);
 const isLoggedIn = computed(() => memberStore.isLoggedIn);
@@ -179,6 +183,14 @@ const fetchPopularPosts = async () => {
     console.error("실시간 인기글 불러오기 오류:", error);
   }
 };
+
+const fetchPopolarClub = async () => {
+  try {
+    await clubStore.getClubsByLocation(sessionStorage.getItem(""))
+  } catch {
+
+  }
+}
 
 // 컴포넌트 마운트 시 게시글과 인기글 가져오기
 onMounted(async () => {
