@@ -8,11 +8,17 @@
       <h1 class="text-3xl font-title text-darkBlue mb-6">운동 클래스 🏋️‍♀️</h1>
 
       <!-- 검색 섹션 -->
-      <div class="flex justify-end items-center mb-8 space-x-4 w-1/4 ml-auto">
-        <input v-model="searchQuery" type="text" placeholder="클래스 검색하기"
-          class="flex-grow px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-sm" />
-        <button @click="searchClasses"
-          class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm whitespace-nowrap">
+      <div class="flex justify-end items-center mb-8 space-x-4 ml-auto">
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="클래스 검색하기"
+          class="flex-grow px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-sm"
+        />
+        <button
+          @click="searchClasses"
+          class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm whitespace-nowrap"
+        >
           검색
         </button>
       </div>
@@ -22,11 +28,22 @@
         <h2 class="text-xl font-title text-lightBlue mb-4">
           유성구 <span class="text-darkBlue font-title">근처의</span>
         </h2>
-        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
+        <Swiper
+          class="my-swiper"
+          :modules="[Navigation]"
+          :slides-per-view="3"
+          :space-between="20"
+          navigation
+        >
           <SwiperSlide v-for="(classItem, index) in filteredNearbyClasses" :key="index">
-            <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center">
-              {{ classItem.name }}
-            </div>
+            <!-- 클래스 항목을 router-link로 감싸서 클릭 시 상세 페이지로 이동 -->
+            <router-link :to="{ name: 'classesdetail', params: { classNo: classItem.classNo } }">
+              <div
+                class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition"
+              >
+                {{ classItem.className }}
+              </div>
+            </router-link>
           </SwiperSlide>
         </Swiper>
       </div>
@@ -34,18 +51,31 @@
       <!-- 인기 클래스 -->
       <div class="mb-12">
         <h2 class="text-xl font-title text-darkBlue mb-4">평점 높은</h2>
-        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
+        <Swiper
+          class="my-swiper"
+          :modules="[Navigation]"
+          :slides-per-view="3"
+          :space-between="20"
+          navigation
+        >
           <SwiperSlide v-for="(classItem, index) in popularClasses" :key="index">
-            <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center">
-              {{ classItem.name }}
-            </div>
+            <!-- 클래스 항목을 router-link로 감싸서 클릭 시 상세 페이지로 이동 -->
+            <router-link :to="{ name: 'classesdetail', params: { classNo: classItem.classNo } }">
+              <div
+                class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition"
+              >
+                {{ classItem.className }}
+              </div>
+            </router-link>
           </SwiperSlide>
         </Swiper>
       </div>
 
       <!-- 새로운 클래스 만들기 -->
       <div v-if="memberRole === 'ROLE_INSTRUCTOR'" class="text-center">
-        <p class="text-xl mb-4 text-darkBlue font-title"> <span class="text-lightBlue font-title">강사</span>이신가요?</p>
+        <p class="text-xl mb-4 text-darkBlue font-title">
+          <span class="text-lightBlue font-title">강사</span>이신가요?
+        </p>
         <router-link to="/register-classes">
           <button class="px-6 py-3 bg-lightBlue text-white font-title rounded-md hover:bg-darkBlue">
             👉 새로운 클래스 만들기
@@ -65,6 +95,7 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper";
 import { useMemberStore } from "../stores/member";
 import { useClassStore } from "../stores/class"; // Pinia의 class.js 가져오기
+import Swal from "sweetalert2";
 import "swiper/css";
 import "swiper/css/navigation";
 
@@ -77,45 +108,33 @@ const memberRole = computed(() => memberStore.memberRole);
 // 검색 쿼리 상태
 const searchQuery = ref("");
 
-// 추천 클래스와 인기 클래스 데이터
+// 클래스 데이터
 const nearbyClasses = ref([]);
 
 // 컴포넌트 로드 시 클래스 데이터 가져오기
 onMounted(async () => {
-  loaded();
-  console.log(classStore.classList)
-  // await classStore.fetchClassList(); // 전체 클래스 데이터 가져오기
-  // nearbyClasses.value = classStore.classList; // 전체 클래스를 추천 클래스 리스트에 반영
+  await classStore.getClassList(); // 전체 클래스 데이터 가져오기
+  nearbyClasses.value = classStore.classList; // 클래스 데이터를 설정
 });
 
-const loaded = () => {
-  new Promise(async () => {
-    await classStore.getClassList(); // 전체 클래스 데이터 가져오기
-    nearbyClasses.value = classStore.classList; // 전체 클래스를 추천 클래스 리스트에 반영
-  })
-}
-
+// 필터링된 근처 클래스
 const filteredNearbyClasses = computed(() => {
-    if (!Array.isArray(nearbyClasses.value)) return [];
-    return nearbyClasses.value.filter((c) => c.name.includes(searchQuery.value));
+  if (!Array.isArray(nearbyClasses.value)) return [];
+  return nearbyClasses.value.filter((c) => c.className.includes(searchQuery.value));
 });
 
+// 인기 클래스
 const popularClasses = computed(() => {
-    if (!Array.isArray(classStore.classList)) return [];
-    return classStore.classList.filter((c) => c.isPopular);
+  if (!Array.isArray(classStore.classList)) return [];
+  return classStore.classList.filter((c) => c.isPopular);
 });
-
 
 // 검색 버튼 클릭 이벤트
-async function searchClasses() {
+function searchClasses() {
   if (!searchQuery.value.trim()) {
     Swal.fire("알림", "검색어를 입력해주세요.", "warning");
-    return;
   }
-  // 추천 클래스 중 검색어 포함된 것만 필터링
-  filteredNearbyClasses.value = classStore.classList.filter((c) =>
-    c.name.includes(searchQuery.value)
-  );
+  // `searchQuery`가 변경되면 `filteredNearbyClasses`가 자동으로 업데이트됩니다.
 }
 </script>
 

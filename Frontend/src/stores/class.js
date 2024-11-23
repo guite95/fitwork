@@ -112,10 +112,11 @@ export const useClassStore = defineStore('class', () => {
   // 새로운 클래스 등록
   const createClass = async (classData, file) => {
     const formData = new FormData();
-    formData.append('class', new Blob([JSON.stringify(classData)], { type: 'application/json' }));
+    formData.append('classes', new Blob([JSON.stringify(classData)], { type: 'application/json' }));
     if (file) {
       formData.append('file', file);
     }
+    console.log(classData)
 
     try {
       await axios.post(`${REST_API_URL}/register/class`, formData, {
@@ -135,7 +136,7 @@ export const useClassStore = defineStore('class', () => {
   const modifyClass = async (classNo, updatedClass, file) => {
     try {
       const formData = new FormData();
-      formData.append('class', new Blob([JSON.stringify(updatedClass)], { type: 'application/json' }));
+      formData.append('classes', new Blob([JSON.stringify(updatedClass)], { type: 'application/json' }));
       if (file) {
         formData.append('file', file);
       }
