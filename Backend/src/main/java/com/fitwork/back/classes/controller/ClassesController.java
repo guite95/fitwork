@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -176,26 +175,28 @@ public class ClassesController {
     @PostMapping("/register/class")
     public ResponseEntity<Object> registClass(@RequestPart Classes classes, @RequestPart(required = false) MultipartFile file) {
         try {
-            String oriName = file.getOriginalFilename();
-            
-            if (oriName != null && oriName.length() > 0) {
-            	SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
-            	String subDir = sdf.format(new Date());
-            	
-            	File dir = new File("c://SSAFY/final-prj/classes/img" + subDir);
-            	dir.mkdirs();
-            	
-            	String systemName = UUID.randomUUID().toString() + oriName;
-            	
-            	file.transferTo(new File(dir, systemName));
-            	
-            	ClassesFile classesFile = new ClassesFile();
-            	classesFile.setPath(subDir);
-            	classesFile.setOriName(oriName);
-            	classesFile.setSystemName(systemName);
-            	
-            	classes.setClassesFile(classesFile);
-            }
+        	if (file != null) {
+        		String oriName = file.getOriginalFilename();
+        		
+        		if (oriName != null && oriName.length() > 0) {
+        			SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
+        			String subDir = sdf.format(new Date());
+        			
+        			File dir = new File("c://SSAFY/final-prj/classes/img" + subDir);
+        			dir.mkdirs();
+        			
+        			String systemName = UUID.randomUUID().toString() + oriName;
+        			
+        			file.transferTo(new File(dir, systemName));
+        			
+        			ClassesFile classesFile = new ClassesFile();
+        			classesFile.setPath(subDir);
+        			classesFile.setOriName(oriName);
+        			classesFile.setSystemName(systemName);
+        			
+        			classes.setClassesFile(classesFile);
+        		}
+        	}
             
             classesService.registClass(classes);
             return ResponseEntity.status(HttpStatus.CREATED).body("클래스가 성공적으로 등록되었습니다.");
@@ -205,13 +206,43 @@ public class ClassesController {
     }
 
     @PutMapping("/modify/{classNo}")
-    public ResponseEntity<Object> modifyClass(@PathVariable int classNo, @RequestBody Classes classes) {
+    public ResponseEntity<Object> modifyClass(@PathVariable int classNo, @RequestPart Classes classes, @RequestPart(required = false) MultipartFile file) {
         try {
-            classes.setClassNo(classNo);
+        	Classes tmp = classesService.classDetail(classNo);
+        	
+        	if (file != null) {
+        		if (tmp.getClassesFile() != null) {
+        			classesService.deleteClassFile(tmp.getClassesFile().getFileNo());
+        		}
+        		String oriName = file.getOriginalFilename();
+        		
+        		if (oriName != null && oriName.length() > 0) {
+        			SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
+        			String subDir = sdf.format(new Date());
+        			
+        			File dir = new File("c://SSAFY/final-prj/classes/img" + subDir);
+        			dir.mkdirs();
+        			
+        			String systemName = UUID.randomUUID().toString() + oriName;
+        			
+        			file.transferTo(new File(dir, systemName));
+        			
+        			ClassesFile classesFile = new ClassesFile();
+        			classesFile.setPath(subDir);
+        			classesFile.setOriName(oriName);
+        			classesFile.setSystemName(systemName);
+        			
+        			classes.setClassesFile(classesFile);
+        		}
+        	}
+        	
+        	tmp.setClassName(classes.getClassName());
+        	tmp.setLocation(classes.getLocation());
+        	tmp.setTag(classes.getTag());
+        	tmp.setDescription(classes.getDescription());
+        	tmp.setPrice(classes.getPrice());
             
-            
-            
-            classesService.modifyClassInfo(classes);
+            classesService.modifyClassInfo(tmp);
             return ResponseEntity.status(HttpStatus.OK).body("클래스 정보가 수정되었습니다.");
         } catch (Exception e) {
             return handleException(e);

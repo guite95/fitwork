@@ -28,7 +28,7 @@ export const useClassStore = defineStore('class', () => {
     const loading = ref(false);
 
     // 전체 클래스 목록 가져오기
-    const fetchClassList = async () => {
+    const getClassList = async () => {
         loading.value = true;
         try {
             await axios.get(`${REST_API_URL}/list/all`, {
@@ -46,15 +46,12 @@ export const useClassStore = defineStore('class', () => {
     };
 
     // 위치별 클래스 검색
-    const fetchClassesByLocation = async (location) => {
+    const getClassesByLocation = async (location) => {
         loading.value = true;
         try {
-            const response = await axios.get(`${REST_API_URL}/location/${location}`, {
-                headers: {
-                    'Authorization': sessionStorage.getItem('memberToken'),
-                }
-            });
+            const response = await axios.get(`${REST_API_URL}/list/location/${location}`);
             filteredClasses.value = response.data;
+            console.log(filteredClasses.value)
         } catch (error) {
             customSwal.fire('에러', '위치별 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
         } finally {
@@ -63,10 +60,10 @@ export const useClassStore = defineStore('class', () => {
     };
 
     // 카테고리별 클래스 검색
-    const fetchClassesByCategory = async (category) => {
+    const getClassesByCategory = async (category) => {
         loading.value = true;
         try {
-            const response = await axios.get(`${REST_API_URL}/category/${category}`, {
+            const response = await axios.get(`${REST_API_URL}/list/category/${category}`, {
                 headers: {
                     'Authorization': sessionStorage.getItem('memberToken'),
                 }
@@ -80,10 +77,10 @@ export const useClassStore = defineStore('class', () => {
     };
 
     // 성별 필터 클래스 검색
-    const fetchClassesByGender = async (gender) => {
+    const getClassesByGender = async (gender) => {
         loading.value = true;
         try {
-            const response = await axios.get(`${REST_API_URL}/gender/${gender}`, {
+            const response = await axios.get(`${REST_API_URL}/list/gender/${gender}`, {
                 headers: {
                     'Authorization': sessionStorage.getItem('memberToken'),
                 }
@@ -168,10 +165,10 @@ export const useClassStore = defineStore('class', () => {
         userMemberedClasses,
         leaderedClasses,
         loading,
-        fetchClassList,
-        fetchClassesByLocation,
-        fetchClassesByCategory,
-        fetchClassesByGender,
+        getClassList,
+        getClassesByLocation,
+        getClassesByCategory,
+        getClassesByGender,
         createClass,
         modifyClass,
         deleteClass,

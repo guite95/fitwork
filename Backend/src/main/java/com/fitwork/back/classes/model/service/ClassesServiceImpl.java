@@ -93,6 +93,11 @@ public class ClassesServiceImpl implements ClassesService {
 	public void modifyClassInfo(Classes classes) {
 		classesRepository.updateClassInfo(classes);
 	}
+	
+	@Override
+	public void deleteClassFile(int fileNo) {
+		classesRepository.deleteClassFile(fileNo);
+	}
 
 	@Override
 	public void deleteClassInfo(int classNo) {

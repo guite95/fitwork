@@ -47,7 +47,7 @@ public class SecurityConfig {
 								"/api-member/**",
 								"/", "/file/**", 
 								"/api-board/list", 
-								"api-class/list/**", 
+								"/api-class/list/**", 
 								"/api-club/list/**").permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.anyRequest().authenticated());

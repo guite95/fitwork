@@ -108,6 +108,8 @@ public interface ClassesService {
 	 */
 	public void modifyClassInfo(Classes classes);
 	
+	public void deleteClassFile(int fileNo);
+	
 	/**
 	 * 클래스 정보 삭제
 	 * @param classNo
