@@ -96,6 +96,8 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public void modifyClubInfo(Club club) {
+    	club.getClubFile().setClubNo(club.getClubNo());
+    	clubRepository.insertClubFile(club.getClubFile());
         clubRepository.updateClubInfo(club);
     }
     
