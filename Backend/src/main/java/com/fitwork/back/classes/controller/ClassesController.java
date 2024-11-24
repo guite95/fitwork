@@ -232,7 +232,7 @@ public class ClassesController {
         			classesFile.setOriName(oriName);
         			classesFile.setSystemName(systemName);
         			
-        			classes.setClassesFile(classesFile);
+        			tmp.setClassesFile(classesFile);
         		}
         	}
         	

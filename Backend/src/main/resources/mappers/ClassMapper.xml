@@ -90,7 +90,7 @@
 	
 	<!-- 클래스 이미지 등록-->
 	<insert id="insertClassFile" parameterType="ClassesFile">
-		INSERT INTO board_file(ori_name, system_name, path, class_no)
+		INSERT INTO class_file(ori_name, system_name, path, class_no)
 		VALUES(#{oriName}, #{systemName}, #{path}, #{classNo})
 	</insert>
 	

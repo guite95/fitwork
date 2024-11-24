@@ -233,7 +233,7 @@ public class ClubController {
         			clubFile.setOriName(oriName);
         			clubFile.setSystemName(systemName);
         			
-        			club.setClubFile(clubFile);
+        			tmp.setClubFile(clubFile);
         		}
         		
         	}

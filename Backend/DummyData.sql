@@ -96,4 +96,6 @@ INSERT INTO comment (writer, content, reg_date, board_no) VALUES
 ('yesul09', '필라테스 강사님이 너무 잘 가르쳐주셔서 너무 좋았어요!', '2024-11-09 11:30:00', 6);
 
 
-
+#클래스 더미
+INSERT INTO class (leader, class_name, tag, location, description, price) VALUES
+('귤', '테스트', '#20대', '서울시 강남구', 'ㅇㅇ', 1);
