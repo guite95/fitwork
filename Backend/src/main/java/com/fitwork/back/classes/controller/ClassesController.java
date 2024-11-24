@@ -22,6 +22,7 @@ import com.fitwork.back.classes.model.dto.Classes;
 import com.fitwork.back.classes.model.dto.ClassesFile;
 import com.fitwork.back.classes.model.service.ClassesService;
 
+
 @RestController
 @RequestMapping("/api-class")
 public class ClassesController {
@@ -63,7 +64,7 @@ public class ClassesController {
 		}
 	}
 
-	@GetMapping("{classNo}")
+	@GetMapping("/detail/{classNo}")
 	public ResponseEntity<Object> getClassesDetail(@PathVariable int classNo) {
 		try {
 			Classes classes = classesService.classDetail(classNo);
