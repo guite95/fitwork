@@ -64,8 +64,8 @@ export const useBoardStore = defineStore('board', () => {
             });
     };
 
-    const writeBoard = (formData) => {
-        return axios.post(`${REST_API_URL}/write`, formData, {
+    const writeBoard = async (formData) => {
+        return await axios.post(`${REST_API_URL}/write`, formData, {
             headers: {
                 'Authorization': sessionStorage.getItem('memberToken'),
                 'Content-Type': 'multipart/form-data',
@@ -102,8 +102,8 @@ export const useBoardStore = defineStore('board', () => {
             });
     };
 
-    const modifyBoard = (boardNo, formData) => {
-        return axios.put(`${REST_API_URL}/modify/${boardNo}`, formData, {
+    const modifyBoard = async (boardNo, formData) => {
+        return await axios.put(`${REST_API_URL}/modify/${boardNo}`, formData, {
             headers: {
                 'Authorization': sessionStorage.getItem('memberToken'),
                 'Content-Type': 'multipart/form-data',
@@ -140,8 +140,8 @@ export const useBoardStore = defineStore('board', () => {
             });
     };
 
-    const deleteBoard = (boardNo) => {
-        return axios.delete(`${REST_API_URL}/${boardNo}`, {
+    const deleteBoard = async (boardNo) => {
+        return await axios.delete(`${REST_API_URL}/${boardNo}`, {
             headers: {
                 'Authorization': sessionStorage.getItem('memberToken'),
             }
@@ -215,8 +215,8 @@ export const useBoardStore = defineStore('board', () => {
             });
     };
 
-    const getComments = (boardNo) => {
-        return axios.get(`${REST_API_URL}/comment/${boardNo}`, {
+    const getComments = async (boardNo) => {
+        return await axios.get(`${REST_API_URL}/comment/${boardNo}`, {
             headers: {
                 'Authorization': sessionStorage.getItem('memberToken'),
             }
@@ -241,5 +241,55 @@ export const useBoardStore = defineStore('board', () => {
             });
     };
 
-    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail, deleteBoard, board, addComment, getComments };
+    const likePlus = async (boardNo) => {
+        return await axios.put(`${REST_API_URL}/puls/${boardNo}`, sessionStorage.getItem("memberId"), {
+            headers: {
+                'Authorization': sessionStorage.getItem('memberToken'),
+            }
+        })
+            .then((response) => {
+                console.log(response.data)
+            })
+            .catch((err) => {
+                console.error(err);
+                Swal.fire({
+                    icon: 'error',
+                    title: '좋아요 오류',
+                    text: '오류가 발생했습니다. 다시 시도해 주세요.',
+                    customClass: {
+                        title: 'custom-swal-title',
+                        text: 'custom-swal-text',
+                        confirmButton: 'custom-swal-button',
+                    },
+                    buttonsStyling: false,
+                });
+            })
+    }
+
+    const likeMinus = async (boardNo) => {
+        return await axios.put(`${REST_API_URL}/minus/${boardNo}`, sessionStorage.getItem("memberId"), {
+            headers: {
+                'Authorization': sessionStorage.getItem('memberToken'),
+            }
+        })
+            .then((response) => {
+                console.log(response.data)
+            })
+            .catch((err) => {
+                console.error(err);
+                Swal.fire({
+                    icon: 'error',
+                    title: '좋아요 취소 오류',
+                    text: '오류가 발생했습니다. 다시 시도해 주세요.',
+                    customClass: {
+                        title: 'custom-swal-title',
+                        text: 'custom-swal-text',
+                        confirmButton: 'custom-swal-button',
+                    },
+                    buttonsStyling: false,
+                });
+            })
+    }
+
+    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail, deleteBoard, board, addComment, getComments, likePlus, likeMinus };
 });

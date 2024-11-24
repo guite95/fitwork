@@ -274,24 +274,24 @@ public class BoardController {
 		}
 	}
 	
-//	/**
-//	 * 회원이 쓴 댓글 조회
-//	 * @param nickname
-//	 * @return
-//	 */
-//	@GetMapping("/comment/member/{nickname}")
-//	public ResponseEntity<Object> getMemberComment(@PathVariable String nickname) {
-//		try {
-//			List<Comment> commentList = boardService.userComment(nickname);
-//			if (commentList == null) {
-//				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("작성한 댓글이 없습니다");
-//			}
-//			return ResponseEntity.status(HttpStatus.OK).body(commentList);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
-//		}
-//	}
+	/**
+	 * 회원이 쓴 댓글 조회
+	 * @param nickname
+	 * @return
+	 */
+	@GetMapping("/comment/member/{nickname}")
+	public ResponseEntity<Object> getMemberComment(@PathVariable String nickname) {
+		try {
+			List<Comment> commentList = boardService.userComment(nickname);
+			if (commentList == null) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("작성한 댓글이 없습니다");
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(commentList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
+		}
+	}
 	
 	/**
 	 * 댓글 수정
@@ -324,5 +324,7 @@ public class BoardController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
 		}
 	}
+	
+	
 	
 }
