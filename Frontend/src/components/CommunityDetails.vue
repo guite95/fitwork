@@ -54,17 +54,27 @@
         <h2 class="text-lg font-title text-greyBlue mb-4">댓글</h2>
         <ul class="space-y-4">
           <li v-for="(comment, index) in comments" :key="index">
-            <div class="flex justify-between">
+            <div class="flex justify-between items-center">
               <p class="text-darkBlue text-sm font-title">{{ index + 1 }}. {{ comment.content }}</p>
-              <div class="text-gray-500 text-xs font-title">
+              <div class="text-gray-500 text-xs font-title flex items-center">
                 <span class="font-title text-greyBlue text-sm">{{ comment.writer }}</span>
                 <span class="ml-8">{{ comment.createdAt }}</span>
-                <span class="ml-8">{{ comment.regDate }}</span>
+                <span class="ml-8 flex items-center">
+                  {{ comment.regDate }}
+                  <!-- 댓글 작성자인 경우에만 삭제 버튼 표시 -->
+                  <button v-if="comment.writer === memberStore.memberNickname"
+                    @click="deleteComment(comment.commentNo, index)"
+                    class="ml-2 w-6 h-6 bg-darkBlue text-white text-xs font-title rounded-full flex items-center justify-center hover:bg-lightBlue transition duration-300"
+                    aria-label="댓글 삭제">
+                    &times;
+                  </button>
+                </span>
               </div>
             </div>
           </li>
         </ul>
       </div>
+
 
       <!-- Add Comment Section -->
       <div class="border-t pt-6 mt-6">
@@ -180,6 +190,7 @@ const addComment = () => {
     return;
   }
 
+
   // 서버로 댓글 추가 요청
   store
     .addComment(boardNo, { content: newComment.value, writer: memberStore.memberNickname, boardNo: boardNo })
@@ -195,6 +206,30 @@ const addComment = () => {
     .catch((error) => {
       console.error('댓글 추가 중 오류 발생:', error);
     });
+};
+
+const deleteComment = (commentNo, index) => {
+  Swal.fire({
+    title: "정말 삭제하시겠습니까?",
+    text: "댓글을 삭제하시겠습니까?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "삭제",
+    cancelButtonText: "취소",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      store
+        .deleteComment(commentNo) // board.js의 deleteComment 호출
+        .then(() => {
+          comments.value.splice(index, 1); // 로컬 상태에서 댓글 제거
+        })
+        .catch((error) => {
+          console.error("댓글 삭제 중 오류 발생:", error);
+        });
+    }
+  });
 };
 
 // 돌아가기 버튼 클릭 핸들러

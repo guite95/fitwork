@@ -209,6 +209,19 @@ export const useClassStore = defineStore('class', () => {
     }
   };
 
+  const registerClass = async (userId, classNo) => {
+    try {
+      await axios.post(`${REST_API_URL}/register/${userId}/${classNo}`, null, {
+        headers: {
+          Authorization: sessionStorage.getItem('memberToken'),
+        },
+      });
+      customSwal.fire('성공', '클래스 가입 신청이 완료되었습니다.', 'success');
+    } catch (error) {
+      customSwal.fire('에러', '클래스 가입 신청 중 문제가 발생했습니다.', 'error');
+      throw error; // 에러가 필요한 경우 상위 컴포넌트로 전달
+    }
+  };
 
 
   return {
@@ -230,5 +243,6 @@ export const useClassStore = defineStore('class', () => {
     getClassDetail,
     getClassesById,
     getClassesByLeader,
+    registerClass,
   };
 });

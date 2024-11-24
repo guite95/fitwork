@@ -84,8 +84,10 @@
 <script setup>
 import { ref, watch, onMounted } from "vue";
 import { useMemberStore } from "../stores/member";
+import { useRouter } from "vue-router";
 
 const memberStore = useMemberStore();
+const router = useRouter();
 
 const currentPassword = ref(""); // Current password input
 const phone = ref(""); // Phone number
@@ -152,8 +154,24 @@ async function handleSubmit() {
         };
 
         await memberStore.modifyMember(updatedInfo); // 서버로 수정된 정보 전송
+
+        // 수정 성공 시 마이페이지로 이동
+        Swal.fire({
+            icon: "success",
+            title: "수정 완료",
+            text: "회원 정보가 성공적으로 수정되었습니다.",
+        }).then(() => {
+            router.push("/mypage"); // 마이페이지로 이동
+        });
     } catch (error) {
         console.error("회원 정보 수정 중 오류가 발생했습니다:", error);
+
+        // 수정 실패 시 알림
+        Swal.fire({
+            icon: "error",
+            title: "수정 실패",
+            text: "회원 정보 수정에 실패했습니다. 다시 시도해주세요.",
+        });
     }
 }
 </script>

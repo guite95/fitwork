@@ -26,11 +26,14 @@
           <SwiperSlide v-for="club in filteredRecommendedClubs" :key="club.clubNo">
             <!-- Wrap the club display with router-link -->
             <router-link :to="{ name: 'clubsdetail', params: { clubNo: club.clubNo } }">
-              <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition">
-                {{ club.clubName }}
+              <div
+                class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
+                <img :src="getClubImageUrl(club)" alt="Club Image" class="w-full h-28 object-cover rounded-md mb-2" />
+                <span class="text-center text-darkBlue font-title">{{ club.clubName }}</span>
               </div>
             </router-link>
           </SwiperSlide>
+
         </Swiper>
       </div>
 
@@ -41,11 +44,14 @@
           <SwiperSlide v-for="club in popularClubs" :key="club.clubNo">
             <!-- Wrap the club display with router-link -->
             <router-link :to="{ name: 'clubsdetail', params: { clubNo: club.clubNo } }">
-              <div class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition">
-                {{ club.clubName }}
+              <div
+                class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
+                <img :src="getClubImageUrl(club)" alt="Club Image" class="w-full h-28 object-cover rounded-md mb-2" />
+                <span class="text-center text-darkBlue font-title">{{ club.clubName }}</span>
               </div>
             </router-link>
           </SwiperSlide>
+
         </Swiper>
       </div>
 
@@ -102,7 +108,9 @@ const filteredRecommendedClubs = computed(() => {
 
 const popularClubs = computed(() => {
   if (!Array.isArray(clubStore.clubList)) return [];
-  return clubStore.clubList.filter((c) => c.isPopular);
+  return [...clubStore.clubList]
+    .filter((c) => c.headCount >= 0) // headCount가 0 이상인 클래스만 필터링
+    .sort((a, b) => b.headCount - a.headCount); // headCount 기준으로 내림차순 정렬
 });
 
 // 검색 버튼 클릭 이벤트
@@ -116,6 +124,15 @@ async function searchClubs() {
     c.clubName.includes(searchQuery.value)
   );
 }
+
+// 이미지 URL 생성 메서드
+const getClubImageUrl = (club) => {
+  if (club.clubFile) {
+    return `http://localhost:8080/file/club${club.clubFile.path}/${club.clubFile.systemName}`;
+  }
+  return '/images/dumbbell.jpg'; // 기본 이미지
+}
+
 </script>
 
 <style scoped>

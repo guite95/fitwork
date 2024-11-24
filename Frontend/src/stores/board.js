@@ -290,5 +290,30 @@ export const useBoardStore = defineStore('board', () => {
             })
     }
 
-    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail, deleteBoard, board, addComment, getComments, likePlus, likeMinus };
+    const deleteComment = async (commentNo) => {
+        try {
+          await axios.delete(`${REST_API_URL}/comment/${commentNo}`, {
+            headers: {
+              Authorization: sessionStorage.getItem("memberToken"),
+            },
+          });
+          Swal.fire({
+            icon: "success",
+            title: "삭제 완료",
+            text: "댓글이 삭제되었습니다.",
+          });
+        } catch (error) {
+          console.error("댓글 삭제 중 오류 발생:", error);
+          Swal.fire({
+            icon: "error",
+            title: "삭제 실패",
+            text: "댓글 삭제 중 문제가 발생했습니다. 다시 시도해주세요.",
+          });
+          throw error; // 필요 시 상위에서 에러 처리 가능
+        }
+      };
+    
+      
+
+    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail, deleteBoard, board, addComment, getComments, likePlus, likeMinus, deleteComment };
 });

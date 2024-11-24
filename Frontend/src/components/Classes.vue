@@ -8,17 +8,11 @@
       <h1 class="text-3xl font-title text-darkBlue mb-6">운동 클래스 🏋️‍♀️</h1>
 
       <!-- 검색 섹션 -->
-      <div class="flex justify-end items-center mb-8 space-x-4 ml-auto">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="클래스 검색하기"
-          class="flex-grow px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-sm"
-        />
-        <button
-          @click="searchClasses"
-          class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm whitespace-nowrap"
-        >
+      <div class="flex justify-end items-center mb-8 space-x-4 w-1/4 ml-auto">
+        <input v-model="searchQuery" type="text" placeholder="클래스 검색하기"
+          class="flex-grow px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-sm" />
+        <button @click="searchClasses"
+          class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm whitespace-nowrap">
           검색
         </button>
       </div>
@@ -28,20 +22,15 @@
         <h2 class="text-xl font-title text-lightBlue mb-4">
           유성구 <span class="text-darkBlue font-title">근처의</span>
         </h2>
-        <Swiper
-          class="my-swiper"
-          :modules="[Navigation]"
-          :slides-per-view="3"
-          :space-between="20"
-          navigation
-        >
-          <SwiperSlide v-for="(classItem, index) in filteredNearbyClasses" :key="index">
+        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
+          <SwiperSlide v-for="(classItem, index) in popularClasses" :key="index">
             <!-- 클래스 항목을 router-link로 감싸서 클릭 시 상세 페이지로 이동 -->
             <router-link :to="{ name: 'classesdetail', params: { classNo: classItem.classNo } }">
               <div
-                class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition"
-              >
-                {{ classItem.className }}
+                class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
+                <img :src="getClassImageUrl(classItem)" alt="Class Image"
+                  class="w-full h-28 object-cover rounded-md mb-2" />
+                <span class="text-center text-darkBlue font-title">{{ classItem.className }}</span>
               </div>
             </router-link>
           </SwiperSlide>
@@ -51,23 +40,19 @@
       <!-- 인기 클래스 -->
       <div class="mb-12">
         <h2 class="text-xl font-title text-darkBlue mb-4">평점 높은</h2>
-        <Swiper
-          class="my-swiper"
-          :modules="[Navigation]"
-          :slides-per-view="3"
-          :space-between="20"
-          navigation
-        >
+        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
           <SwiperSlide v-for="(classItem, index) in popularClasses" :key="index">
             <!-- 클래스 항목을 router-link로 감싸서 클릭 시 상세 페이지로 이동 -->
             <router-link :to="{ name: 'classesdetail', params: { classNo: classItem.classNo } }">
               <div
-                class="bg-gray-100 p-4 rounded-md shadow h-24 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition"
-              >
-                {{ classItem.className }}
+                class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
+                <img :src="classItem.classesFile || '/images/dumbbell.jpg'" alt="Class Image"
+                  class="w-full h-28 object-cover rounded-md mb-2" />
+                <span class="text-center text-darkBlue font-title">{{ classItem.className }}</span>
               </div>
             </router-link>
           </SwiperSlide>
+
         </Swiper>
       </div>
 
@@ -126,7 +111,9 @@ const filteredNearbyClasses = computed(() => {
 // 인기 클래스
 const popularClasses = computed(() => {
   if (!Array.isArray(classStore.classList)) return [];
-  return classStore.classList.filter((c) => c.isPopular);
+  return [...classStore.classList]
+    .filter((c) => c.headCount >= 0) // headCount가 0 이상인 클래스만 필터링
+    .sort((a, b) => b.headCount - a.headCount); // headCount 기준으로 내림차순 정렬
 });
 
 // 검색 버튼 클릭 이벤트
@@ -136,6 +123,17 @@ function searchClasses() {
   }
   // `searchQuery`가 변경되면 `filteredNearbyClasses`가 자동으로 업데이트됩니다.
 }
+
+// 이미지 URL 생성 메서드
+const getClassImageUrl = (classItem) => {
+  console.log(classItem)
+  if (classItem.classesFile) {
+    return `http://localhost:8080/file/class${classItem.classesFile.path}/${classItem.classesFile.systemName}`;
+  }
+  return '/images/dumbbell.jpg'; // 기본 이미지
+};
+
+
 </script>
 
 <style scoped>
