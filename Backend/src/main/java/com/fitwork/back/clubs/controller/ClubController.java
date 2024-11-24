@@ -109,7 +109,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/registed/{id}")
+    @GetMapping("/list/registed/{id}")
     public ResponseEntity<Object> getRegistedClubs(@PathVariable String id) {
         try {
             List<Club> list = clubService.registeredClub(id);
@@ -120,7 +120,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/membered/{id}")
+    @GetMapping("/list/membered/{id}")
     public ResponseEntity<Object> getMemberedClubs(@PathVariable String id) {
         try {
             List<Club> list = clubService.memberedClub(id);
@@ -131,7 +131,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/leader/{leader}")
+    @GetMapping("/list/leader/{leader}")
     public ResponseEntity<Object> getLeaderedClubs(@PathVariable String leader) {
         try {
             List<Club> list = clubService.leaderedClub(leader);

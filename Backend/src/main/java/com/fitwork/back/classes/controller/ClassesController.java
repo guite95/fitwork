@@ -110,7 +110,7 @@ public class ClassesController {
 		}
 	}
 
-	@GetMapping("/registed/{id}")
+	@GetMapping("/list/registed/{id}")
 	public ResponseEntity<Object> getRegistedClasses(@PathVariable String id) {
 		try {
 			List<Classes> list = classesService.registerdClass(id);
@@ -121,7 +121,7 @@ public class ClassesController {
 		}
 	}
 
-	@GetMapping("/membered/{id}")
+	@GetMapping("/list/membered/{id}")
 	public ResponseEntity<Object> getMemberedClasses(@PathVariable String id) {
 		try {
 			List<Classes> list = classesService.memberedClass(id);
@@ -132,7 +132,7 @@ public class ClassesController {
 		}
 	}
 
-	@GetMapping("/leader/{leader}")
+	@GetMapping("/list/leader/{leader}")
 	public ResponseEntity<Object> getLeaderedClasses(@PathVariable String leader) {
 		try {
 			List<Classes> list = classesService.leaderedClass(leader);
