@@ -125,7 +125,7 @@ const loadClassDetails = async () => {
     classData.value = store.classDetail;
 
     if (classData.value.classesFile) {
-      imgSrc.value = `http://localhost:8080/file/class${classData.value.classesFile.path}/${classData.value.classesFile.systemName}`;
+      imgSrc.value = `http://:192.168.210.83:8080/file/class${classData.value.classesFile.path}/${classData.value.classesFile.systemName}`;
     }
 
     comments.value = classData.value.comments || [];

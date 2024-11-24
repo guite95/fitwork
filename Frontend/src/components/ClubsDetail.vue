@@ -130,7 +130,7 @@ const loadClubDetails = async () => {
     club.value = store.clubDetail;
 
     if (club.value.clubFile) {
-      imgSrc.value = `http://localhost:8080/file/club${club.value.clubFile.path}/${club.value.clubFile.systemName}`;
+      imgSrc.value = `http://192.168.210.83:8080/file/club${club.value.clubFile.path}/${club.value.clubFile.systemName}`;
     }
 
     comments.value = club.value.comments || [];

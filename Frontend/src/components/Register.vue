@@ -157,7 +157,7 @@ import Swal from "sweetalert2";
 import '@/assets/swal_custom.css';
 
 // const REST_API_URL = `http://192.168.210.83:8080/api-member`; // API URL
-const REST_API_URL = `http://localhost:8080/api-member`; // API URL
+const REST_API_URL = `http://192.168.210.83:8080/api-member`; // API URL
 const router = useRouter(); // Router 인스턴스
 
 // Form data

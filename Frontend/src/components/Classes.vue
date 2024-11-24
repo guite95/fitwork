@@ -133,7 +133,7 @@ const popularClasses = computed(() => {
 // 이미지 URL 생성 메서드
 const getClassImageUrl = (classItem) => {
   if (classItem.classesFile) {
-    return `http://localhost:8080/file/class${classItem.classesFile.path}/${classItem.classesFile.systemName}`;
+    return `http://192.168.210.83:8080/file/class${classItem.classesFile.path}/${classItem.classesFile.systemName}`;
   }
   return "/images/dumbbell.jpg"; // 기본 이미지
 };

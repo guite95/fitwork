@@ -127,7 +127,7 @@ const popularClubs = computed(() => {
 // 이미지 URL 생성 메서드
 const getClubImageUrl = (club) => {
   if (club.clubFile) {
-    return `http://localhost:8080/file/club${club.clubFile.path}/${club.clubFile.systemName}`;
+    return `http://192.168.210.83:8080/file/club${club.clubFile.path}/${club.clubFile.systemName}`;
   }
   return "/images/dumbbell.jpg"; // 기본 이미지
 };

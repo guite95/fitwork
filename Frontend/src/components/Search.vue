@@ -90,9 +90,9 @@ const currentPage = ref(1); // 현재 페이지
 // 이미지 URL 생성 메서드
 const getItemImageUrl = (item) => {
     if (searchType.value === "클럽" && item.clubFile) {
-        return `http://localhost:8080/file/club${item.clubFile.path}/${item.clubFile.systemName}`;
+        return `http://192.168.210.83:8080/file/club${item.clubFile.path}/${item.clubFile.systemName}`;
     } else if (searchType.value === "클래스" && item.classesFile) {
-        return `http://localhost:8080/file/class${item.classesFile.path}/${item.classesFile.systemName}`;
+        return `http://192.168.210.83:8080/file/class${item.classesFile.path}/${item.classesFile.systemName}`;
     }
     return "/images/dumbbell.jpg"; // 기본 이미지
 };

@@ -126,7 +126,7 @@ const detail = async () => {
 
     // 첨부파일이 있는 경우에만 imgSrc 설정
     if (board.value.boardFile) {
-      imgSrc.value = `http://localhost:8080/file/board${board.value.boardFile.path}/${board.value.boardFile.systemName}`;
+      imgSrc.value = `http://192.168.210.83:8080/file/board${board.value.boardFile.path}/${board.value.boardFile.systemName}`;
     }
 
     // 댓글 불러오기
