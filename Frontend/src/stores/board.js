@@ -21,7 +21,6 @@ export const useBoardStore = defineStore('board', () => {
         })
             .then((response) => {
                 boardList.value = response.data;
-                console.log(boardList.value)
             })
             .catch((err) => {
                 console.error(err);

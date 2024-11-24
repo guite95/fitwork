@@ -52,7 +52,7 @@
             <div class="bg-white shadow-md rounded-lg p-4">
               <!-- 이미지 추가 -->
               <img src="/images/dumbbell.jpg" alt="Class Image" class="w-full h-40 object-cover rounded-md mb-4" />
-              <p class="text-gray-800 font-medium text-sm">{{ exerciseClass }}</p>
+              <p class="text-gray-800 font-medium text-sm">{{ exerciseClass.className }}</p>
             </div>
           </SwiperSlide>
         </Swiper>
@@ -86,7 +86,7 @@
 
 
 <script setup>
-import { computed, ref, onMounted, watch } from "vue";
+import { computed, ref, onMounted, watch, onBeforeMount, onBeforeUpdate } from "vue";
 import Header from "./Header.vue";
 import Footer from "./Footer.vue"; // Footer 컴포넌트 추가
 import { useRouter, useRoute } from "vue-router";
@@ -154,7 +154,7 @@ const fetchPopularPosts = async () => {
         .slice()
         .sort((a, b) => b.viewCnt - a.viewCnt)
         .slice(0, 4);
-      console.log("Popular posts fetched successfully:", popularPosts.value);
+      console.log("Popular posts fetched successfully");
     } else {
       console.warn("게시글 목록이 비어있습니다.");
       popularPosts.value = [];
@@ -164,10 +164,51 @@ const fetchPopularPosts = async () => {
   }
 };
 
+const fetchAllClub = async () => {
+  try {
+    await clubStore.getClubList();
+
+    if (Array.isArray(clubStore.clubList) && clubStore.clubList.length > 0) {
+      clubs.value = clubStore.clubList
+      .slice()
+      .sort((a, b) => b.headCount - a.headCount)
+      .slice(0, 10);
+      console.log("전체 클럽 로딩 완료", clubs.value);
+    } else {
+      console.log("클럽 목록이 비어있습니다");
+      clubs.value = [];
+    }
+  } catch (error) {
+    console.error("전체 클럽 불러오기 오류", error)
+  }
+}
+
+const fetchAllClass = async () => {
+  try {
+    await classStore.getClassList();
+
+    if (Array.isArray(classStore.classList) && classStore.classList.length > 0) {
+      classes.value = classStore.classList
+      .slice()
+      .sort((a, b) => b.headCount - a.headCount)
+      .slice(0, 10);
+      console.log("전체 클래스 로딩 완료", classes.value);
+    } else {
+      console.log("클래스 목록이 비어있습니다");
+      classes.value = [];
+    }
+  } catch (error) {
+    console.error("전체 클래스 가져오기 오류", error)
+  }
+}
+
 const fetchPopolarClub = async () => {
   try {
-    await clubStore.getClubsByLocation(memberDistrict.value)
-    console.log(Array.isArray(clubStore.filteredClubs))
+    if (!isLoggedIn) {
+      await clubStore.getClubsByLocation(" ")
+    } else {
+      await clubStore.getClubsByLocation(memberDistrict.value)
+    }
     if (Array.isArray(clubStore.filteredClubs) && clubStore.filteredClubs.length > 0) {
       clubs.value = clubStore.filteredClubs
       .slice()
@@ -184,8 +225,11 @@ const fetchPopolarClub = async () => {
 
 const fetchPopolarClass = async () => {
   try {
-    await classStore.getClassesByLocation(memberDistrict.value)
-    console.log(Array.isArray(classStore.filteredClasses))
+    if (!isLoggedIn) {
+      await classStore.getClassesByLocation(" ")
+    } else {
+      await classStore.getClassesByLocation(memberDistrict.value)
+    }
     if (Array.isArray(classStore.filteredClasses) && classStore.filteredClasses.length > 0) {
       classes.value = classStore.filteredClasses
       .slice()
@@ -202,9 +246,9 @@ const fetchPopolarClass = async () => {
 
 // 컴포넌트 마운트 시 게시글과 인기글 가져오기
 onMounted(async () => {
-  await fetchPopularPosts(); // 컴포넌트가 마운트될 때 게시글과 인기글 가져오기
-  await fetchPopolarClub();
-  await fetchPopolarClass();
+    await fetchPopularPosts(); // 컴포넌트가 마운트될 때 게시글과 인기글 가져오기
+    await fetchPopolarClub();
+    await fetchPopolarClass();
 });
 
 // Watch for route changes to reload data

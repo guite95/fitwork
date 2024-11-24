@@ -63,7 +63,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("{clubNo}")
+    @GetMapping("/detail/{clubNo}")
     public ResponseEntity<Object> getClubDetail(@PathVariable int clubNo) {
         try {
             Club club = clubService.clubDetail(clubNo);
