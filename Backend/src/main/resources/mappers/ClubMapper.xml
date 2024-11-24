@@ -61,9 +61,9 @@
         FROM 
             club c
         INNER JOIN 
-            club_member cm ON c.club_no = cm.club_no
+            club_regist cr ON c.club_no = cr.club_no
         INNER JOIN 
-            member m ON cm.id = m.id
+            member m ON cr.id = m.id
         WHERE 
             m.id = #{id}
     </select>

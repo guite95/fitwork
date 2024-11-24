@@ -153,11 +153,11 @@ public class ClassesController {
         }
     }
 
-    @DeleteMapping("/register/refuse/{id}/{classNo}")
+    @DeleteMapping("/register/cancel/{id}/{classNo}")
     public ResponseEntity<Object> refuseClassRegistration(@PathVariable String id, @PathVariable int classNo) {
         try {
             classesService.refuseRegist(id, classNo);
-            return ResponseEntity.status(HttpStatus.OK).body("수강 신청이 거절되었습니다.");
+            return ResponseEntity.status(HttpStatus.OK).body("수강 신청이 취소되었습니다.");
         } catch (Exception e) {
             return handleException(e);
         }

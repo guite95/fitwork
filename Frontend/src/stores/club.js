@@ -209,6 +209,7 @@ const modifyClub = async (clubNo, updatedClub, file) => {
     }
   };
 
+  // 클럽 가입 신청
   const registerClub = async (userId, clubNo) => {
     try {
       await axios.post(`${REST_API_URL}/register/${userId}/${clubNo}`, null, {
@@ -220,6 +221,21 @@ const modifyClub = async (clubNo, updatedClub, file) => {
     } catch (error) {
       customSwal.fire('에러', '클럽 가입 신청 중 문제가 발생했습니다.', 'error');
       throw error; // 에러가 필요한 경우 상위 컴포넌트로 전달
+    }
+  };
+  
+  // 클럽 신청 취소
+  const cancelRegistClub = async (id, classNo) => {
+    try {
+      await axios.delete(`${REST_API_URL}/register/cancel/${id}/${classNo}`, {
+        headers: {
+          'Authorization': sessionStorage.getItem('memberToken'),
+        }
+      });
+      customSwal.fire('성공', '클럽 신청이 취소되었습니다', 'success');
+    } catch (error) {
+      customSwal.fire('에러', '클럽 신청 취소 중 문제가 발생했습니다', 'error')
+      throw error;
     }
   };
 
@@ -243,5 +259,6 @@ const modifyClub = async (clubNo, updatedClub, file) => {
     getClubsById,
     getClubsByLeader,
     registerClub,
+    cancelRegistClub,
   };
 });

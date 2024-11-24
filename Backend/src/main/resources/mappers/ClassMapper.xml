@@ -61,9 +61,9 @@
         FROM 
             class c
         INNER JOIN 
-            class_member cm ON c.class_no = cm.class_no
+            class_regist cr ON c.class_no = cr.class_no
         INNER JOIN 
-            member m ON cm.id = m.id
+            member m ON cr.id = m.id
         WHERE 
             m.id = #{id}
 	</select>

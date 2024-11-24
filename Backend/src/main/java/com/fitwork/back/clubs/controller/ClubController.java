@@ -152,11 +152,11 @@ public class ClubController {
         }
     }
 
-    @DeleteMapping("/register/refuse/{id}/{clubNo}")
+    @DeleteMapping("/register/cancel/{id}/{clubNo}")
     public ResponseEntity<Object> refuseClubRegistration(@PathVariable String id, @PathVariable int clubNo) {
         try {
             clubService.refuseRegister(id, clubNo);
-            return ResponseEntity.status(HttpStatus.OK).body("가입 신청이 거절되었습니다.");
+            return ResponseEntity.status(HttpStatus.OK).body("가입 신청이 취소되었습니다.");
         } catch (Exception e) {
             return handleException(e);
         }
