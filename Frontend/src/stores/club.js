@@ -101,9 +101,9 @@ export const useClubStore = defineStore('club', () => {
           'Authorization': sessionStorage.getItem('memberToken'),
         }
       });
-      userRegisteredClasses.value = response.data;
+      userRegisteredClubs.value = response.data;
     } catch {
-      customSwal.fire('에러', '신청한 클래스를 조회하는 중 문제가 발생했습니다', 'error')
+      customSwal.fire('에러', '신청한 클럽을 조회하는 중 문제가 발생했습니다', 'error')
     }
   };
 
@@ -115,9 +115,9 @@ export const useClubStore = defineStore('club', () => {
           'Authorization': sessionStorage.getItem('memberToken'),
         }
       });
-      leaderedClasses.value = response.data;
+      leaderedClubs.value = response.data;
     } catch {
-      customSwal.fire('에러', '개설한 클래스를 조회하는 중 문제가 발생했습니다', 'error')
+      customSwal.fire('에러', '개설한 클럽을 조회하는 중 문제가 발생했습니다', 'error')
     }
   }
 

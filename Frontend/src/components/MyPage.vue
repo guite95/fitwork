@@ -24,7 +24,7 @@
                 class="hover:text-lightBlue font-title"
                 active-class="font-bold text-lightBlue"
               >
-                신청 목록
+                신청/개설 목록
               </router-link>
             </li>
           </ul>
