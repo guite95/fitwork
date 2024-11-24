@@ -168,7 +168,7 @@ const modifyClub = async (clubNo, updatedClub, file) => {
   const getClubDetail = async (clubNo) => {
     loading.value = true;
     try {
-      const response = await axios.get(`${REST_API_URL}/${clubNo}`, {
+      const response = await axios.get(`${REST_API_URL}/detail/${clubNo}`, {
         headers: {
           'Authorization': sessionStorage.getItem('memberToken'),
         },

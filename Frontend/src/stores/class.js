@@ -48,7 +48,7 @@ export const useClassStore = defineStore('class', () => {
   const getClassDetail = async (classNo) => {
     loading.value = true;
     try {
-      const response = await axios.get(`${REST_API_URL}/${classNo}`, {
+      const response = await axios.get(`${REST_API_URL}/detail/${classNo}`, {
         headers: {
           'Authorization': sessionStorage.getItem('memberToken'),
         },
