@@ -23,6 +23,8 @@ public interface ClassesRepository {
 	 */
 	public Classes selectClassByClassNo(int classNo);
 	
+	public ClassesFile selectClassesFileByClassNo(int classNo);
+	
 	/**
 	 * 위치별 클래스 조회
 	 * @param location
