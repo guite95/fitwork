@@ -209,6 +209,7 @@ export const useClassStore = defineStore('class', () => {
     }
   };
 
+  // 클래스 가입 신청
   const registerClass = async (userId, classNo) => {
     try {
       await axios.post(`${REST_API_URL}/register/${userId}/${classNo}`, null, {
@@ -223,6 +224,20 @@ export const useClassStore = defineStore('class', () => {
     }
   };
 
+  // 클래스 신청 취소
+  const cancelRegistClass = async (id, classNo) => {
+    try {
+      await axios.delete(`${REST_API_URL}/register/cancel/${id}/${classNo}`, {
+        headers: {
+          'Authorization': sessionStorage.getItem('memberToken'),
+        }
+      });
+      customSwal.fire('성공', '클래스 신청이 취소되었습니다', 'success');
+    } catch (error) {
+      customSwal.fire('에러', '클래스 신청 취소 중 문제가 발생했습니다', 'error')
+      throw error;
+    }
+  };
 
   return {
     classList,
@@ -244,5 +259,6 @@ export const useClassStore = defineStore('class', () => {
     getClassesById,
     getClassesByLeader,
     registerClass,
+    cancelRegistClass,
   };
 });
