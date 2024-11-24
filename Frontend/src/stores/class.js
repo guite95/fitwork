@@ -133,7 +133,7 @@ export const useClassStore = defineStore('class', () => {
       });
       leaderedClasses.value = response.data;
     } catch {
-      customSwal.fire('에러', '개설한 클래스를 조회하는 중 문제가 발생했습니다', 'error')
+      // customSwal.fire('에러', '개설한 클래스를 조회하는 중 문제가 발생했습니다', 'error')
     }
   }
 
