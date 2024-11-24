@@ -50,6 +50,11 @@
               삭제
             </button>
           </div>
+          <!-- 클럽 신청하기 버튼 -->
+          <button v-else @click="handleJoin"
+            class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
+            클럽 신청하기
+          </button>
         </div>
       </div>
 
@@ -91,6 +96,16 @@ import { useRoute, useRouter } from "vue-router";
 import { useClubStore } from "@/stores/club";
 import { useMemberStore } from "@/stores/member";
 import Swal from "sweetalert2";
+import '@/assets/swal_custom.css';
+
+const customSwal = Swal.mixin({
+  customClass: {
+    title: 'custom-swal-title',
+    text: 'custom-swal-text',
+    confirmButton: 'custom-swal-button',
+  },
+  buttonsStyling: false,
+});
 
 const route = useRoute();
 const router = useRouter();
@@ -125,12 +140,20 @@ const loadClubDetails = async () => {
 };
 
 const addComment = () => {
-  if (newComment.value.trim() === "") {
+  if (!memberStore.memberId) {
     Swal.fire({
       icon: "warning",
-      title: "댓글 내용이 비어있습니다.",
-      text: "댓글을 입력해주세요.",
+      title: "로그인이 필요합니다.",
+      text: "댓글 작성을 위해 로그인해주세요.",
+      confirmButtonText: "로그인하기",
+    }).then(() => {
+      router.push({path: "/sign-in", query: { redirect: router.currentRoute.value.fullPath } });
     });
+    return;
+  }
+  if (newComment.value.trim() === "") {
+    customSwal.fire("댓글 내용이 비어있습니다.", "댓글을 입력해주세요.","warning",
+    );
     return;
   }
 
@@ -139,7 +162,7 @@ const addComment = () => {
     .then(() => {
       comments.value.push({
         content: newComment.value,
-        writer: "현재 사용자",
+        writer: memberStore.memberNickname || "익명",
         createdAt: new Date().toLocaleString(),
       });
       newComment.value = "";
@@ -153,13 +176,12 @@ const handleEdit = () => {
   router.push({
     name: 'registerclubs',
     params: {
-      clubNo: clubNo, // clubId를 수정 페이지로 전달
+      clubNo: clubNo, // clubNo를 수정 페이지로 전달
     },
   });
 };
 
 const handleDelete = () => {
-  // 삭제 로직 추가
   Swal.fire({
     title: "정말로 삭제하시겠습니까?",
     icon: "warning",
@@ -172,7 +194,7 @@ const handleDelete = () => {
       store
         .deleteClub(clubNo)
         .then(() => {
-          Swal.fire("삭제 완료!", "클럽이 삭제되었습니다.", "success");
+          customSwal.fire("삭제 완료!", "클럽이 삭제되었습니다.", "success");
           navigateBack();
         })
         .catch((error) => {
@@ -180,6 +202,34 @@ const handleDelete = () => {
         });
     }
   });
+};
+
+// 수정된 handleJoin 함수
+const handleJoin = () => {
+  if (!memberStore.memberId) {
+    customSwal.fire({
+      icon: "warning",
+      title: "로그인이 필요합니다.",
+      text: "클럽 신청을 위해 로그인해주세요.",
+      confirmButtonText: "로그인하기",
+    }).then(() => {
+      router.push({path: "/sign-in", query: { redirect: router.currentRoute.value.fullPath } });
+    });
+    return;
+  }
+
+  store
+    .registerClub(memberStore.memberId, clubNo)
+    .then(() => {
+      customSwal.fire({
+        icon: "success",
+        title: "신청 완료",
+        text: "클럽 신청이 성공적으로 완료되었습니다.",
+      });
+    })
+    .catch((error) => {
+      console.error("클럽 신청 실패:", error);
+    });
 };
 
 const navigateBack = () => {
@@ -190,5 +240,6 @@ onMounted(() => {
   loadClubDetails();
 });
 </script>
+
 
 <style scoped></style>

@@ -93,6 +93,7 @@ function handleAuthAction() {
     if (isLoggedIn.value) {
         // 로그아웃 처리
         memberStore.clearMemberToken(); // Pinia store의 토큰을 초기화
+        window.location.href = "/";
     } else {
         // 로그인 페이지로 이동
         window.location.href = "/sign-in";

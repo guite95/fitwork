@@ -63,7 +63,10 @@ const handleLogin = async () => {
     try {
         // 로그인 요청 처리
         await memberStore.login(id.value, password.value);
-        router.push('/');
+        
+        // 이전 페이지로 이동 (query를 이용하여 이전 경로를 전달받은 경우 처리)
+        const redirectPath = router.currentRoute.value.query.redirect || '/';
+        router.push(redirectPath);
     } catch (error) {
         // 로그인 실패 시 SweetAlert 호출
         console.error('로그인 실패:', error);
