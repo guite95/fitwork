@@ -19,6 +19,7 @@ import Swal from 'sweetalert2';
 import '@/assets/swal_custom.css'
 import ClubsDetail from '../components/ClubsDetail.vue';
 import ClassesDetail from '../components/ClassesDetail.vue';
+import Search from '../components/Search.vue';
 
 
 // 라우트 설정
@@ -81,7 +82,7 @@ const routes = [
     name: 'newpost',
     component: NewPost,
     props: true, // props를 통해 boardNo를 컴포넌트에 전달합니다.
-  },  
+  },
   {
     path: '/community-details/:boardNo',
     name: 'communitydetails',
@@ -122,7 +123,15 @@ const routes = [
     component: ClassesDetail,
     props: true,
   },
-
+  {
+    path: "/search",
+    name: "search",
+    component: Search,
+    props: (route) => ({
+      type: route.query.type, // '클럽' 또는 '클래스'
+      query: route.query.query, // 검색어
+    }),
+  },
 
 
   // 다른 경로 추가 가능

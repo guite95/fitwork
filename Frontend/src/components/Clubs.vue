@@ -11,7 +11,7 @@
       <div class="flex justify-end items-center mb-8 space-x-4 w-1/4 ml-auto">
         <input v-model="searchQuery" type="text" placeholder="클럽 검색하기"
           class="flex-grow px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-sm" />
-        <button @click="searchClubs"
+        <button @click="navigateToSearch"
           class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm whitespace-nowrap">
           검색
         </button>
@@ -19,12 +19,11 @@
 
       <!-- 추천 클럽 -->
       <div class="mb-12">
-        <h2 class="text-xl font-title text-lightBlue mb-4">
-          20대 여성 <span class="text-darkBlue font-title">이 관심있는</span>
+        <h2 class="text-xl font-title text-lightBlue mb-8">
+          <span class="text-lightBlue"> {{ memberDistrict }} </span> <span class="text-darkBlue">근처의</span>
         </h2>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
           <SwiperSlide v-for="club in filteredRecommendedClubs" :key="club.clubNo">
-            <!-- Wrap the club display with router-link -->
             <router-link :to="{ name: 'clubsdetail', params: { clubNo: club.clubNo } }">
               <div
                 class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
@@ -33,7 +32,6 @@
               </div>
             </router-link>
           </SwiperSlide>
-
         </Swiper>
       </div>
 
@@ -42,7 +40,6 @@
         <h2 class="text-xl font-title text-darkBlue mb-4">최근 인기 많은</h2>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
           <SwiperSlide v-for="club in popularClubs" :key="club.clubNo">
-            <!-- Wrap the club display with router-link -->
             <router-link :to="{ name: 'clubsdetail', params: { clubNo: club.clubNo } }">
               <div
                 class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
@@ -51,7 +48,6 @@
               </div>
             </router-link>
           </SwiperSlide>
-
         </Swiper>
       </div>
 
@@ -75,19 +71,27 @@ import Header from "./Header.vue";
 import Footer from "./Footer.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper";
-import { useMemberStore } from "../stores/member";
 import { useClubStore } from "../stores/club";
+import { useMemberStore } from "../stores/member";
 import { useRouter } from "vue-router";
-import Swal from "sweetalert2";
 import "swiper/css";
 import "swiper/css/navigation";
 
-// Member Store 및 Club Store
-const memberStore = useMemberStore();
+// Club Store 및 Member Store
 const clubStore = useClubStore();
-
-// Router instance
+const memberStore = useMemberStore();
 const router = useRouter();
+
+// 사용자 정보
+const memberName = ref(memberStore.memberName || "사용자");
+const memberAddress = computed(() => memberStore.memberAddress);
+const memberDistrict = computed(() => {
+  if (memberAddress.value) {
+    const parts = memberAddress.value.split(" ");
+    return parts[1];
+  }
+  return "지역";
+});
 
 // 검색 쿼리 상태
 const searchQuery = ref("");
@@ -101,38 +105,37 @@ onMounted(async () => {
   recommendedClubs.value = clubStore.clubList; // 전체 클럽을 추천 클럽 리스트에 반영
 });
 
+// 추천 클럽 필터링 (사용자 지역 기준)
 const filteredRecommendedClubs = computed(() => {
+  console.log(recommendedClubs)
   if (!recommendedClubs.value) return [];
-  return recommendedClubs.value.filter((c) => c.clubName.includes(searchQuery.value));
+  return recommendedClubs.value.filter((c) => {
+    // 주소가 제대로 존재하고, 분리 가능한지 확인
+    const addressParts = c.location?.split(" ");
+    return addressParts && addressParts[1] === memberDistrict.value;
+  });
 });
 
+// 인기 클럽 필터링
 const popularClubs = computed(() => {
   if (!Array.isArray(clubStore.clubList)) return [];
   return [...clubStore.clubList]
-    .filter((c) => c.headCount >= 0) // headCount가 0 이상인 클래스만 필터링
+    .filter((c) => c.headCount >= 0)
     .sort((a, b) => b.headCount - a.headCount); // headCount 기준으로 내림차순 정렬
 });
-
-// 검색 버튼 클릭 이벤트
-async function searchClubs() {
-  if (!searchQuery.value.trim()) {
-    Swal.fire("알림", "검색어를 입력해주세요.", "warning");
-    return;
-  }
-  // 추천 클럽 중 검색어 포함된 것만 필터링
-  filteredRecommendedClubs.value = recommendedClubs.value.filter((c) =>
-    c.clubName.includes(searchQuery.value)
-  );
-}
 
 // 이미지 URL 생성 메서드
 const getClubImageUrl = (club) => {
   if (club.clubFile) {
     return `http://localhost:8080/file/club${club.clubFile.path}/${club.clubFile.systemName}`;
   }
-  return '/images/dumbbell.jpg'; // 기본 이미지
-}
+  return "/images/dumbbell.jpg"; // 기본 이미지
+};
 
+// 검색 버튼 클릭 시 검색 페이지로 이동
+const navigateToSearch = () => {
+  router.push({ name: "search", query: { type: "클럽", query: searchQuery.value } });
+};
 </script>
 
 <style scoped>
@@ -145,7 +148,6 @@ const getClubImageUrl = (club) => {
 :deep(.swiper-button-next),
 :deep(.swiper-button-prev) {
   color: #64748b !important;
-  /* greyBlue */
   font-size: 1.2rem !important;
   font-weight: bold !important;
   opacity: 0.8;

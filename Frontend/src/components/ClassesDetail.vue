@@ -230,7 +230,13 @@ const handleJoin = () => {
 };
 
 const navigateBack = () => {
-  router.push("/classes");
+  if (window.history.length > 1) {
+    // 이전 페이지가 있는 경우
+    router.back();
+  } else {
+    // 이전 페이지가 없는 경우 기본 경로로 이동
+    router.push("/classes");
+  }
 };
 
 onMounted(() => {

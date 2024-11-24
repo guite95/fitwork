@@ -1,6 +1,6 @@
 <template>
   <footer class="bg-darkBlue text-white py-3">
-    <div class="container mx-auto px-8">
+    <div class="w-full mx-auto px-8">
       <div class="flex flex-col md:flex-row justify-between items-center">
         <!-- Logo and Description -->
         <div class="mb-6 md:mt-6 md:mb-0">

@@ -11,7 +11,7 @@
       <div class="flex justify-end items-center mb-8 space-x-4 w-1/4 ml-auto">
         <input v-model="searchQuery" type="text" placeholder="클래스 검색하기"
           class="flex-grow px-4 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lightBlue font-title text-sm" />
-        <button @click="searchClasses"
+        <button @click="navigateToSearch"
           class="px-5 py-2 bg-lightBlue text-white rounded-2xl font-title hover:bg-darkBlue transition duration-300 text-sm whitespace-nowrap">
           검색
         </button>
@@ -19,12 +19,11 @@
 
       <!-- 추천 클래스 -->
       <div class="mb-12">
-        <h2 class="text-xl font-title text-lightBlue mb-4">
-          유성구 <span class="text-darkBlue font-title">근처의</span>
+        <h2 class="text-xl font-title text-lightBlue mb-8">
+          <span class="text-lightBlue"> {{ memberDistrict }} </span> <span class="text-darkBlue">근처의</span>
         </h2>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
-          <SwiperSlide v-for="(classItem, index) in popularClasses" :key="index">
-            <!-- 클래스 항목을 router-link로 감싸서 클릭 시 상세 페이지로 이동 -->
+          <SwiperSlide v-for="classItem in filteredRecommendedClasses" :key="classItem.classNo">
             <router-link :to="{ name: 'classesdetail', params: { classNo: classItem.classNo } }">
               <div
                 class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
@@ -37,22 +36,22 @@
         </Swiper>
       </div>
 
+
       <!-- 인기 클래스 -->
       <div class="mb-12">
-        <h2 class="text-xl font-title text-darkBlue mb-4">평점 높은</h2>
+        <h2 class="text-xl font-title text-darkBlue mb-4">최근 인기 많은</h2>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
           <SwiperSlide v-for="(classItem, index) in popularClasses" :key="index">
             <!-- 클래스 항목을 router-link로 감싸서 클릭 시 상세 페이지로 이동 -->
             <router-link :to="{ name: 'classesdetail', params: { classNo: classItem.classNo } }">
               <div
                 class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
-                <img :src="classItem.classesFile || '/images/dumbbell.jpg'" alt="Class Image"
+                <img :src="getClassImageUrl(classItem)" alt="Class Image"
                   class="w-full h-28 object-cover rounded-md mb-2" />
                 <span class="text-center text-darkBlue font-title">{{ classItem.className }}</span>
               </div>
             </router-link>
           </SwiperSlide>
-
         </Swiper>
       </div>
 
@@ -79,33 +78,48 @@ import Footer from "./Footer.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper";
 import { useMemberStore } from "../stores/member";
-import { useClassStore } from "../stores/class"; // Pinia의 class.js 가져오기
+import { useClassStore } from "../stores/class";
+import { useRouter } from "vue-router"; // Router 사용
 import Swal from "sweetalert2";
 import "swiper/css";
 import "swiper/css/navigation";
 
 // Member Store 및 Class Store
 const memberStore = useMemberStore();
-const classStore = useClassStore(); // class.js 사용
+const classStore = useClassStore();
+const router = useRouter(); // Router instance
 
 const memberRole = computed(() => memberStore.memberRole);
+const memberAddress = computed(() => memberStore.memberAddress);
+const memberDistrict = computed(() => {
+  if (memberAddress.value) {
+    const parts = memberAddress.value.split(" ");
+    return parts[1];
+  }
+  return "지역";
+});
 
 // 검색 쿼리 상태
 const searchQuery = ref("");
 
-// 클래스 데이터
-const nearbyClasses = ref([]);
+
+// 추천 클래스 데이터
+const recommendedClasses = ref([]);
 
 // 컴포넌트 로드 시 클래스 데이터 가져오기
 onMounted(async () => {
   await classStore.getClassList(); // 전체 클래스 데이터 가져오기
-  nearbyClasses.value = classStore.classList; // 클래스 데이터를 설정
+  recommendedClasses.value = classStore.classList; // 전체 클럽을 추천 클럽 리스트에 반영
 });
 
-// 필터링된 근처 클래스
-const filteredNearbyClasses = computed(() => {
-  if (!Array.isArray(nearbyClasses.value)) return [];
-  return nearbyClasses.value.filter((c) => c.className.includes(searchQuery.value));
+// 추천 클럽 필터링 (사용자 지역 기준)
+const filteredRecommendedClasses = computed(() => {
+  if (!recommendedClasses.value) return [];
+  return recommendedClasses.value.filter((c) => {
+    // 주소가 제대로 존재하고, 분리 가능한지 확인
+    const addressParts = c.location?.split(" ");
+    return addressParts && addressParts[1] === memberDistrict.value;
+  });
 });
 
 // 인기 클래스
@@ -116,24 +130,25 @@ const popularClasses = computed(() => {
     .sort((a, b) => b.headCount - a.headCount); // headCount 기준으로 내림차순 정렬
 });
 
-// 검색 버튼 클릭 이벤트
-function searchClasses() {
-  if (!searchQuery.value.trim()) {
-    Swal.fire("알림", "검색어를 입력해주세요.", "warning");
-  }
-  // `searchQuery`가 변경되면 `filteredNearbyClasses`가 자동으로 업데이트됩니다.
-}
-
 // 이미지 URL 생성 메서드
 const getClassImageUrl = (classItem) => {
-  console.log(classItem)
   if (classItem.classesFile) {
     return `http://localhost:8080/file/class${classItem.classesFile.path}/${classItem.classesFile.systemName}`;
   }
-  return '/images/dumbbell.jpg'; // 기본 이미지
+  return "/images/dumbbell.jpg"; // 기본 이미지
 };
 
-
+// 검색 버튼 클릭 시 search 페이지로 이동
+function navigateToSearch() {
+  if (!searchQuery.value.trim()) {
+    Swal.fire("알림", "검색어를 입력해주세요.", "warning");
+    return;
+  }
+  router.push({
+    name: "search",
+    query: { type: "클래스", query: searchQuery.value },
+  });
+}
 </script>
 
 <style scoped>
@@ -146,7 +161,6 @@ const getClassImageUrl = (classItem) => {
 :deep(.swiper-button-next),
 :deep(.swiper-button-prev) {
   color: #64748b !important;
-  /* greyBlue */
   font-size: 1.2rem !important;
   font-weight: bold !important;
   opacity: 0.8;
