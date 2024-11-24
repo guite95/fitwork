@@ -15,6 +15,13 @@
 		FROM class
 		WHERE class_no = #{classNo}
 	</select>
+	
+	<!-- 클래스 파일 선택 -->
+	<select id="selectClassesFileByClassNo" parameterType="int">
+		SELECT *
+		FROM class_file
+		WHERE class_no = #{classNo}
+	</select>
 
 	<!-- 위치별 클래스 조회 -->
 	<select id="selectClassByLocation" parameterType="String" resultType="Classes">

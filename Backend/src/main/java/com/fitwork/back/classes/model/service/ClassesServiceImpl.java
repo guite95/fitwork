@@ -23,7 +23,13 @@ public class ClassesServiceImpl implements ClassesService {
 
 	@Override
 	public Classes classDetail(int classNo) {
-		return classesRepository.selectClassByClassNo(classNo);
+		Classes classes = classesRepository.selectClassByClassNo(classNo);
+		
+		ClassesFile classesFile = classesRepository.selectClassesFileByClassNo(classNo);
+		
+		if (classesFile != null) classes.setClassesFile(classesFile);
+		
+		return classes;
 	}
 
 	@Override
