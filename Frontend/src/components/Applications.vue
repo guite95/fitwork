@@ -74,18 +74,27 @@
   </template>
   
   <script setup>
-  import { ref } from "vue";
+  import { ref, onMounted } from "vue";
+  import { useClassStore } from "../stores/class";
+  import { useClubStore } from "../stores/club";
   
   // 상태 관리
-  const clubApplications = ref([
-    { content: "[클라이밍] 여성 클밍팟 모집해요", date: "2024년 11월 18일" },
-    { content: "[크로스핏] 수업 같이 들을 20대", date: "2024년 11월 20일" },
-  ]);
+  const classStore = useClassStore();
+  const clubStore = useClubStore();
+
+  const clubApplications = ref([]);
   
-  const classApplications = ref([
-    { content: "[크로스핏] 하이크로스 일일수강", date: "2024년 12월 2일" },
-    { content: "[댄스] 넥스트 댄스 스쿨 리징 안무가", date: "2024년 11월 30일" },
-  ]);
+  const classApplications = ref([]);
+
+  const fetchRegistedClub = async () => {
+    try {
+      await clubStore.getClubsById(sessionStorage.getItem('memberId'), {
+
+      })
+    } catch {
+      
+    }
+  }
   
   // 신청 취소 함수
   function cancelApplication(type, index) {

@@ -204,11 +204,7 @@ const fetchAllClass = async () => {
 
 const fetchPopolarClub = async () => {
   try {
-    if (!isLoggedIn) {
-      await clubStore.getClubsByLocation(" ")
-    } else {
-      await clubStore.getClubsByLocation(memberDistrict.value)
-    }
+    await clubStore.getClubsByLocation(memberDistrict.value)
     if (Array.isArray(clubStore.filteredClubs) && clubStore.filteredClubs.length > 0) {
       clubs.value = clubStore.filteredClubs
       .slice()
@@ -225,11 +221,7 @@ const fetchPopolarClub = async () => {
 
 const fetchPopolarClass = async () => {
   try {
-    if (!isLoggedIn) {
-      await classStore.getClassesByLocation(" ")
-    } else {
-      await classStore.getClassesByLocation(memberDistrict.value)
-    }
+    await classStore.getClassesByLocation(memberDistrict.value)
     if (Array.isArray(classStore.filteredClasses) && classStore.filteredClasses.length > 0) {
       classes.value = classStore.filteredClasses
       .slice()
@@ -247,8 +239,13 @@ const fetchPopolarClass = async () => {
 // 컴포넌트 마운트 시 게시글과 인기글 가져오기
 onMounted(async () => {
     await fetchPopularPosts(); // 컴포넌트가 마운트될 때 게시글과 인기글 가져오기
-    await fetchPopolarClub();
-    await fetchPopolarClass();
+    if (!isLoggedIn.value) {
+      await fetchAllClub();
+      await fetchAllClass();
+    } else {
+      await fetchPopolarClub();
+      await fetchPopolarClass();
+    }
 });
 
 // Watch for route changes to reload data

@@ -93,6 +93,34 @@ export const useClubStore = defineStore('club', () => {
     }
   };
 
+  // 회원이 신청한 클럽 조회
+  const getClubsById = async (id) => {
+    try {
+      const response = await axios.get(`${REST_API_URL}/list/registed/${id}`, {
+        headers: {
+          'Authorization': sessionStorage.getItem('memberToken'),
+        }
+      });
+      userRegisteredClasses.value = response.data;
+    } catch {
+      customSwal.fire('에러', '신청한 클래스를 조회하는 중 문제가 발생했습니다', 'error')
+    }
+  };
+
+  // 회원이 개설한 클럽 조회
+  const getClubsByLeader = async (leader) => {
+    try {
+      const response = await axios.get(`${REST_API_URL}/list/leader/${leader}`, {
+        headers: {
+          'Authorization': sessionStorage.getItem('memberToken'),
+        }
+      });
+      leaderedClasses.value = response.data;
+    } catch {
+      customSwal.fire('에러', '개설한 클래스를 조회하는 중 문제가 발생했습니다', 'error')
+    }
+  }
+
   // 새로운 클럽 등록
   const createClub = async (clubData, file) => {
     const formData = new FormData();
@@ -212,6 +240,8 @@ const modifyClub = async (clubNo, updatedClub, file) => {
     deleteClub,
     refuseClubRegistration,
     getClubDetail,
+    getClubsById,
+    getClubsByLeader,
     registerClub,
   };
 });

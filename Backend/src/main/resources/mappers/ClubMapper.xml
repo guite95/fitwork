@@ -103,13 +103,13 @@
     
     <!-- 클럽 신청 테이블에 저장 -->
     <insert id="insertClubRegister">
-        INSERT INTO club_register(id, club_no)
+        INSERT INTO club_regist(id, club_no)
         VALUES (#{id}, #{clubNo})
     </insert>
     
     <!-- 클럽 신청 목록에서 삭제 -->
     <delete id="deleteClubRegister">
-        DELETE FROM club_register
+        DELETE FROM club_regist
         WHERE id = #{id} AND club_no = #{clubNo}
     </delete>
     

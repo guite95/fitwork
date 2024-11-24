@@ -43,7 +43,7 @@ export const useClassStore = defineStore('class', () => {
       loading.value = false;
     }
   };
-  
+
   // 클래스 세부 정보 가져오기
   const getClassDetail = async (classNo) => {
     loading.value = true;
@@ -61,53 +61,81 @@ export const useClassStore = defineStore('class', () => {
     }
   };
 
-    // 위치별 클래스 검색
-    const getClassesByLocation = async (location) => {
-        loading.value = true;
-        try {
-            const response = await axios.get(`${REST_API_URL}/list/location/${location}`);
-            filteredClasses.value = response.data;
-            console.log(filteredClasses.value)
-        } catch (error) {
-            customSwal.fire('에러', '위치별 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
-        } finally {
-            loading.value = false;
-        }
-    };
+  // 위치별 클래스 검색
+  const getClassesByLocation = async (location) => {
+    loading.value = true;
+    try {
+      const response = await axios.get(`${REST_API_URL}/list/location/${location}`);
+      filteredClasses.value = response.data;
+      console.log(filteredClasses.value)
+    } catch (error) {
+      customSwal.fire('에러', '위치별 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
+    } finally {
+      loading.value = false;
+    }
+  };
 
-    // 카테고리별 클래스 검색
-    const getClassesByCategory = async (category) => {
-        loading.value = true;
-        try {
-            const response = await axios.get(`${REST_API_URL}/list/category/${category}`, {
-                headers: {
-                    'Authorization': sessionStorage.getItem('memberToken'),
-                }
-            });
-            filteredClasses.value = response.data;
-        } catch (error) {
-            customSwal.fire('에러', '카테고리별 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
-        } finally {
-            loading.value = false;
+  // 카테고리별 클래스 검색
+  const getClassesByCategory = async (category) => {
+    loading.value = true;
+    try {
+      const response = await axios.get(`${REST_API_URL}/list/category/${category}`, {
+        headers: {
+          'Authorization': sessionStorage.getItem('memberToken'),
         }
-    };
+      });
+      filteredClasses.value = response.data;
+    } catch (error) {
+      customSwal.fire('에러', '카테고리별 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
+    } finally {
+      loading.value = false;
+    }
+  };
 
-    // 성별 필터 클래스 검색
-    const getClassesByGender = async (gender) => {
-        loading.value = true;
-        try {
-            const response = await axios.get(`${REST_API_URL}/list/gender/${gender}`, {
-                headers: {
-                    'Authorization': sessionStorage.getItem('memberToken'),
-                }
-            });
-            filteredClasses.value = response.data;
-        } catch (error) {
-            customSwal.fire('에러', '성별 필터 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
-        } finally {
-            loading.value = false;
+  // 성별 필터 클래스 검색
+  const getClassesByGender = async (gender) => {
+    loading.value = true;
+    try {
+      const response = await axios.get(`${REST_API_URL}/list/gender/${gender}`, {
+        headers: {
+          'Authorization': sessionStorage.getItem('memberToken'),
         }
-    };
+      });
+      filteredClasses.value = response.data;
+    } catch (error) {
+      customSwal.fire('에러', '성별 필터 클래스를 불러오는 중 문제가 발생했습니다.', 'error');
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  // 회원이 신청한 클래스 조회
+  const getClassesById = async (id) => {
+    try {
+      const response = await axios.get(`${REST_API_URL}/list/registed/${id}`, {
+        headers: {
+          'Authorization': sessionStorage.getItem('memberToken'),
+        }
+      });
+      userRegisteredClasses.value = response.data;
+    } catch {
+      customSwal.fire('에러', '신청한 클래스를 조회하는 중 문제가 발생했습니다', 'error')
+    }
+  };
+
+  // 강사가 개설한 클래스 조회
+  const getClassesByLeader = async (leader) => {
+    try {
+      const response = await axios.get(`${REST_API_URL}/list/leader/${leader}`, {
+        headers: {
+          'Authorization': sessionStorage.getItem('memberToken'),
+        }
+      });
+      leaderedClasses.value = response.data;
+    } catch {
+      customSwal.fire('에러', '개설한 클래스를 조회하는 중 문제가 발생했습니다', 'error')
+    }
+  }
 
   // 새로운 클래스 등록
   const createClass = async (classData, file) => {
@@ -127,7 +155,7 @@ export const useClassStore = defineStore('class', () => {
       });
       customSwal.fire('성공', '클래스가 성공적으로 등록되었습니다.', 'success');
     } catch (error) {
-        console.log(error)
+      console.log(error)
       customSwal.fire('에러', '클래스를 등록하는 중 문제가 발생했습니다.', 'error');
     }
   };
@@ -181,7 +209,7 @@ export const useClassStore = defineStore('class', () => {
     }
   };
 
-  
+
 
   return {
     classList,
@@ -200,5 +228,7 @@ export const useClassStore = defineStore('class', () => {
     deleteClass,
     refuseClassRegistration,
     getClassDetail,
+    getClassesById,
+    getClassesByLeader,
   };
 });
