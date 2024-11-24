@@ -42,7 +42,7 @@
         <!-- 로그인 확인 -->
         <div v-if="!isLoggedIn" class="text-center text-darkBlue font-title mt-20">
           <p>게시글을 보려면 로그인이 필요합니다.</p>
-          <router-link to="/sign-in">
+          <router-link to="{ path: '/sign-in', query: { redirect: $route.fullPath } }">
             <button class="mt-4 px-6 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300">
               로그인
             </button>
@@ -150,6 +150,7 @@ onMounted(async () => {
     await store.getBoardList(); // 게시글 목록 가져오기
   }
 });
+
 
 // allReviews를 store의 boardList로 설정
 const allReviews = computed(() => store.boardList);
