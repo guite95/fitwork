@@ -22,7 +22,7 @@
 
       <!-- Copyright -->
       <div class="text-center text-xs text-gray-100 mt-8 font-title">
-        &copy; 2024 Sports Club Platform. All rights reserved.
+        &copy; 2024 FitWork. All rights reserved.
       </div>
     </div>
   </footer>

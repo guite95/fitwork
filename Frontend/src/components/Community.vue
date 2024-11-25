@@ -43,7 +43,8 @@
         <div v-if="!isLoggedIn" class="text-center text-darkBlue font-title mt-20">
           <p>게시글을 보려면 로그인이 필요합니다.</p>
           <router-link to="{ path: '/sign-in', query: { redirect: $route.fullPath } }">
-            <button class="mt-4 px-6 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300">
+            <button
+              class="mt-4 px-6 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300">
               로그인
             </button>
           </router-link>
@@ -135,67 +136,72 @@ import Footer from "./Footer.vue";
 import { useBoardStore } from "../stores/board";
 import { useMemberStore } from "../stores/member";
 
-// Pinia 스토어 사용
 const router = useRouter();
 const route = useRoute();
 const store = useBoardStore();
 const memberStore = useMemberStore();
 
-// 로그인 여부 확인
 const isLoggedIn = computed(() => memberStore.isLoggedIn);
 
 // 게시글 목록 로드
 onMounted(async () => {
   if (isLoggedIn.value) {
-    await store.getBoardList(); // 게시글 목록 가져오기
+    await store.getBoardList();
   }
 });
 
-
-// allReviews를 store의 boardList로 설정
 const allReviews = computed(() => store.boardList);
-
-// 탭 선택 상태
 const selectedTab = ref(route.query.tab || "club");
+const searchQuery = ref("");
+const currentPage = ref(1);
+const itemsPerPage = ref(5);
 
-// URL 쿼리 변화 감지
 watch(
   () => route.query.tab,
   (newTab) => {
-    selectedTab.value = newTab || "club"; // 기본값: club
+    selectedTab.value = newTab || "club";
+    currentPage.value = 1; // 탭 변경 시 페이지 초기화
   },
   { immediate: true }
 );
 
-const itemsPerPage = ref(5);
-const currentPage = ref(1);
-const searchQuery = ref("");
-
 // 검색된 리뷰 목록
 const filteredReviews = computed(() => {
-  return allReviews.value
-    .filter((review) => review.category === selectedTab.value)
-    .filter((review) => review.title.includes(searchQuery.value));
+  const filteredByTab = allReviews.value.filter(
+    (review) => review.category === selectedTab.value
+  );
+
+  if (searchQuery.value.trim() === "") {
+    return filteredByTab;
+  }
+
+  // 검색 조건에 따라 필터링
+  return filteredByTab.filter((review) =>
+    review.title.includes(searchQuery.value) ||
+    review.writer.includes(searchQuery.value) ||
+    review.content.includes(searchQuery.value)
+  );
 });
 
+// 페이지네이션된 리뷰 목록
 const filteredPaginatedReviews = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   return filteredReviews.value.slice(start, start + itemsPerPage.value);
 });
 
-const totalPages = computed(() => Math.ceil(filteredReviews.value.length / itemsPerPage.value));
+const totalPages = computed(() =>
+  Math.ceil(filteredReviews.value.length / itemsPerPage.value)
+);
 
 const tabTitles = { club: "클럽 후기 🏃", class: "클래스 후기 🏋️‍♀️", chat: "잡담 💬" };
 const currentTabTitle = computed(() => tabTitles[selectedTab.value]);
 
-// 탭 변경 함수
 function changeTab(tab) {
-  selectedTab.value = tab; // 선택된 탭 업데이트
-  router.push({ query: { tab } }); // URL 쿼리 업데이트
-  currentPage.value = 1; // 페이지 초기화
+  selectedTab.value = tab;
+  router.push({ query: { tab } });
+  currentPage.value = 1;
 }
 
-// 페이지 이동 함수
 function goToPage(page) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
@@ -206,7 +212,9 @@ function goToPage(page) {
 function handleSearch() {
   currentPage.value = 1; // 검색 시 페이지를 1로 초기화
 }
+
 </script>
+
 
 <style scoped>
 table {
