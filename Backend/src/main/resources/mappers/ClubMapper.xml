@@ -5,15 +5,30 @@
 <mapper namespace="com.fitwork.back.clubs.model.repository.ClubRepository">
     <!-- 전체 클럽 조회 -->
     <select id="selectAllClub" resultType="Club">
-        SELECT *
-        FROM club
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		GROUP BY 
+		    c.club_no;
     </select>
 
     <!-- 클럽 상세 조회 -->
     <select id="selectClubByClubNo" parameterType="int" resultType="Club">
-        SELECT *
-        FROM club
-        WHERE club_no = #{clubNo}
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		WHERE 
+		    c.club_no = #{clubNo}
+		GROUP BY 
+		    c.club_no;
     </select>
     
     <!-- 클럽 파일 선택 -->
@@ -25,19 +40,36 @@
 
     <!-- 위치별 클럽 조회 -->
     <select id="selectClubByLocation" parameterType="String" resultType="Club">
-        SELECT *
-        FROM club
-        WHERE location LIKE concat('%',#{location},'%')
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+        WHERE 
+        	location LIKE concat('%',#{location},'%')
+		GROUP BY 
+		    c.club_no;
     </select>
     
     <!-- 카테고리별 클럽 조회 -->
     <select id="selectClubByCategory" parameterType="String" resultType="Club">
-        SELECT *
-        FROM club
-        WHERE category = #{category}
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+        WHERE 
+        	category = #{category}
+		GROUP BY 
+		    c.club_no;
     </select>
 
     <!-- 성별 비중 순으로 클럽 조회 -->
+    <!-- 
     <select id="selectClubByGender" parameterType="String" resultType="Club">
         SELECT 
             c.*,
@@ -53,34 +85,47 @@
         ORDER BY 
             gender_percentage DESC;
     </select>
+     -->
 
     <!-- 회원이 신청한 클럽 조회 -->
     <select id="selectRegisteredClubById" parameterType="String" resultType="Club">
         SELECT 
-            c.*
-        FROM 
-            club c
-        INNER JOIN 
-            club_regist cr ON c.club_no = cr.club_no
-        INNER JOIN 
-            member m ON cr.id = m.id
-        WHERE 
-            m.id = #{id}
+		    c.*,
+		    IFNULL(COUNT(cr2.club_no), 0) AS head_count
+		FROM 
+		    club c
+		INNER JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		INNER JOIN 
+		    member m ON cr.id = m.id
+		LEFT JOIN 
+		    club_regist cr2 ON c.club_no = cr2.club_no
+		WHERE 
+		    m.id = #{id}
+		GROUP BY 
+		    c.club_no;
     </select>
 
     <!-- 회원이 가입된 클럽 조회 -->
+    <!-- 
     <select id="selectMemberedClubById" parameterType="String" resultType="Club">
         SELECT 
-            c.*
-        FROM 
-            club c
-        INNER JOIN 
-            club_member cm ON c.club_no = cm.club_no
-        INNER JOIN 
-            member m ON cm.id = m.id
-        WHERE 
-            m.id = #{id}
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		INNER JOIN 
+		    club_member cm ON c.club_no = cm.club_no
+		INNER JOIN 
+		    member m ON cm.id = m.id
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		WHERE 
+		    m.id = #{id}
+		GROUP BY 
+		    c.club_no;
     </select>
+     -->
 
     <!-- 강사가 개설한 클럽 조회 -->
     <select id="selectClubByLeader" parameterType="String" resultType="Club">
