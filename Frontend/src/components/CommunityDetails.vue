@@ -92,12 +92,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import Header from './Header.vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useBoardStore } from '@/stores/board';
-import { useMemberStore } from '../stores/member';
-import Swal from 'sweetalert2';
+import { ref, computed, onMounted } from "vue";
+import Header from "./Header.vue";
+import { useRoute, useRouter } from "vue-router";
+import { useBoardStore } from "@/stores/board";
+import { useMemberStore } from "../stores/member";
+import Swal from "sweetalert2";
+import '@/assets/swal_custom.css';
 
 // Router
 const route = useRoute();
@@ -107,8 +108,8 @@ const router = useRouter();
 const store = useBoardStore();
 const memberStore = useMemberStore();
 const board = ref({});
-const imgSrc = ref('');
-const newComment = ref('');
+const imgSrc = ref("");
+const newComment = ref("");
 const comments = ref([]);
 
 // 게시글 번호 가져오기
@@ -133,14 +134,14 @@ const detail = async () => {
     await store.getComments(boardNo);
     comments.value = board.value.comments;
   } catch (error) {
-    console.error('게시글 상세 정보 불러오기 오류:', error);
+    console.error("게시글 상세 정보 불러오기 오류:", error);
   }
 };
 
 // 수정 버튼 클릭 핸들러
 function handleEdit() {
   router.push({
-    name: 'newpost',
+    name: "newpost",
     params: {
       boardNo: boardNo, // boardNo를 수정 페이지로 전달
     },
@@ -150,30 +151,30 @@ function handleEdit() {
 // 삭제 버튼 클릭 핸들러
 const handleDelete = () => {
   Swal.fire({
-    title: '정말 삭제하시겠습니까?',
-    text: '이 작업은 되돌릴 수 없습니다.',
-    icon: 'warning',
+    title: "정말 삭제하시겠습니까?",
+    text: "이 작업은 되돌릴 수 없습니다.",
+    icon: "warning",
     showCancelButton: true,
-    confirmButtonColor: '#486284',
-    cancelButtonColor: '#7B95B7',
-    confirmButtonText: '네, 삭제합니다',
-    cancelButtonText: '취소',
+    confirmButtonColor: "#486284",
+    cancelButtonColor: "#7B95B7",
+    confirmButtonText: "네, 삭제합니다",
+    cancelButtonText: "취소",
   }).then((result) => {
     if (result.isConfirmed) {
       store
         .deleteBoard(boardNo)
         .then(() => {
-          Swal.fire('삭제 완료!', '게시글이 삭제되었습니다.', 'success').then(() => {
-            router.push('/community');
+          Swal.fire("삭제 완료!", "게시글이 삭제되었습니다.", "success").then(() => {
+            router.push("/community");
           });
         })
         .catch((error) => {
           Swal.fire({
-            icon: 'error',
-            title: '삭제 실패',
-            text: '게시글 삭제 중 문제가 발생했습니다. 다시 시도해주세요.',
+            icon: "error",
+            title: "삭제 실패",
+            text: "게시글 삭제 중 문제가 발생했습니다. 다시 시도해주세요.",
           });
-          console.error('게시글 삭제 중 오류 발생:', error);
+          console.error("게시글 삭제 중 오류 발생:", error);
         });
     }
   });
@@ -181,15 +182,14 @@ const handleDelete = () => {
 
 // 댓글 추가 핸들러
 const addComment = () => {
-  if (newComment.value.trim() === '') {
+  if (newComment.value.trim() === "") {
     Swal.fire({
-      icon: 'warning',
-      title: '댓글 내용이 비어있습니다.',
-      text: '댓글을 입력해주세요.',
+      icon: "warning",
+      title: "댓글 내용이 비어있습니다.",
+      text: "댓글을 입력해주세요.",
     });
     return;
   }
-
 
   // 서버로 댓글 추가 요청
   store
@@ -201,10 +201,10 @@ const addComment = () => {
         writer: memberStore.memberNickname,
         createdAt: new Date().toLocaleString(),
       });
-      newComment.value = '';
+      newComment.value = "";
     })
     .catch((error) => {
-      console.error('댓글 추가 중 오류 발생:', error);
+      console.error("댓글 추가 중 오류 발생:", error);
     });
 };
 
@@ -234,13 +234,32 @@ const deleteComment = (commentNo, index) => {
 
 // 돌아가기 버튼 클릭 핸들러
 const navigateBack = () => {
-  router.push('/community');
+  router.push("/community");
 };
 
-// 컴포넌트가 마운트될 때 게시글 상세 정보 가져오기
+// 컴포넌트가 마운트될 때 로그인 상태 확인 및 게시글 상세 정보 가져오기
 onMounted(() => {
+  if (!memberStore.isLoggedIn) {
+    // 로그인되지 않은 경우 Swal 경고 창 표시
+    Swal.fire({
+      icon: "warning",
+      title: "게시글을 보려면 로그인이 필요합니다.",
+      text: "로그인 후 다시 시도해주세요.",
+      confirmButtonText: "로그인하기",
+      customClass: {
+        title: 'custom-swal-title',
+        text: 'custom-swal-text',
+        confirmButton: 'custom-swal-button',
+      },
+    }).then(() => {
+      // 확인 버튼을 누르면 로그인 페이지로 이동
+      router.push({ path: "/sign-in", query: { redirect: route.fullPath } });
+    });
+    return;
+  }
   detail();
 });
 </script>
+
 
 <style scoped></style>

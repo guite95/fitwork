@@ -97,6 +97,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useClassStore } from "@/stores/class";
 import { useMemberStore } from "@/stores/member";
 import Swal from "sweetalert2";
+import '@/assets/swal_custom.css';
 
 const route = useRoute();
 const router = useRouter();
@@ -135,17 +136,6 @@ const loadClassDetails = async () => {
 };
 
 const addComment = () => {
-  if (!memberStore.memberId) {
-    Swal.fire({
-      icon: "warning",
-      title: "로그인이 필요합니다.",
-      text: "댓글 작성을 위해 로그인해주세요.",
-      confirmButtonText: "로그인하기",
-    }).then(() => {
-      router.push({ path: "/sign-in", query: { redirect: router.currentRoute.value.fullPath } });
-    });
-    return;
-  }
   if (newComment.value.trim() === "") {
     Swal.fire({
       icon: "warning",
