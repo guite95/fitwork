@@ -35,7 +35,7 @@
         <div class="text-xl">
           <button class="text-3xl" @click="toggleLike" v-if="isLiked">❤️</button>
           <button class="text-3xl" @click="toggleLike" v-if="!isLiked">🤍</button>
-          {{ board.likeCnt }}
+          {{ likeCount }}
         </div>
 
         <!-- 수정 및 삭제 버튼 (본인 글일 경우에만 표시) -->
@@ -121,6 +121,7 @@ const newComment = ref("");
 const comments = ref([]);
 
 const isLiked = ref(false);
+const likeCount = computed(() => board.value.likeCnt)
 
 // 게시글 번호 가져오기
 const boardNo = route.params.boardNo;
@@ -142,7 +143,8 @@ const detail = async () => {
 
     // 첨부파일이 있는 경우에만 imgSrc 설정
     if (board.value.boardFile) {
-      imgSrc.value = `http://192.168.210.83:8080/file/board${board.value.boardFile.path}/${board.value.boardFile.systemName}`;
+      // imgSrc.value = `http://192.168.210.83:8080/file/board${board.value.boardFile.path}/${board.value.boardFile.systemName}`;
+      imgSrc.value = `http://localhost:8080/file/board${board.value.boardFile.path}/${board.value.boardFile.systemName}`;
     }
 
     // 댓글 불러오기
@@ -199,10 +201,10 @@ const handleDelete = () => {
 const toggleLike = async () => {
   if (isLiked) {
     await store.likePlus(boardNo, memberStore.memberId)
-    isLiked.value = store.isLiked;
+    isLiked.value = !isLiked.value;
   } else {
     await store.likeMinus(boardNo, memberStore.memberId)
-    isLiked.value = store.isLiked;
+    isLiked.value = !isLiked.value;
   }
 }
 

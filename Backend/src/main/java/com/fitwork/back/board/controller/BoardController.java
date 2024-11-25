@@ -227,6 +227,8 @@ public class BoardController {
 	 */
 	@PutMapping("/like/minus/{boardNo}/{id}")
 	public ResponseEntity<String> likeMinus(@PathVariable int boardNo, @PathVariable String id) {
+		System.out.println(boardNo);
+		System.out.println(id);
 		try {
 			boardService.decreaseLikeCnt(id, boardNo);
 			return ResponseEntity.status(HttpStatus.OK).body("좋아요 감소");
@@ -236,9 +238,16 @@ public class BoardController {
 		}
 	}
 	
+	/**
+	 * 해당 게시글에 좋아요 눌렀는지 체크
+	 * @param boardNo
+	 * @param id
+	 * @return
+	 */
 	@GetMapping("/like/status/{boardNo}/{id}")
 	public ResponseEntity<Object> getLikeStatus(@PathVariable int boardNo, @PathVariable String id) {
 		boolean isLiked = boardService.isLiked(id, boardNo);
+		System.out.println(isLiked);
 		return ResponseEntity.status(HttpStatus.OK).body(isLiked);
 	}
 	

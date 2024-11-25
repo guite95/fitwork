@@ -28,14 +28,16 @@ public class JWTFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		
 		String authorization = request.getHeader("Authorization");
+		String i = request.getQueryString();
+		System.out.println(i);
 		System.out.println("토큰 받음");
 		System.out.println(authorization);
 		
 		// 헤더 검증
 		if (authorization == null || !authorization.startsWith("Bearer ")) {
-			System.out.println("로그 전");
+//			System.out.println("로그 전");
 			logger.info("Token is null or invalid.");
-			System.out.println("이건 널?");
+//			System.out.println("이건 널?");
 			System.out.println(authorization);
 //			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 //			response.getWriter().write("Missing or malformed Authorization header.");

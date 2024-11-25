@@ -4,8 +4,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import '@/assets/swal_custom.css'; // 커스텀 CSS 사용
 
-const REST_API_URL = `http://192.168.210.83:8080/api-club`;
-// const REST_API_URL = `http://localhost:8080/api-club`;
+// const REST_API_URL = `http://192.168.210.83:8080/api-club`;
+const REST_API_URL = `http://localhost:8080/api-club`;
 
 // 커스텀 스타일 적용
 const customSwal = Swal.mixin({
