@@ -30,6 +30,14 @@
           <span>조회수 {{ board.viewCnt }}</span>
           <span class="ml-3">{{ board.regDate }}</span>
         </div>
+
+        <!-- 좋아요 버튼 -->
+        <div class="text-xl">
+          <button class="text-3xl" @click="toggleLike" v-if="isLiked">❤️</button>
+          <button class="text-3xl" @click="toggleLike" v-if="!isLiked">🤍</button>
+          {{ board.likeCnt }}
+        </div>
+
         <!-- 수정 및 삭제 버튼 (본인 글일 경우에만 표시) -->
         <div class="flex space-x-2">
           <button @click="navigateBack"
@@ -112,8 +120,12 @@ const imgSrc = ref("");
 const newComment = ref("");
 const comments = ref([]);
 
+const isLiked = ref(false);
+
 // 게시글 번호 가져오기
 const boardNo = route.params.boardNo;
+
+// 회원의 좋아요 여부 확인
 
 // 작성자와 현재 로그인한 사용자가 일치하는지 확인
 const isAuthor = computed(() => {
@@ -124,6 +136,9 @@ const detail = async () => {
   try {
     await store.getBoardDetail(boardNo);
     board.value = store.board;
+
+    await store.likeStatus(boardNo, memberStore.memberId);
+    isLiked.value = store.isLiked;
 
     // 첨부파일이 있는 경우에만 imgSrc 설정
     if (board.value.boardFile) {
@@ -179,6 +194,17 @@ const handleDelete = () => {
     }
   });
 };
+
+// 좋아요 버튼 클릭 핸들러
+const toggleLike = async () => {
+  if (isLiked) {
+    await store.likePlus(boardNo, memberStore.memberId)
+    isLiked.value = store.isLiked;
+  } else {
+    await store.likeMinus(boardNo, memberStore.memberId)
+    isLiked.value = store.isLiked;
+  }
+}
 
 // 댓글 추가 핸들러
 const addComment = () => {

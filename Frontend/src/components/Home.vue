@@ -31,10 +31,10 @@
         <h3 class="text-xl font-title text-darkBlue mb-6">운동 클럽 🏃</h3>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="6" :space-between="20" navigation>
           <SwiperSlide v-for="(club, index) in clubs" :key="index">
-            <div class="bg-white shadow-md rounded-lg p-4 cursor-pointer" @click="navigateToClubDetail(club.clubNo)">
+            <div class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition" @click="navigateToClubDetail(club.clubNo)">
               <!-- 이미지 추가 -->
               <img src="/images/dumbbell.jpg" alt="Club Image" class="w-full h-40 object-cover rounded-md mb-4" />
-              <p class="text-gray-800 font-medium text-sm">{{ club.clubName }}</p>
+              <p class="text-darkBlue font-medium text-sm font-title">{{ club.clubName }}</p>
             </div>
           </SwiperSlide>
         </Swiper>
@@ -49,11 +49,11 @@
         <h3 class="text-xl font-title text-darkBlue mb-6">운동 클래스 🏋️‍♀️</h3>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="6" :space-between="20" navigation>
           <SwiperSlide v-for="(exerciseClass, index) in classes" :key="index">
-            <div class="bg-white shadow-md rounded-lg p-4 cursor-pointer"
+            <div class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition"
               @click="navigateToClassDetail(exerciseClass.classNo)">
               <!-- 이미지 추가 -->
               <img src="/images/dumbbell.jpg" alt="Class Image" class="w-full h-40 object-cover rounded-md mb-4" />
-              <p class="text-gray-800 font-medium text-sm">{{ exerciseClass.className }}</p>
+              <p class="text-darkBlue font-medium text-sm font-title">{{ exerciseClass.className }}</p>
             </div>
           </SwiperSlide>
         </Swiper>

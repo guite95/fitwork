@@ -12,6 +12,7 @@ export const useBoardStore = defineStore('board', () => {
 
     const boardList = ref([]);
     const board = ref({});
+    const isLiked = ref(false);
 
     const getBoardList = async () => {
         await axios.get(`${REST_API_URL}/list`, {
@@ -240,8 +241,8 @@ export const useBoardStore = defineStore('board', () => {
             });
     };
 
-    const likePlus = async (boardNo) => {
-        return await axios.put(`${REST_API_URL}/puls/${boardNo}`, sessionStorage.getItem("memberId"), {
+    const likePlus = async (boardNo, id) => {
+        await axios.put(`${REST_API_URL}/like/plus/${boardNo}/${id}`, {
             headers: {
                 'Authorization': sessionStorage.getItem('memberToken'),
             }
@@ -265,8 +266,8 @@ export const useBoardStore = defineStore('board', () => {
             })
     }
 
-    const likeMinus = async (boardNo) => {
-        return await axios.put(`${REST_API_URL}/minus/${boardNo}`, sessionStorage.getItem("memberId"), {
+    const likeMinus = async (boardNo, id) => {
+        await axios.put(`${REST_API_URL}/like/minus/${boardNo}/${id}`, {
             headers: {
                 'Authorization': sessionStorage.getItem('memberToken'),
             }
@@ -288,6 +289,19 @@ export const useBoardStore = defineStore('board', () => {
                     buttonsStyling: false,
                 });
             })
+    }
+
+    const likeStatus = async (boardNo, id) => {
+        try {
+            const response = await axios.get(`${REST_API_URL}/like/status/${boardNo}/${id}`, {
+                headers: {
+                    'Authorization': sessionStorage.getItem("memberToken"),
+                },
+            })
+            isLiked.value = response.data;
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     const deleteComment = async (commentNo) => {
@@ -315,5 +329,5 @@ export const useBoardStore = defineStore('board', () => {
     
       
 
-    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail, deleteBoard, board, addComment, getComments, likePlus, likeMinus, deleteComment };
+    return { boardList, getBoardList, writeBoard, modifyBoard, getBoardDetail, deleteBoard, board, addComment, getComments, likePlus, likeMinus, deleteComment, likeStatus };
 });

@@ -34,10 +34,8 @@ import com.fitwork.back.board.model.service.BoardService;
 public class BoardController {
   
 	private final BoardService boardService;
-	private final ResourceLoader resourceLoader;
-	public BoardController(BoardService boardService, ResourceLoader resourceLoader) {
+	public BoardController(BoardService boardService) {
 		this.boardService = boardService;
-		this.resourceLoader = resourceLoader;
 	}
 	
 	/**
@@ -200,14 +198,18 @@ public class BoardController {
 		}
 	}
 	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * 좋아요 수 증가
 	 * @param boardNo
 	 * @param id
 	 * @return
 	 */
-	@PutMapping("/plus/{boardNo}")
-	public ResponseEntity<String> likePlus(@PathVariable int boardNo, @RequestBody String id) {
+	@PutMapping("/like/plus/{boardNo}/{id}")
+	public ResponseEntity<String> likePlus(@PathVariable int boardNo, @PathVariable String id) {
+		System.out.println(boardNo);
+		System.out.println(id);
 		try {
 			boardService.increseLikeCnt(id, boardNo);
 			return ResponseEntity.status(HttpStatus.OK).body("좋아요 증가");
@@ -223,8 +225,8 @@ public class BoardController {
 	 * @param id
 	 * @return
 	 */
-	@PutMapping("/minus/{boardNo}")
-	public ResponseEntity<String> likeMinus(@PathVariable int boardNo, @RequestBody String id) {
+	@PutMapping("/like/minus/{boardNo}/{id}")
+	public ResponseEntity<String> likeMinus(@PathVariable int boardNo, @PathVariable String id) {
 		try {
 			boardService.decreaseLikeCnt(id, boardNo);
 			return ResponseEntity.status(HttpStatus.OK).body("좋아요 감소");
@@ -232,6 +234,12 @@ public class BoardController {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
 		}
+	}
+	
+	@GetMapping("/like/status/{boardNo}/{id}")
+	public ResponseEntity<Object> getLikeStatus(@PathVariable int boardNo, @PathVariable String id) {
+		boolean isLiked = boardService.isLiked(id, boardNo);
+		return ResponseEntity.status(HttpStatus.OK).body(isLiked);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -243,8 +251,6 @@ public class BoardController {
 	 */
 	@PostMapping("/comment/{boardNo}")
 	public ResponseEntity<String> writeComment(@PathVariable int boardNo, @RequestBody Comment comment) {
-		System.out.println(boardNo);
-		System.out.println(comment.toString());
 		comment.setBoardNo(boardNo);
 		try {
 			boardService.addComment(comment);

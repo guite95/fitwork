@@ -52,18 +52,6 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public void increseLikeCnt(String id, int boardNo) {
-		boardRepository.increaseLikeCnt(boardNo);
-		boardRepository.insertLike(id, boardNo);
-	}
-
-	@Override
-	public void decreaseLikeCnt(String id, int boardNo) {
-		boardRepository.decreaseLikeCnt(boardNo);
-		boardRepository.deleteLike(id, boardNo);
-	}
-
-	@Override
 	public void deleteBoard(int boardNo) {
 		boardRepository.deleteBoard(boardNo);
 	}
@@ -88,6 +76,25 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public void deleteFile(int fileNo) {
 		boardRepository.deleteBoardFile(fileNo);
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public void increseLikeCnt(String id, int boardNo) {
+		boardRepository.increaseLikeCnt(boardNo);
+		boardRepository.insertLike(id, boardNo);
+	}
+	
+	@Override
+	public void decreaseLikeCnt(String id, int boardNo) {
+		boardRepository.decreaseLikeCnt(boardNo);
+		boardRepository.deleteLike(id, boardNo);
+	}
+	
+	@Override
+	public boolean isLiked(String id, int boardNo) {
+		return boardRepository.isLiked(id, boardNo);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////
