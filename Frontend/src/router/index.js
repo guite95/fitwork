@@ -20,7 +20,8 @@ import '@/assets/swal_custom.css'
 import ClubsDetail from '../components/ClubsDetail.vue';
 import ClassesDetail from '../components/ClassesDetail.vue';
 import Search from '../components/Search.vue';
-
+import AdminView from '../components/AdminView.vue';
+import VisitorStats from '../components/VisitorStats.vue';
 
 // 라우트 설정
 const routes = [
@@ -131,6 +132,18 @@ const routes = [
       type: route.query.type, // '클럽' 또는 '클래스'
       query: route.query.query, // 검색어
     }),
+  },
+  {
+    path: "/admin",
+    name: "admin",
+    component: AdminView,
+    children: [
+      {
+        path: "",
+        name: visitorstat,
+        component: VisitorStats,
+      },
+    ]
   },
 
 
