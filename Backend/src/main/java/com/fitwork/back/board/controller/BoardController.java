@@ -208,8 +208,6 @@ public class BoardController {
 	 */
 	@PutMapping("/like/plus/{boardNo}/{id}")
 	public ResponseEntity<String> likePlus(@PathVariable int boardNo, @PathVariable String id) {
-		System.out.println(boardNo);
-		System.out.println(id);
 		try {
 			boardService.increseLikeCnt(id, boardNo);
 			return ResponseEntity.status(HttpStatus.OK).body("좋아요 증가");

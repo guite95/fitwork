@@ -32,6 +32,8 @@ public interface ClubRepository {
     
     public void deleteClubRegister(String id, int clubNo);
     
+    public boolean isRegisted(String id, int clubNo);
+    
     public void insertClubMember(String id, int clubNo);
     
     public void deleteClubMember(String id, int clubNo);

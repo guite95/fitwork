@@ -5,8 +5,8 @@ import router from '@/router';
 import Swal from 'sweetalert2';
 import '@/assets/swal_custom.css';
 
-// const REST_API_URL = `http://192.168.210.83:8080/api-board`;
-const REST_API_URL = `http://localhost:8080/api-board`;
+const REST_API_URL = `http://192.168.210.83:8080/api-board`;
+// const REST_API_URL = `http://localhost:8080/api-board`;
 
 export const useBoardStore = defineStore('board', () => {
 
@@ -40,7 +40,6 @@ export const useBoardStore = defineStore('board', () => {
     };
 
     const getBoardDetail = async (boardNo) => {
-        alert("게시글 상세", sessionStorage.getItem('memberToken'))
         await axios.get(`${REST_API_URL}/${boardNo}`, {
             headers: {
                 'Authorization': sessionStorage.getItem('memberToken'),
@@ -217,7 +216,6 @@ export const useBoardStore = defineStore('board', () => {
     };
 
     const getComments = async (boardNo) => {
-        alert("댓글", sessionStorage.getItem('memberToken'))
         return await axios.get(`${REST_API_URL}/comment/${boardNo}`, {
             headers: {
                 'Authorization': sessionStorage.getItem('memberToken'),
@@ -250,7 +248,7 @@ export const useBoardStore = defineStore('board', () => {
             }
         })
             .then((response) => {
-                console.log(response.data)
+                getBoardDetail(boardNo);
             })
             .catch((err) => {
                 console.error(err);
@@ -275,7 +273,7 @@ export const useBoardStore = defineStore('board', () => {
             }
         })
             .then((response) => {
-                console.log(response.data)
+                getBoardDetail(boardNo);
             })
             .catch((err) => {
                 console.error(err);
@@ -295,10 +293,9 @@ export const useBoardStore = defineStore('board', () => {
 
     const likeStatus = async (boardNo, id) => {
         try {
-            alert("좋아요", sessionStorage.getItem('memberToken'))
             const response = await axios.get(`${REST_API_URL}/like/status/${boardNo}/${id}`, {
                 headers: {
-                    'Authorization': sessionStorage.getItem("memberToken"),
+                    'Authorization': sessionStorage.getItem('memberToken'),
                 },
             })
             isLiked.value = response.data;

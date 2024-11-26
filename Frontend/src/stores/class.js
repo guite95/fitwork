@@ -4,8 +4,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import '@/assets/swal_custom.css'; // 커스텀 CSS 사용
 
-// const REST_API_URL = `http://192.168.210.83:8080/api-class`;
-const REST_API_URL = `http://localhost:8080/api-class`;
+const REST_API_URL = `http://192.168.210.83:8080/api-class`;
+// const REST_API_URL = `http://localhost:8080/api-class`;
 
 // 커스텀 스타일 적용
 const customSwal = Swal.mixin({
@@ -26,6 +26,7 @@ export const useClassStore = defineStore('class', () => {
   const userMemberedClasses = ref([]);
   const leaderedClasses = ref([]);
   const loading = ref(false);
+  const isRegisted = ref(false);
 
   // 전체 클래스 목록 가져오기
   const getClassList = async () => {
@@ -210,13 +211,14 @@ export const useClassStore = defineStore('class', () => {
   };
 
   // 클래스 가입 신청
-  const registerClass = async (userId, classNo) => {
+  const registerClass = async (id, classNo) => {
     try {
-      await axios.post(`${REST_API_URL}/register/${userId}/${classNo}`, null, {
+      await axios.post(`${REST_API_URL}/register/${id}/${classNo}`, null, {
         headers: {
           Authorization: sessionStorage.getItem('memberToken'),
         },
       });
+      registStatus(id, classNo);
       customSwal.fire('성공', '클래스 가입 신청이 완료되었습니다.', 'success');
     } catch (error) {
       customSwal.fire('에러', '클래스 가입 신청 중 문제가 발생했습니다.', 'error');
@@ -232,12 +234,26 @@ export const useClassStore = defineStore('class', () => {
           'Authorization': sessionStorage.getItem('memberToken'),
         }
       });
+      registStatus(id, classNo);
       customSwal.fire('성공', '클래스 신청이 취소되었습니다', 'success');
     } catch (error) {
       customSwal.fire('에러', '클래스 신청 취소 중 문제가 발생했습니다', 'error')
       throw error;
     }
   };
+
+  const registStatus = async (id, classNo) => {
+    try {
+      const response = await axios.get(`${REST_API_URL}/register/status/${id}/${classNo}`, {
+        headers: {
+          'Authorization': sessionStorage.getItem('memberToken'),
+        },
+      })
+      isRegisted.value = response.data;
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return {
     classList,
@@ -247,6 +263,7 @@ export const useClassStore = defineStore('class', () => {
     userMemberedClasses,
     leaderedClasses,
     loading,
+    isRegisted,
     getClassList,
     getClassesByLocation,
     getClassesByCategory,
@@ -260,5 +277,6 @@ export const useClassStore = defineStore('class', () => {
     getClassesByLeader,
     registerClass,
     cancelRegistClass,
+    registStatus,
   };
 });

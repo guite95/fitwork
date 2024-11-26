@@ -152,6 +152,15 @@
         VALUES (#{id}, #{clubNo})
     </insert>
     
+    <!-- 신청 했는지 확인 -->
+    <select id="isRegisted" resultType="boolean">
+    	SELECT EXISTS (
+    		SELECT 1
+    		FROM club_regist
+    		WHERE id = #{id} AND club_no = #{clubNo}
+    	)
+    </select>
+    
     <!-- 클럽 신청 목록에서 삭제 -->
     <delete id="deleteClubRegister">
         DELETE FROM club_regist

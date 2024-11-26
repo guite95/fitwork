@@ -161,6 +161,16 @@ public class ClubController {
             return handleException(e);
         }
     }
+    
+    @GetMapping("/register/status/{id}/{clubNo}")
+    public ResponseEntity<Object> isRegisted(@PathVariable String id, @PathVariable int clubNo) {
+    	try {
+			boolean isRegisted = clubService.isRegisted(id, clubNo);
+			return ResponseEntity.status(HttpStatus.OK).body(isRegisted);
+		} catch (Exception e) {
+			return handleException(e);
+		}
+    }
 
     @DeleteMapping("/member/exit/{id}/{clubNo}")
     public ResponseEntity<Object> exitClub(@PathVariable String id, @PathVariable int clubNo) {

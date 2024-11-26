@@ -162,6 +162,16 @@ public class ClassesController {
             return handleException(e);
         }
     }
+    
+    @GetMapping("/register/status/{id}/{classNo}")
+    public ResponseEntity<Object> isRegisted(@PathVariable String id, @PathVariable int classNo) {
+    	try {
+			boolean isRegisted = classesService.isRegisted(id, classNo);
+			return ResponseEntity.status(HttpStatus.OK).body(isRegisted);
+		} catch (Exception e) {
+			return handleException(e);
+		}
+    }
 
     @DeleteMapping("/member/exit/{id}/{classNo}")
     public ResponseEntity<Object> exitClass(@PathVariable String id, @PathVariable int classNo) {
