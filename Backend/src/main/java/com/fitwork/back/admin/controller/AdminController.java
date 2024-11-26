@@ -13,7 +13,7 @@ import com.fitwork.back.admin.model.dto.VisitorStats;
 import com.fitwork.back.admin.model.service.AdminService;
 
 @RestController
-@RequestMapping("api-admin")
+@RequestMapping("/api-admin")
 public class AdminController {
 	private final AdminService adminService;
 	public AdminController(AdminService adminService) {

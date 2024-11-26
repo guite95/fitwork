@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fitwork.back.admin.model.repository.AdminRepository">
-	<!-- 방문자 수 추가 또는 업데이트 -->
+    <!-- 방문자 수 추가 또는 업데이트 -->
     <insert id="insertOrUpdateVisitorCount" parameterType="map">
         INSERT INTO visitor_stats (visit_date, visitor_count)
         VALUES (#{visitDate}, 1)
@@ -13,20 +13,22 @@
 
     <!-- 일별 방문자 통계 조회 -->
     <select id="getDailyStats" resultType="VisitorStats">
-        SELECT visit_date, visitor_count FROM visitor_stats ORDER BY visit_date DESC LIMIT 30;
+        SELECT visit_date, visitor_count FROM visitor_stats ORDER BY visit_date DESC LIMIT 7;
     </select>
 
-    <!-- 주별 방문자 통계 조회 -->
+    <!-- 주별 방문자 통계 조회 (수정된 쿼리) -->
     <select id="getWeeklyStats" resultType="VisitorStats">
-        SELECT WEEK(visit_date) AS week, SUM(visitor_count) AS visitor_count
+        SELECT MIN(visit_date) AS visit_date, SUM(visitor_count) AS visitor_count
         FROM visitor_stats
-        GROUP BY week ORDER BY week DESC LIMIT 10;
+        GROUP BY WEEK(visit_date)
+        ORDER BY WEEK(visit_date) DESC LIMIT 4;
     </select>
 
-    <!-- 월별 방문자 통계 조회 -->
+    <!-- 월별 방문자 통계 조회 (수정된 쿼리) -->
     <select id="getMonthlyStats" resultType="VisitorStats">
-        SELECT MONTH(visit_date) AS month, SUM(visitor_count) AS visitor_count
+        SELECT MIN(visit_date) AS visit_date, SUM(visitor_count) AS visitor_count
         FROM visitor_stats
-        GROUP BY month ORDER BY month DESC LIMIT 12;
-    </select>	
+        GROUP BY MONTH(visit_date)
+        ORDER BY MONTH(visit_date) DESC LIMIT 3;
+    </select>
 </mapper>

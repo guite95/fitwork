@@ -140,7 +140,7 @@ const routes = [
     children: [
       {
         path: "",
-        name: visitorstat,
+        name: 'visitorstat',
         component: VisitorStats,
       },
     ]
