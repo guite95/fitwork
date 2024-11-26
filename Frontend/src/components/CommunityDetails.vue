@@ -97,11 +97,13 @@
       </div>
     </div>
   </div>
+  <Footer/>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import Header from "./Header.vue";
+import Footer from "./Footer.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBoardStore } from "@/stores/board";
 import { useMemberStore } from "../stores/member";

@@ -79,8 +79,8 @@
         </router-link>
       </div>
     </section>
-    <Footer />
   </div>
+  <Footer />
 </template>
 
 <script setup>

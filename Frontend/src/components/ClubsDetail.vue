@@ -93,11 +93,13 @@
       </div>
     </div>
   </div>
+  <Footer/>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import Header from "./Header.vue";
+import Footer from "./Footer.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useClubStore } from "@/stores/club";
 import { useMemberStore } from "@/stores/member";
@@ -123,6 +125,7 @@ const comments = ref([]);
 const newComment = ref("");
 const imgSrc = ref('');
 const isRegisted = computed(() => store.isRegisted)
+const headCount = computed(() => store.clubDetail.headCount)
 
 // 작성자와 현재 로그인한 사용자가 일치하는지 확인
 const isAuthor = computed(() => {
