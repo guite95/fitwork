@@ -218,7 +218,7 @@ export const useClassStore = defineStore('class', () => {
           Authorization: sessionStorage.getItem('memberToken'),
         },
       });
-      registStatus(id, classNo);
+      await registStatus(id, classNo);
       customSwal.fire('성공', '클래스 가입 신청이 완료되었습니다.', 'success');
     } catch (error) {
       customSwal.fire('에러', '클래스 가입 신청 중 문제가 발생했습니다.', 'error');
@@ -235,6 +235,7 @@ export const useClassStore = defineStore('class', () => {
         }
       });
       registStatus(id, classNo);
+      getClassDetail(classNo);
       customSwal.fire('성공', '클래스 신청이 취소되었습니다', 'success');
     } catch (error) {
       customSwal.fire('에러', '클래스 신청 취소 중 문제가 발생했습니다', 'error')

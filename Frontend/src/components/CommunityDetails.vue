@@ -211,7 +211,7 @@ const toggleLike = async () => {
 }
 
 // 댓글 추가 핸들러
-const addComment = () => {
+const addComment = async () => {
   if (newComment.value.trim() === "") {
     Swal.fire({
       icon: "warning",
@@ -222,9 +222,9 @@ const addComment = () => {
   }
 
   // 서버로 댓글 추가 요청
-  store
+  await store
     .addComment(boardNo, { content: newComment.value, writer: memberStore.memberNickname, boardNo: boardNo })
-    .then(() => {
+    .then(async () => {
       // 댓글 추가 성공 시 로컬 상태 업데이트
       comments.value.push({
         content: newComment.value,
@@ -232,6 +232,8 @@ const addComment = () => {
         createdAt: new Date().toLocaleString(),
       });
       newComment.value = "";
+      await store.getComments(boardNo);
+      comments.value = store.board.comments;
     })
     .catch((error) => {
       console.error("댓글 추가 중 오류 발생:", error);

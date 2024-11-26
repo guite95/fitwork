@@ -39,7 +39,7 @@
         <div class="flex space-x-2">
           <button @click="navigateBack"
             class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-greyBlue transition duration-300 text-sm font-title">
-            목록으로
+            돌아가기
           </button>
           <div v-if="isAuthor" class="flex space-x-2">
             <button @click="handleEdit"
