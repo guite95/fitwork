@@ -51,10 +51,16 @@
             </button>
           </div>
           <!-- 클럽 신청하기 버튼 -->
-          <button v-else @click="handleJoin"
-            class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
-            클럽 신청하기
-          </button>
+           <div v-else @click="handleJoin">
+             <button v-if="!isRegisted"
+             class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
+             클럽 신청하기
+            </button>
+            <button v-if="isRegisted"
+             class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
+             신청 취소하기
+            </button>
+          </div>
         </div>
       </div>
 
@@ -235,11 +241,14 @@ const handleJoin = () => {
         console.error("클럽 신청 실패:", error);
       });
   } else {
-    customSwal.fire({
-      icon: 'info',
-      title: '',
-      text: '이미 신청하셨습니다',
-      confirmButtonText: '확인',
+    store.cancelRegistClub(memberStore.memberId, clubNo)
+    .then(() => {
+      customSwal.fire({
+          icon: "success",
+          title: "취소 완료",
+          text: "클럽 신청이 성공적으로 취소되었습니다.",
+          confirmButtonText: '확인',
+        });
     })
   }
 };

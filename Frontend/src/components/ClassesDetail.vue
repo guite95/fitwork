@@ -52,10 +52,16 @@
             </button>
           </div>
           <!-- 클래스 신청하기 버튼 -->
-          <button v-else @click="handleJoin"
-            class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
-            클래스 신청하기
-          </button>
+          <div v-else @click="handleJoin">
+            <button v-if="!isRegisted"
+              class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
+              클래스 신청하기
+            </button>
+            <button v-if="isRegisted"
+              class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
+              신청 취소하기
+            </button>
+          </div>
         </div>
       </div>
 
@@ -217,17 +223,21 @@ const handleJoin = () => {
           icon: "success",
           title: "신청 완료",
           text: "클래스 신청이 성공적으로 완료되었습니다.",
+          confirmButtonText: '확인',
         });
       })
       .catch((error) => {
         console.error("클래스 신청 실패:", error);
       });
   } else {
-    Swal.fire({
-      icon: 'info',
-      title: '',
-      text: '이미 신청하셨습니다',
-      confirmButtonText: '확인',
+    store.cancelRegistClass(memberStore.memberId, classNo)
+    .then(() => {
+      Swal.fire({
+        icon: 'success',
+        title: '취소완료',
+        text: '클래스 신청이 성공적으로 취소되었습니다.',
+        confirmButtonText: '확인',
+      });
     })
   }
 };
