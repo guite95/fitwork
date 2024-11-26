@@ -52,7 +52,6 @@ export const useClubStore = defineStore('club', () => {
     try {
       const response = await axios.get(`${REST_API_URL}/list/location/${location}`);
       filteredClubs.value = response.data;
-      console.log(filteredClubs.value)
     } catch (error) {
       customSwal.fire('에러', '위치별 클럽를 불러오는 중 문제가 발생했습니다.', 'error');
     } finally {
