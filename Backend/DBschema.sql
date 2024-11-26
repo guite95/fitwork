@@ -153,3 +153,12 @@ CREATE TABLE IF NOT EXISTS club_member (
     FOREIGN KEY (id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (club_no) REFERENCES club(club_no) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+# 관리자 페이지
+-- 방문자 수 체크 테이블
+CREATE TABLE visitor_stats (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    visit_date DATE NOT NULL,
+    visitor_count INT DEFAULT 0,
+    UNIQUE KEY unique_visit_date (visit_date)
+);
