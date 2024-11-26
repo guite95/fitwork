@@ -25,7 +25,7 @@
 
       <!-- Class Image -->
       <div class="mb-6 flex justify-center">
-        <img v-if="classData.classesFile" :src="imgSrc" alt="Class Image" class="rounded-lg object-contain" />
+        <img v-if="!isLoading && classData.classesFile" :src="imgSrc" alt="Class Image" class="rounded-lg object-contain" />
       </div>
 
       <!-- Class Description -->
@@ -115,6 +115,30 @@ const comments = ref([]);
 const newComment = ref("");
 const imgSrc = ref("");
 const isRegisted = computed(() => store.isRegisted)
+const isLoading = ref(true);
+
+const loadClassDetails = async () => {
+  try {
+    isLoading.value = true;
+    await store.getClassDetail(classNo);
+    classData.value = store.classDetail;
+
+    await store.registStatus(sessionStorage.getItem('memberId'), classNo);
+    isRegisted.value = store.isRegisted;
+
+    if (classData.value.classesFile) {
+      imgSrc.value = `http://192.168.210.83:8080/file/class${classData.value.classesFile.path}/${classData.value.classesFile.systemName}`;
+    }
+
+    comments.value = classData.value.comments || [];
+  } catch (error) {
+    console.error("클래스 상세 정보 로드 실패:", error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+
 
 // Check if the current user is the author
 const isAuthor = computed(() => {
@@ -127,23 +151,6 @@ const isAuthor = computed(() => {
 
 const classNo = route.params.classNo;
 
-const loadClassDetails = async () => {
-  try {
-    await store.getClassDetail(classNo);
-    classData.value = store.classDetail;
-
-    await store.registStatus(sessionStorage.getItem('memberId'), classNo);
-    isRegisted.value = store.isRegisted;
-
-    if (classData.value.classesFile) {
-      imgSrc.value = `http://:192.168.210.83:8080/file/class${classData.value.classesFile.path}/${classData.value.classesFile.systemName}`;
-    }
-
-    comments.value = classData.value.comments || [];
-  } catch (error) {
-    console.error("클래스 상세 정보 로드 실패:", error);
-  }
-};
 
 const addComment = () => {
   if (newComment.value.trim() === "") {
@@ -231,14 +238,14 @@ const handleJoin = () => {
       });
   } else {
     store.cancelRegistClass(memberStore.memberId, classNo)
-    .then(() => {
-      Swal.fire({
-        icon: 'success',
-        title: '취소완료',
-        text: '클래스 신청이 성공적으로 취소되었습니다.',
-        confirmButtonText: '확인',
-      });
-    })
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: '취소완료',
+          text: '클래스 신청이 성공적으로 취소되었습니다.',
+          confirmButtonText: '확인',
+        });
+      })
   }
 };
 
