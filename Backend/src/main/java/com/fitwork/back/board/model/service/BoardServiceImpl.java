@@ -1,15 +1,14 @@
 package com.fitwork.back.board.model.service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.fitwork.back.board.model.dto.Board;
 import com.fitwork.back.board.model.dto.BoardFile;
 import com.fitwork.back.board.model.dto.BoardSearch;
+import com.fitwork.back.board.model.dto.Comment;
 import com.fitwork.back.board.model.repository.BoardRepository;
-import com.fitwork.back.util.PageResult;
 
 @Service
 public class BoardServiceImpl implements BoardService {
@@ -25,20 +24,16 @@ public class BoardServiceImpl implements BoardService {
 		
 		BoardFile boardFile = board.getBoardFile();
 		if (boardFile != null) {
-			boardFile.setFileNo(board.getBoardNo());
+			boardFile.setBoardNo(board.getBoardNo());
 			
 			boardRepository.insertFile(boardFile);
 		}
 	}
 
 	@Override
-	public Map<String, Object> list(BoardSearch boardSearch) {
-		Map<String, Object> result = new HashMap<>();
+	public List<Board> list(BoardSearch boardSearch) {
 		
-		result.put("list", boardRepository.selectAllBoard(boardSearch));
-		result.put("pr", new PageResult(boardSearch.getPage(), boardRepository.selectBoardCount(boardSearch), boardSearch.getListSize()));
-		
-		return result;
+		return boardRepository.selectAllBoard(boardSearch);
 	}
 
 	@Override
@@ -47,21 +42,13 @@ public class BoardServiceImpl implements BoardService {
 		
 		Board board = boardRepository.selectBoardByNo(boardNo);
 		
-		board.setBoardFile(boardRepository.selectBoardFileByNo(boardNo));
+		BoardFile boardFile = boardRepository.selectBoardFileByNo(boardNo);
+		
+		if (boardFile != null) {
+			board.setBoardFile(boardFile);
+		}
 		
 		return board;
-	}
-
-	@Override
-	public void increseLikeCnt(String id, int boardNo) {
-		boardRepository.increaseLikeCnt(boardNo);
-		boardRepository.insertLike(id, boardNo);
-	}
-
-	@Override
-	public void decreaseLikeCnt(String id, int boardNo) {
-		boardRepository.decreaseLikeCnt(boardNo);
-		boardRepository.deleteLike(id, boardNo);
 	}
 
 	@Override
@@ -72,6 +59,8 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public void modifyBoard(Board board) {
 		board.setModified(true);
+		board.getBoardFile().setBoardNo(board.getBoardNo());
+		boardRepository.insertFile(board.getBoardFile());
 		boardRepository.updateBoard(board);
 	}
 
@@ -87,6 +76,52 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public void deleteFile(int fileNo) {
 		boardRepository.deleteBoardFile(fileNo);
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public void increseLikeCnt(String id, int boardNo) {
+		boardRepository.increaseLikeCnt(boardNo);
+		boardRepository.insertLike(id, boardNo);
+	}
+	
+	@Override
+	public void decreaseLikeCnt(String id, int boardNo) {
+		boardRepository.decreaseLikeCnt(boardNo);
+		boardRepository.deleteLike(id, boardNo);
+	}
+	
+	@Override
+	public boolean isLiked(String id, int boardNo) {
+		return boardRepository.isLiked(id, boardNo);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public void addComment(Comment comment) {
+		boardRepository.insertComment(comment);
+	}
+
+	@Override
+	public List<Comment> commentList(int boardNo) {
+		return boardRepository.selectCommentByBoardNo(boardNo);
+	}
+
+	@Override
+	public List<Comment> userComment(String writer) {
+		return boardRepository.selectCommentByWriter(writer);
+	}
+
+	@Override
+	public void modifyComment(Comment comment) {
+		boardRepository.updateComment(comment);
+	}
+
+	@Override
+	public void deleteComment(int commentNo) {
+		boardRepository.deleteComment(commentNo);
 	}
 
 }

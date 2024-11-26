@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fitwork.back.clubs.model.repository.ClubRepository">
+    <!-- 전체 클럽 조회 -->
+    <select id="selectAllClub" resultType="Club">
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		GROUP BY 
+		    c.club_no;
+    </select>
+
+    <!-- 클럽 상세 조회 -->
+    <select id="selectClubByClubNo" parameterType="int" resultType="Club">
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		WHERE 
+		    c.club_no = #{clubNo}
+		GROUP BY 
+		    c.club_no;
+    </select>
+    
+    <!-- 클럽 파일 선택 -->
+    <select id="selectClubFileByClubNo" parameterType="int">
+    	SELECT *
+    	FROM club_file
+    	WHERE club_no = #{clubNo}
+    </select>
+
+    <!-- 위치별 클럽 조회 -->
+    <select id="selectClubByLocation" parameterType="String" resultType="Club">
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+        WHERE 
+        	location LIKE concat('%',#{location},'%')
+		GROUP BY 
+		    c.club_no;
+    </select>
+    
+    <!-- 카테고리별 클럽 조회 -->
+    <select id="selectClubByCategory" parameterType="String" resultType="Club">
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+        WHERE 
+        	category = #{category}
+		GROUP BY 
+		    c.club_no;
+    </select>
+
+    <!-- 성별 비중 순으로 클럽 조회 -->
+    <!-- 
+    <select id="selectClubByGender" parameterType="String" resultType="Club">
+        SELECT 
+            c.*,
+            (SUM(CASE WHEN m.gender = #{gender} THEN 1 ELSE 0 END) * 100 / COUNT(cm.nickname)) AS gender_percentage
+        FROM 
+            club c
+        LEFT JOIN 
+            club_member cm ON c.club_no = cm.club_no
+        LEFT JOIN 
+            member m ON cm.nickname = m.nickname
+        GROUP BY 
+            c.club_no
+        ORDER BY 
+            gender_percentage DESC;
+    </select>
+     -->
+
+    <!-- 회원이 신청한 클럽 조회 -->
+    <select id="selectRegisteredClubById" parameterType="String" resultType="Club">
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr2.club_no), 0) AS head_count
+		FROM 
+		    club c
+		INNER JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		INNER JOIN 
+		    member m ON cr.id = m.id
+		LEFT JOIN 
+		    club_regist cr2 ON c.club_no = cr2.club_no
+		WHERE 
+		    m.id = #{id}
+		GROUP BY 
+		    c.club_no;
+    </select>
+
+    <!-- 회원이 가입된 클럽 조회 -->
+    <!-- 
+    <select id="selectMemberedClubById" parameterType="String" resultType="Club">
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		INNER JOIN 
+		    club_member cm ON c.club_no = cm.club_no
+		INNER JOIN 
+		    member m ON cm.id = m.id
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		WHERE 
+		    m.id = #{id}
+		GROUP BY 
+		    c.club_no;
+    </select>
+     -->
+
+    <!-- 강사가 개설한 클럽 조회 -->
+    <select id="selectClubByLeader" parameterType="String" resultType="Club">
+        SELECT *
+        FROM club
+        WHERE leader = #{leader}
+    </select>
+
+    <!-- 클럽 정보 등록 -->
+    <insert id="insertClub" parameterType="Club" useGeneratedKeys="true" keyProperty="clubNo">
+        INSERT INTO club(leader, club_name, category, tag, location, description)
+        VALUES(#{leader}, #{clubName}, #{category}, #{tag}, #{location}, #{description})
+    </insert>
+    
+    <!-- 클럽 이미지 등록 -->
+    <insert id="insertClubFile" parameterType="ClubFile">
+        INSERT INTO club_file(ori_name, system_name, path, club_no)
+        VALUES(#{oriName}, #{systemName}, #{path}, #{clubNo})
+    </insert>
+    
+    <!-- 클럽 신청 테이블에 저장 -->
+    <insert id="insertClubRegister">
+        INSERT INTO club_regist(id, club_no)
+        VALUES (#{id}, #{clubNo})
+    </insert>
+    
+    <!-- 신청 했는지 확인 -->
+    <select id="isRegisted" resultType="boolean">
+    	SELECT EXISTS (
+    		SELECT 1
+    		FROM club_regist
+    		WHERE id = #{id} AND club_no = #{clubNo}
+    	)
+    </select>
+    
+    <!-- 클럽 신청 목록에서 삭제 -->
+    <delete id="deleteClubRegister">
+        DELETE FROM club_regist
+        WHERE id = #{id} AND club_no = #{clubNo}
+    </delete>
+    
+    <!-- 클럽 수강인원으로 등록 -->
+    <insert id="insertClubMember">
+        INSERT INTO club_member(id, club_no)
+        VALUES (#{id}, #{clubNo})
+    </insert>
+    
+    <!-- 클럽 수강인원에서 삭제 -->
+    <delete id="deleteClubMember">
+        DELETE FROM club_member
+        WHERE id = #{id} AND club_no = #{clubNo}
+    </delete>
+    
+    <!-- 클럽 정보 수정 -->
+    <update id="updateClubInfo" parameterType="Club">
+        UPDATE club
+        SET club_name = #{clubName}, location = #{location}, tag = #{tag}, description = #{description}
+        WHERE club_no = #{clubNo}
+    </update>
+    
+    <!-- 클럽 파일 삭제 -->
+    <delete id="deleteClubFile" parameterType="int">
+    	DELETE FROM club_file
+    	WHERE file_no = #{fileNo}
+    </delete>
+    
+    <!-- 클럽 정보 삭제 -->
+    <delete id="deleteClub" parameterType="int">
+        DELETE FROM club
+        WHERE club_no = #{clubNo}
+    </delete>
+</mapper>

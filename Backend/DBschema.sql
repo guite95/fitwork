@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS board (
 	board_no INT AUTO_INCREMENT,
     title VARCHAR(200),
     writer VARCHAR(50),
+    category VARCHAR(30),
     content VARCHAR(10000),
     reg_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     view_cnt INT DEFAULT 0,
@@ -48,7 +49,7 @@ CREATE TABLE IF NOT EXISTS comment (
     content VARCHAR(300),
     reg_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     board_no INT,
-    parent_comment_number INT DEFAULT -1,
+    parent_comment_number INT DEFAULT 0,
     PRIMARY KEY(comment_no),
     FOREIGN KEY (writer) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (board_no) REFERENCES board(board_no) ON UPDATE CASCADE ON DELETE CASCADE
@@ -66,11 +67,11 @@ CREATE TABLE IF NOT EXISTS board_file (
 
 
 # 카테고리 테이블
-CREATE TABLE IF NOT EXISTS category (
-	category_no INT AUTO_INCREMENT,
-    category_name VARCHAR(30) UNIQUE,
-    PRIMARY KEY(category_no)
-);
+-- CREATE TABLE IF NOT EXISTS category (
+-- 	category_no INT AUTO_INCREMENT,
+--     category_name VARCHAR(30) UNIQUE,
+--     PRIMARY KEY(category_no)
+-- );
 
 
 # 클래스 정보 관련 테이블
@@ -80,13 +81,13 @@ CREATE TABLE IF NOT EXISTS class (
     leader VARCHAR(50),
     class_name VARCHAR(100),
     category VARCHAR(30),
+    tag VARCHAR(1000),
     location VARCHAR(100),
     description VARCHAR(10000),
-    head_count INT DEFAULT 0,
     price INT NOT NULL,
     PRIMARY KEY(class_no),
-    FOREIGN KEY (leader) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (category) REFERENCES category(category_name) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (leader) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE
+    -- FOREIGN KEY (category) REFERENCES category(category_name) ON UPDATE CASCADE ON DELETE CASCADE 
 );
 -- 클래스 파일 테이블
 CREATE TABLE IF NOT EXISTS class_file (
@@ -100,16 +101,16 @@ CREATE TABLE IF NOT EXISTS class_file (
 );
 -- 클래스 신청 목록
 CREATE TABLE IF NOT EXISTS class_regist (
-	nickname VARCHAR(50),
+	id VARCHAR(50),
     class_no INT,
-    FOREIGN KEY (nickname) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (class_no) REFERENCES class(class_no) ON UPDATE CASCADE ON DELETE CASCADE
 );
 -- 클래스 수강 인원
 CREATE TABLE IF NOT EXISTS class_member (
-	nickname VARCHAR(50),
+	id VARCHAR(50),
     class_no INT,
-    FOREIGN KEY (nickname) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (class_no) REFERENCES class(class_no) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -121,13 +122,12 @@ CREATE TABLE IF NOT EXISTS club (
     leader VARCHAR(50),
     club_name VARCHAR(100),
     category VARCHAR(30),
+    tag VARCHAR(1000),
     location VARCHAR(100),
     description VARCHAR(10000),
-    head_count INT DEFAULT 0,
-    price INT NOT NULL,
     PRIMARY KEY(club_no),
-    FOREIGN KEY (leader) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (category) REFERENCES category(category_name) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (leader) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE
+    -- FOREIGN KEY (category) REFERENCES category(category_name) ON UPDATE CASCADE ON DELETE CASCADE
 );
 -- 모임 파일 테이블
 CREATE TABLE IF NOT EXISTS club_file (
@@ -141,15 +141,15 @@ CREATE TABLE IF NOT EXISTS club_file (
 );
 -- 모임 신청 목록
 CREATE TABLE IF NOT EXISTS club_regist (
-	nickname VARCHAR(50),
+	id VARCHAR(50),
     club_no INT,
-    FOREIGN KEY (nickname) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (club_no) REFERENCES club(club_no) ON UPDATE CASCADE ON DELETE CASCADE
 );
 -- 모임 수강 인원
 CREATE TABLE IF NOT EXISTS club_member (
-	nickname VARCHAR(50),
+	id VARCHAR(50),
     club_no INT,
-    FOREIGN KEY (nickname) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (id) REFERENCES member(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (club_no) REFERENCES club(club_no) ON UPDATE CASCADE ON DELETE CASCADE
 );

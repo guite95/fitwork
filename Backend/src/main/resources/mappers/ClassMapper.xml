@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.fitwork.back.classes.model.repository.ClassesRepository">
+	<!-- 전체 클래스 조회 -->
+	<select id="selectAllClass" resultType="Classes">
+		SELECT
+			c.class_no,
+			c.leader,
+			c.class_name,
+			c.category,
+			c.tag,
+			c.location,
+			c.description,
+			c.price,
+			IFNULL(COUNT(cr.class_no), 0) AS head_count
+		FROM
+			class c
+		LEFT JOIN
+			class_regist cr ON c.class_no = cr.class_no
+		GROUP BY
+			c.class_no;
+	</select>
+
+	<!-- 클래스 상세 조회 -->
+	<select id="selectClassByClassNo" parameterType="int" resultType="Classes">
+		SELECT 
+		    c.class_no,
+		    c.leader,
+		    c.class_name,
+		    c.category,
+		    c.tag,
+		    c.location,
+		    c.description,
+		    c.price,
+		    IFNULL(COUNT(cr.class_no), 0) AS head_count
+		FROM 
+		    class c
+		LEFT JOIN 
+		    class_regist cr ON c.class_no = cr.class_no
+		WHERE 
+		    c.class_no = #{classNo}
+		GROUP BY 
+		    c.class_no;
+	</select>
+
+	<!-- 클래스 파일 선택 -->
+	<select id="selectClassesFileByClassNo" parameterType="int">
+		SELECT *
+		FROM class_file
+		WHERE class_no = #{classNo}
+	</select>
+
+	<!-- 위치별 클래스 조회 -->
+	<select id="selectClassByLocation" parameterType="String" resultType="Classes">
+		SELECT 
+		    c.class_no,
+		    c.leader,
+		    c.class_name,
+		    c.category,
+		    c.tag,
+		    c.location,
+		    c.description,
+		    c.price,
+		    IFNULL(COUNT(cr.class_no), 0) AS head_count
+		FROM 
+		    class c
+		LEFT JOIN 
+		    class_regist cr ON c.class_no = cr.class_no
+		WHERE 
+			location LIKE concat('%',#{location},'%')
+		GROUP BY 
+		    c.class_no;
+	</select>
+
+	<!-- 카테고리별 클래스 조회 -->
+	<select id="selectClassByCategory" parameterType="String" resultType="Classes">
+		SELECT
+			c.class_no,
+			c.leader,
+			c.class_name,
+			c.category,
+			c.tag,
+			c.location,
+			c.description,
+			c.price,
+			IFNULL(COUNT(cr.class_no), 0) AS head_count
+		FROM
+			class c
+		LEFT JOIN
+			class_regist cr ON c.class_no = cr.class_no
+		WHERE 
+			category = #{category}
+		GROUP BY
+			c.class_no;
+	</select>
+
+	<!-- 성별 비중 순으로 클래스 조회 -->
+	<!-- 
+	<select id="selectClassByGender" parameterType="String" resultType="Classes">
+		SELECT
+		c.*,
+		(SUM(CASE WHEN m.gender = #{gender} THEN 1 ELSE 0 END) * 100 /
+		COUNT(cm.nickname)) AS gender_percentage
+		FROM
+		class c
+		LEFT JOIN
+		class_member cm ON c.class_no = cm.class_no
+		LEFT JOIN
+		member m ON cm.nickname = m.nickname
+		GROUP BY
+		c.class_no
+		ORDER BY
+		gender_percentage DESC;
+	</select>
+	 -->
+
+	<!-- 회원이 신청한 클래스 조회 -->
+	<select id="selectRegistedClassById" parameterType="String" resultType="Classes">
+		SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr2.class_no), 0) AS head_count
+		FROM 
+		    class c
+		INNER JOIN 
+		    class_regist cr ON c.class_no = cr.class_no
+		INNER JOIN 
+		    member m ON cr.id = m.id
+		LEFT JOIN 
+		    class_regist cr2 ON c.class_no = cr2.class_no
+		WHERE 
+		    m.id = #{id}
+		GROUP BY 
+		    c.class_no;
+	</select>
+
+	<!-- 회원이 가입된 클래스 조회 -->
+	<!-- 
+	<select id="selectMemberedClassById" parameterType="String" resultType="Classes">
+		SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.class_no), 0) AS head_count
+		FROM 
+		    class c
+		INNER JOIN 
+		    class_member cm ON c.class_no = cm.class_no
+		INNER JOIN 
+		    member m ON cm.id = m.id
+		LEFT JOIN 
+		    class_regist cr ON c.class_no = cr.class_no
+		WHERE 
+		    m.id = #{id}
+		GROUP BY 
+		    c.class_no;
+	</select>
+	 -->
+
+	<!-- 강사가 개설한 클래스 조회 -->
+	<select id="selectClassByLeader" parameterType="String" resultType="Classes">
+		SELECT
+			c.class_no,
+			c.leader,
+			c.class_name,
+			c.category,
+			c.tag,
+			c.location,
+			c.description,
+			c.price,
+			IFNULL(COUNT(cr.class_no), 0) AS head_count
+		FROM
+			class c
+		LEFT JOIN
+			class_regist cr ON c.class_no = cr.class_no
+		WHERE 
+			leader = #{leader}
+		GROUP BY
+			c.class_no;
+	</select>
+
+	<!-- 클래스 정보 등록 -->
+	<insert id="insertClass" parameterType="Classes" useGeneratedKeys="true" keyProperty="classNo">
+		INSERT INTO class(leader,
+		class_name, category, tag, location, description, price)
+		VALUES(#{leader}, #{className}, #{category}, #{tag}, #{location},
+		#{description}, #{price})
+	</insert>
+
+	<!-- 클래스 이미지 등록 -->
+	<insert id="insertClassFile" parameterType="ClassesFile">
+		INSERT INTO
+		class_file(ori_name, system_name, path, class_no)
+		VALUES(#{oriName},
+		#{systemName}, #{path}, #{classNo})
+	</insert>
+
+	<!-- 클래스 신청 테이블에 저장 -->
+	<insert id="insertClassRegist">
+		INSERT INTO class_regist(id, class_no)
+		VALUES (#{id}, #{classNo})
+	</insert>
+	
+	<!-- 신청 했는지 확인 -->
+	<select id="isRegisted" resultType="boolean">
+		SELECT EXISTS (
+			SELECT 1
+			FROM class_regist
+			WHERE id = #{id} AND class_no = #{classNo}
+		)
+	</select>
+
+
+	<!-- 클래스 신청 목록에서 삭제 -->
+	<delete id="deleteClassRegist">
+		DELETE FROM class_regist
+		WHERE id = #{id} AND class_no
+		= #{classNo}
+	</delete>
+
+	<!-- 클래스 수강인원으로 등록 -->
+	<insert id="insertClassMember">
+		INSERT INTO class_member(id, class_no)
+		VALUES (#{id},
+		#{classNo})
+	</insert>
+
+	<!-- 클래스 수강인원에서 삭제 -->
+	<delete id="deleteClassMember">
+		DELETE FROM class_member
+		WHERE id = #{id} AND class_no
+		= #{classNo}
+	</delete>
+
+	<!-- 클래스 정보 수정 -->
+	<update id="updateClassInfo" parameterType="Classes">
+		UPDATE class
+		SET class_name = #{className}, location = #{location}, tag = #{tag},
+		description = #{description}, price = #{price}
+		WHERE class_no = #{classNo}
+	</update>
+
+	<!-- 클래스 파일 삭제 -->
+	<delete id="deleteClassFile" parameterType="int">
+		DELETE FROM
+		class_file
+		WHERE file_no = #{fileNo}
+	</delete>
+
+	<!-- 클래스 정보 삭제 -->
+	<delete id="deleteClass" parameterType="int">
+		DELETE FROM class
+		WHERE
+		class_no = #{classNo}
+	</delete>
+</mapper>

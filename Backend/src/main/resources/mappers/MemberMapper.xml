@@ -8,7 +8,7 @@
 		INSERT INTO member(id, password, name, nickname, gender, birth_date, email, phone_number, address, member_role)
 		VALUES (#{id}, #{password}, #{name}, #{nickname}, #{gender}, #{birthDate}, #{email}, #{phoneNumber}, #{address}, #{memberRole})
 	</insert>
-	
+
 	<!-- 회원 존재하는지 확인 -->
 	<select id="isMemberExist" resultType="boolean">
 		SELECT EXISTS(
@@ -40,7 +40,7 @@
 	<!-- 회원 정보 수정 -->
 	<update id="updateMemberInfo" parameterType="Member">
 		UPDATE member
-		SET password = #{password}, nickname = #{nickname}, email = #{email}, address = #{address}
+		SET password = #{password}, nickname = #{nickname}, email = #{email}, address = #{address}, phone_number = #{phoneNumber}
 		WHERE id = #{id}
 	</update>
 </mapper>

@@ -5,6 +5,7 @@ import java.util.List;
 import com.fitwork.back.board.model.dto.Board;
 import com.fitwork.back.board.model.dto.BoardFile;
 import com.fitwork.back.board.model.dto.BoardSearch;
+import com.fitwork.back.board.model.dto.Comment;
 
 public interface BoardRepository {
 	
@@ -80,6 +81,8 @@ public interface BoardRepository {
 	 */
 	public void decreaseLikeCnt(int boardNo);
 	
+	public boolean isLiked(String id, int boardNo);
+	
 	/**
 	 * 게시물 삭제
 	 * @param boardNo
@@ -97,5 +100,39 @@ public interface BoardRepository {
 	 * @param board
 	 */
 	public void updateBoard(Board board);
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * 댓글 등록
+	 * @param comment
+	 */
+	public void insertComment(Comment comment);
+	
+	/**
+	 * 게시물 댓글 조회
+	 * @param boardNo
+	 * @return
+	 */
+	public List<Comment> selectCommentByBoardNo(int boardNo);
+	
+	/**
+	 * 내가 쓴 댓글 조회
+	 * @param writer
+	 * @return
+	 */
+	public List<Comment> selectCommentByWriter(String writer);
+	
+	/**
+	 * 댓글 수정
+	 * @param comment
+	 */
+	public void updateComment(Comment comment);
+	
+	/**
+	 * 댓글 삭제
+	 * @param commentNo
+	 */
+	public void deleteComment(int commentNo);
 	
 }
