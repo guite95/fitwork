@@ -44,6 +44,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		return null;
 	}
 	
@@ -51,21 +52,22 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
-		
-		CustomUserDetails customUserDetails = (CustomUserDetails) authResult.getPrincipal();
-		
-		String id = customUserDetails.getUsername();
-		
-		Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
-		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-		GrantedAuthority auth = iterator.next();
-		
-		String role = auth.getAuthority();
-		
-		String token = jwtUtil.createJwt(id, role);
-		
-		response.addHeader("Authorization", "Bearer " + token);
-		
+		try {
+			CustomUserDetails customUserDetails = (CustomUserDetails) authResult.getPrincipal();
+			
+			String id = customUserDetails.getUsername();
+			
+			Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
+			Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+			GrantedAuthority auth = iterator.next();
+			
+			String role = auth.getAuthority();
+			
+			String token = jwtUtil.createJwt(id, role);
+			response.addHeader("Authorization", "Bearer " + token);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	// 로그인 실패 시 실행하는 메서드
@@ -74,7 +76,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 			AuthenticationException failed) throws IOException, ServletException {
 		
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	    response.getWriter().write("Authentication failed: " + failed.getMessage());
+//		response.setStatus(401);
+//	    response.getWriter().write("Authentication failed: " + failed.getMessage());
 		
 	}
 	

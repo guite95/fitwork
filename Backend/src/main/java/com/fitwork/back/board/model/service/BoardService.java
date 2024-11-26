@@ -19,7 +19,7 @@ public interface BoardService {
 	 * @param boardSearch
 	 * @return
 	 */
-	public Map<String, Object> list(BoardSearch boardSearch);
+	public List<Board> list(BoardSearch boardSearch);
 	
 	/**
 	 * 게시글 상세 조회
@@ -98,4 +98,6 @@ public interface BoardService {
 	 * @param commentNo
 	 */
 	public void deleteComment(int commentNo);
+
+	boolean isLiked(String id, int boardNo);
 }

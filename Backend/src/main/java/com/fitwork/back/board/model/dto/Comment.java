@@ -14,6 +14,6 @@ public class Comment {
 	private String writer;
 	private String content;
 	private String regDate;
-	private String boardNo;
+	private int boardNo;
 	private int parentCommentNumber; // 기본댓글 : 0, 대댓글 : 부모댓글번호, 삭제된댓글 : -1
 }

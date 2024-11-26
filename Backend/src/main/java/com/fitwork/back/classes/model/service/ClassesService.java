@@ -81,6 +81,8 @@ public interface ClassesService {
 	 */
 	public void addToRegistedClass(String id, int classNo);
 	
+	public boolean isRegisted(String id, int classNo);
+	
 	/**
 	 * 클래스 등록 완료
 	 * @param id
@@ -107,6 +109,8 @@ public interface ClassesService {
 	 * @param classes
 	 */
 	public void modifyClassInfo(Classes classes);
+	
+	public void deleteClassFile(int fileNo);
 	
 	/**
 	 * 클래스 정보 삭제

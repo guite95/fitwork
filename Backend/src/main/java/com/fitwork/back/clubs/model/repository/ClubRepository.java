@@ -10,6 +10,8 @@ public interface ClubRepository {
     
     public Club selectClubByClubNo(int clubNo);
     
+    public ClubFile selectClubFileByClubNo(int clubNo);
+    
     public List<Club> selectClubByLocation(String location);
     
     public List<Club> selectClubByCategory(String category);
@@ -30,11 +32,15 @@ public interface ClubRepository {
     
     public void deleteClubRegister(String id, int clubNo);
     
+    public boolean isRegisted(String id, int clubNo);
+    
     public void insertClubMember(String id, int clubNo);
     
     public void deleteClubMember(String id, int clubNo);
     
     public void updateClubInfo(Club club);
+    
+    public void deleteClubFile(int fileNo);
     
     public void deleteClub(int clubNo);
 }

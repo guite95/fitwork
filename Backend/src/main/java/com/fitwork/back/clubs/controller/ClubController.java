@@ -13,15 +13,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fitwork.back.clubs.model.service.ClubService;
 import com.fitwork.back.clubs.model.dto.Club;
 import com.fitwork.back.clubs.model.dto.ClubFile;
+import com.fitwork.back.clubs.model.service.ClubService;
 
 @RestController
 @RequestMapping("/api-club")
@@ -64,7 +63,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("{clubNo}")
+    @GetMapping("/detail/{clubNo}")
     public ResponseEntity<Object> getClubDetail(@PathVariable int clubNo) {
         try {
             Club club = clubService.clubDetail(clubNo);
@@ -77,7 +76,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/location/{location}")
+    @GetMapping("/list/location/{location}")
     public ResponseEntity<Object> getNearbyClubs(@PathVariable String location) {
         try {
             List<Club> list = clubService.clubByLocation(location);
@@ -88,7 +87,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/category/{category}")
+    @GetMapping("/list/category/{category}")
     public ResponseEntity<Object> getCategoryClubs(@PathVariable String category) {
         try {
             List<Club> list = clubService.clubByCategory(category);
@@ -99,7 +98,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/gender/{gender}")
+    @GetMapping("/list/gender/{gender}")
     public ResponseEntity<Object> getGenderClubs(@PathVariable String gender) {
         try {
             List<Club> list = clubService.clubByGender(gender);
@@ -110,7 +109,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/registed/{id}")
+    @GetMapping("/list/registed/{id}")
     public ResponseEntity<Object> getRegistedClubs(@PathVariable String id) {
         try {
             List<Club> list = clubService.registeredClub(id);
@@ -121,7 +120,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/membered/{id}")
+    @GetMapping("/list/membered/{id}")
     public ResponseEntity<Object> getMemberedClubs(@PathVariable String id) {
         try {
             List<Club> list = clubService.memberedClub(id);
@@ -132,7 +131,7 @@ public class ClubController {
         }
     }
 
-    @GetMapping("/leader/{leader}")
+    @GetMapping("/list/leader/{leader}")
     public ResponseEntity<Object> getLeaderedClubs(@PathVariable String leader) {
         try {
             List<Club> list = clubService.leaderedClub(leader);
@@ -153,14 +152,24 @@ public class ClubController {
         }
     }
 
-    @DeleteMapping("/register/refuse/{id}/{clubNo}")
+    @DeleteMapping("/register/cancel/{id}/{clubNo}")
     public ResponseEntity<Object> refuseClubRegistration(@PathVariable String id, @PathVariable int clubNo) {
         try {
             clubService.refuseRegister(id, clubNo);
-            return ResponseEntity.status(HttpStatus.OK).body("가입 신청이 거절되었습니다.");
+            return ResponseEntity.status(HttpStatus.OK).body("가입 신청이 취소되었습니다.");
         } catch (Exception e) {
             return handleException(e);
         }
+    }
+    
+    @GetMapping("/register/status/{id}/{clubNo}")
+    public ResponseEntity<Object> isRegisted(@PathVariable String id, @PathVariable int clubNo) {
+    	try {
+			boolean isRegisted = clubService.isRegisted(id, clubNo);
+			return ResponseEntity.status(HttpStatus.OK).body(isRegisted);
+		} catch (Exception e) {
+			return handleException(e);
+		}
     }
 
     @DeleteMapping("/member/exit/{id}/{clubNo}")
@@ -176,26 +185,28 @@ public class ClubController {
     @PostMapping("/register/club")
     public ResponseEntity<Object> registClub(@RequestPart Club club, @RequestPart(required = false) MultipartFile file) {
         try {
-            String oriName = file.getOriginalFilename();
-
-            if (oriName != null && oriName.length() > 0) {
-                SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
-                String subDir = sdf.format(new Date());
-
-                File dir = new File("c://SSAFY/final-prj/clubs/img" + subDir);
-                dir.mkdirs();
-
-                String systemName = UUID.randomUUID().toString() + oriName;
-
-                file.transferTo(new File(dir, systemName));
-
-                ClubFile clubFile = new ClubFile();
-                clubFile.setPath(subDir);
-                clubFile.setOriName(oriName);
-                clubFile.setSystemName(systemName);
-
-                club.setClubFile(clubFile);
-            }
+        	if (file != null) {
+        		String oriName = file.getOriginalFilename();
+        		
+        		if (oriName != null && oriName.length() > 0) {
+        			SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
+        			String subDir = sdf.format(new Date());
+        			
+        			File dir = new File("c://SSAFY/final-prj/clubs/img" + subDir);
+        			dir.mkdirs();
+        			
+        			String systemName = UUID.randomUUID().toString() + oriName;
+        			
+        			file.transferTo(new File(dir, systemName));
+        			
+        			ClubFile clubFile = new ClubFile();
+        			clubFile.setPath(subDir);
+        			clubFile.setOriName(oriName);
+        			clubFile.setSystemName(systemName);
+        			
+        			club.setClubFile(clubFile);
+        		}
+        	}
 
             clubService.registClub(club);
             return ResponseEntity.status(HttpStatus.CREATED).body("클럽이 성공적으로 등록되었습니다.");
@@ -205,10 +216,44 @@ public class ClubController {
     }
 
     @PutMapping("/modify/{clubNo}")
-    public ResponseEntity<Object> modifyClub(@PathVariable int clubNo, @RequestBody Club club) {
+    public ResponseEntity<Object> modifyClub(@PathVariable int clubNo, @RequestPart Club club, @RequestPart(required = false) MultipartFile file) {
         try {
-            club.setClubNo(clubNo);
-            clubService.modifyClubInfo(club);
+        	Club tmp = clubService.clubDetail(clubNo);
+        	
+        	if (file != null) {
+        		if (tmp.getClubFile() != null) {
+        			clubService.deleteClubFile(tmp.getClubFile().getFileNo());
+        		}
+        		
+        		String oriName = file.getOriginalFilename();
+        		
+        		if (oriName != null && oriName.length() > 0) {
+        			SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
+        			String subDir = sdf.format(new Date());
+        			
+        			File dir = new File("c://SSAFY/final-prj/clubs/img" + subDir);
+        			dir.mkdirs();
+        			
+        			String systemName = UUID.randomUUID().toString() + oriName;
+        			
+        			file.transferTo(new File(dir, systemName));
+        			
+        			ClubFile clubFile = new ClubFile();
+        			clubFile.setPath(subDir);
+        			clubFile.setOriName(oriName);
+        			clubFile.setSystemName(systemName);
+        			
+        			tmp.setClubFile(clubFile);
+        		}
+        		
+        	}
+        	
+        	tmp.setClubName(club.getClubName());
+        	tmp.setLocation(club.getLocation());
+        	tmp.setTag(club.getTag());
+        	tmp.setDescription(club.getDescription());
+        	
+            clubService.modifyClubInfo(tmp);
             return ResponseEntity.status(HttpStatus.OK).body("클럽 정보가 수정되었습니다.");
         } catch (Exception e) {
             return handleException(e);

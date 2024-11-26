@@ -40,7 +40,7 @@
 	<!-- 회원 정보 수정 -->
 	<update id="updateMemberInfo" parameterType="Member">
 		UPDATE member
-		SET password = #{password}, nickname = #{nickname}, email = #{email}, address = #{address}
+		SET password = #{password}, nickname = #{nickname}, email = #{email}, address = #{address}, phone_number = #{phoneNumber}
 		WHERE id = #{id}
 	</update>
 </mapper>

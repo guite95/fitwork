@@ -2,35 +2,74 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fitwork.back.club.model.repository.ClubRepository">
+<mapper namespace="com.fitwork.back.clubs.model.repository.ClubRepository">
     <!-- 전체 클럽 조회 -->
     <select id="selectAllClub" resultType="Club">
-        SELECT *
-        FROM club
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		GROUP BY 
+		    c.club_no;
     </select>
 
     <!-- 클럽 상세 조회 -->
     <select id="selectClubByClubNo" parameterType="int" resultType="Club">
-        SELECT *
-        FROM club
-        WHERE club_no = #{clubNo}
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		WHERE 
+		    c.club_no = #{clubNo}
+		GROUP BY 
+		    c.club_no;
+    </select>
+    
+    <!-- 클럽 파일 선택 -->
+    <select id="selectClubFileByClubNo" parameterType="int">
+    	SELECT *
+    	FROM club_file
+    	WHERE club_no = #{clubNo}
     </select>
 
     <!-- 위치별 클럽 조회 -->
     <select id="selectClubByLocation" parameterType="String" resultType="Club">
-        SELECT *
-        FROM club
-        WHERE location = #{location}
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+        WHERE 
+        	location LIKE concat('%',#{location},'%')
+		GROUP BY 
+		    c.club_no;
     </select>
     
     <!-- 카테고리별 클럽 조회 -->
     <select id="selectClubByCategory" parameterType="String" resultType="Club">
-        SELECT *
-        FROM club
-        WHERE category = #{category}
+        SELECT 
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+        WHERE 
+        	category = #{category}
+		GROUP BY 
+		    c.club_no;
     </select>
 
     <!-- 성별 비중 순으로 클럽 조회 -->
+    <!-- 
     <select id="selectClubByGender" parameterType="String" resultType="Club">
         SELECT 
             c.*,
@@ -46,34 +85,47 @@
         ORDER BY 
             gender_percentage DESC;
     </select>
+     -->
 
     <!-- 회원이 신청한 클럽 조회 -->
     <select id="selectRegisteredClubById" parameterType="String" resultType="Club">
         SELECT 
-            c.*
-        FROM 
-            club c
-        INNER JOIN 
-            club_member cm ON c.club_no = cm.club_no
-        INNER JOIN 
-            member m ON cm.id = m.id
-        WHERE 
-            m.id = #{id}
+		    c.*,
+		    IFNULL(COUNT(cr2.club_no), 0) AS head_count
+		FROM 
+		    club c
+		INNER JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		INNER JOIN 
+		    member m ON cr.id = m.id
+		LEFT JOIN 
+		    club_regist cr2 ON c.club_no = cr2.club_no
+		WHERE 
+		    m.id = #{id}
+		GROUP BY 
+		    c.club_no;
     </select>
 
     <!-- 회원이 가입된 클럽 조회 -->
+    <!-- 
     <select id="selectMemberedClubById" parameterType="String" resultType="Club">
         SELECT 
-            c.*
-        FROM 
-            club c
-        INNER JOIN 
-            club_member cm ON c.club_no = cm.club_no
-        INNER JOIN 
-            member m ON cm.id = m.id
-        WHERE 
-            m.id = #{id}
+		    c.*,
+		    IFNULL(COUNT(cr.club_no), 0) AS head_count
+		FROM 
+		    club c
+		INNER JOIN 
+		    club_member cm ON c.club_no = cm.club_no
+		INNER JOIN 
+		    member m ON cm.id = m.id
+		LEFT JOIN 
+		    club_regist cr ON c.club_no = cr.club_no
+		WHERE 
+		    m.id = #{id}
+		GROUP BY 
+		    c.club_no;
     </select>
+     -->
 
     <!-- 강사가 개설한 클럽 조회 -->
     <select id="selectClubByLeader" parameterType="String" resultType="Club">
@@ -84,8 +136,8 @@
 
     <!-- 클럽 정보 등록 -->
     <insert id="insertClub" parameterType="Club" useGeneratedKeys="true" keyProperty="clubNo">
-        INSERT INTO club(leader, club_name, category, location, description, price)
-        VALUES(#{leader}, #{clubName}, #{category}, #{location}, #{description}, #{price})
+        INSERT INTO club(leader, club_name, category, tag, location, description)
+        VALUES(#{leader}, #{clubName}, #{category}, #{tag}, #{location}, #{description})
     </insert>
     
     <!-- 클럽 이미지 등록 -->
@@ -96,13 +148,22 @@
     
     <!-- 클럽 신청 테이블에 저장 -->
     <insert id="insertClubRegister">
-        INSERT INTO club_register(id, club_no)
+        INSERT INTO club_regist(id, club_no)
         VALUES (#{id}, #{clubNo})
     </insert>
     
+    <!-- 신청 했는지 확인 -->
+    <select id="isRegisted" resultType="boolean">
+    	SELECT EXISTS (
+    		SELECT 1
+    		FROM club_regist
+    		WHERE id = #{id} AND club_no = #{clubNo}
+    	)
+    </select>
+    
     <!-- 클럽 신청 목록에서 삭제 -->
     <delete id="deleteClubRegister">
-        DELETE FROM club_register
+        DELETE FROM club_regist
         WHERE id = #{id} AND club_no = #{clubNo}
     </delete>
     
@@ -121,9 +182,15 @@
     <!-- 클럽 정보 수정 -->
     <update id="updateClubInfo" parameterType="Club">
         UPDATE club
-        SET club_name = #{clubName}, location = #{location}, description = #{description}, price = #{price}
+        SET club_name = #{clubName}, location = #{location}, tag = #{tag}, description = #{description}
         WHERE club_no = #{clubNo}
     </update>
+    
+    <!-- 클럽 파일 삭제 -->
+    <delete id="deleteClubFile" parameterType="int">
+    	DELETE FROM club_file
+    	WHERE file_no = #{fileNo}
+    </delete>
     
     <!-- 클럽 정보 삭제 -->
     <delete id="deleteClub" parameterType="int">

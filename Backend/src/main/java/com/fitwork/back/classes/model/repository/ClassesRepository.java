@@ -2,6 +2,8 @@ package com.fitwork.back.classes.model.repository;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.fitwork.back.classes.model.dto.Classes;
 import com.fitwork.back.classes.model.dto.ClassesFile;
 
@@ -20,6 +22,8 @@ public interface ClassesRepository {
 	 * @return
 	 */
 	public Classes selectClassByClassNo(int classNo);
+	
+	public ClassesFile selectClassesFileByClassNo(int classNo);
 	
 	/**
 	 * 위치별 클래스 조회
@@ -89,6 +93,8 @@ public interface ClassesRepository {
 	 */
 	public void deleteClassRegist(String id, int classNo);
 	
+	public boolean isRegisted(String id, int classNo);
+	
 	/**
 	 * 클래스 수강인원으로 등록
 	 * @param nickname
@@ -108,6 +114,8 @@ public interface ClassesRepository {
 	 * @param classes
 	 */
 	public void updateClassInfo(Classes classes);
+	
+	public void deleteClassFile(int fileNo);
 	
 	/**
 	 * 클래스 정보 삭제

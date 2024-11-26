@@ -43,12 +43,20 @@ public class SecurityConfig {
 		
 		httpSecurity
 				.authorizeHttpRequests((auth) -> auth
-						.requestMatchers("/member/login", "/", "/join").permitAll()
+						.requestMatchers(
+								"/api-member/**",
+								"/", "/file/**", 
+								"/api-board/list", 
+								"/api-class/list/**", 
+								"/api-class/detail/**",
+								"/api-club/list/**",
+								"/api-club/detail/**",
+								"/api-board/like/**").permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.anyRequest().authenticated());
 		
 		// JWT필터 추가
-		httpSecurity.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+		httpSecurity.addFilterAfter(new JWTFilter(jwtUtil), LoginFilter.class);
 		
 		// Login 필터 추가
 		httpSecurity
@@ -67,7 +75,8 @@ public class SecurityConfig {
 					public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 						CorsConfiguration configuration = new CorsConfiguration();
 						
-						configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5137"));
+//						configuration.setAllowedOrigins(Collections.singletonList("http://192.168.210.83:5173"));
+						configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
 						configuration.setAllowedMethods(Collections.singletonList("*"));
 						configuration.setAllowCredentials(true);
 						configuration.setAllowedHeaders(Collections.singletonList("*"));

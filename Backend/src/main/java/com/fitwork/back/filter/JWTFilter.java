@@ -28,26 +28,34 @@ public class JWTFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		
 		String authorization = request.getHeader("Authorization");
+		String i = request.getRequestURI();
+		System.out.println(i);
+		System.out.println("토큰 받음");
+		System.out.println(authorization);
+		System.out.println();
 		
 		// 헤더 검증
 		if (authorization == null || !authorization.startsWith("Bearer ")) {
+//			System.out.println("로그 전");
 			logger.info("Token is null or invalid.");
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.getWriter().write("Missing or malformed Authorization header.");
+//			System.out.println("이건 널?");
+//			System.out.println(authorization);
+//			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//			response.getWriter().write("Missing or malformed Authorization header.");
+			filterChain.doFilter(request, response);
 			return;
 		}
-		System.out.println("헤더통과");
 		
 		String token = authorization.split(" ")[1];
 		
 		// 토큰 소멸시간 검증
 		if (jwtUtil.isExpired(token)) {
 			logger.info("Token has expired.");
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.getWriter().write("Token expired.");
+//			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//			response.getWriter().write("Token expired.");
+			filterChain.doFilter(request, response);
 			return;
 		}
-		System.out.println("소멸시간 통과");
 		
 		String id = jwtUtil.getId(token);
 		String role = jwtUtil.getRole(token);

@@ -5,8 +5,8 @@
 <mapper namespace="com.fitwork.back.board.model.repository.BoardRepository">
 	<!-- 게시물 등록 -->
 	<insert id="insertBoard" parameterType="Board" useGeneratedKeys="true" keyProperty="boardNo">
-		INSERT INTO board(title, writer, content)
-		VALUES (#{title}, #{writer}, #{content})
+		INSERT INTO board(title, writer, category, content)
+		VALUES (#{title}, #{writer}, #{category}, #{content})
 	</insert>
 	
 	<!-- 게시물 파일 등록-->
@@ -30,8 +30,6 @@
 		<if test="orderBy == null">
 			ORDER BY board_no DESC
 		</if>
-		
-		LIMIT #{offset}, #{listSize}
 	</select>
 	
 	<!-- 페이징 처리를 위한 전체 게시물 수 반환 -->
@@ -85,6 +83,15 @@
 		WHERE id = #{id} AND board_no = #{boardNo}
 	</delete>
 	
+	<!-- 좋아요 상태 체크 -->
+	<select id="isLiked" resultType="boolean">
+		SELECT EXISTS(
+			SELECT 1
+			FROM board_like
+			WHERE id = #{id} AND board_no = #{boardNo}
+		)
+	</select>
+	
 	<!-- 게시물 삭제 -->
 	<delete id="deleteBoard" parameterType="int">
 		DELETE FROM board
@@ -100,15 +107,15 @@
 	<!-- 게시물 수정 -->
 	<update id="updateBoard" parameterType="Board">
 		UPDATE board
-		SET title = #{title}, content = #{content}
+		SET title = #{title}, category = #{category}, content = #{content}
 		WHERE board_no = #{boardNo}
 	</update>
 	
 	
 	<!-- 댓글 등록 -->
 	<insert id="insertComment" parameterType="Comment">
-		INSERT INTO comment(writer, content)
-		VALUES(#{writer}, #{content})
+		INSERT INTO comment(writer, content, board_no)
+		VALUES(#{writer}, #{content}, #{boardNo})
 	</insert>
 	
 	<!-- 게시물 댓글 조회 -->

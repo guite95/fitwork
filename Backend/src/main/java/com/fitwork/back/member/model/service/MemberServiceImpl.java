@@ -18,10 +18,9 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public boolean joinMember(Member member) {
-		
 		String id = member.getId();
-		
-		if (!memberRepository.isMemberExist(id)) {
+		boolean isExist = memberRepository.isMemberExist(id);
+		if (!isExist) {
 			member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
 			
 			memberRepository.insertMember(member);
@@ -30,10 +29,18 @@ public class MemberServiceImpl implements MemberService {
 		
 		return false;
 	}
+	
+	@Override
+	public boolean isExistId(String id) {
+		boolean isExist = memberRepository.isMemberExist(id);
+		return isExist;
+	}
 
 	@Override
 	public Member getMemberInfo(String id) {
-		return memberRepository.selectMemberById(id);
+		Member member = memberRepository.selectMemberById(id);
+//		member.setPassword(null);
+		return member;
 	}
 
 	@Override
@@ -48,6 +55,11 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public boolean modifyMemberInfo(Member member) {
 		if (memberRepository.isMemberExist(member.getId())) {
+			if (member.getPassword() != null) {
+				member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
+			} else {
+				member.setPassword(memberRepository.selectMemberById(member.getId()).getPassword());
+			}
 	        memberRepository.updateMemberInfo(member);
 	        return true;
 	    }

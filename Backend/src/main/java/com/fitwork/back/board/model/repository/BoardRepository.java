@@ -81,6 +81,8 @@ public interface BoardRepository {
 	 */
 	public void decreaseLikeCnt(int boardNo);
 	
+	public boolean isLiked(String id, int boardNo);
+	
 	/**
 	 * 게시물 삭제
 	 * @param boardNo

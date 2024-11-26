@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,10 +45,9 @@ public class BoardController {
 	 */
 	@GetMapping("/list")
 	public ResponseEntity<Object> list(BoardSearch boardSearch) {
-		System.out.println("리스트 요청 확인");
 		
 		try {
-			Map<String, Object> result = boardService.list(boardSearch);
+			List<Board> result = boardService.list(boardSearch);
 			
 			return ResponseEntity.status(HttpStatus.OK).body(result);
 		} catch (Exception e) {
@@ -87,29 +88,33 @@ public class BoardController {
 	 * @throws IOException 
 	 * @throws IllegalStateException 
 	 */
-	@PostMapping
-	public ResponseEntity<String> write(@RequestPart Board board, @RequestPart MultipartFile file) throws IllegalStateException, IOException {
+	@PostMapping("/write")
+	public ResponseEntity<String> write(@RequestPart Board board, @RequestPart(required = false) MultipartFile file) throws IllegalStateException, IOException {
 		
 		try {
-			String oriName = file.getOriginalFilename();
-			
-			if (oriName != null && oriName.length() > 0) {
-				SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
-				String subDir = sdf.format(new Date());
+			if (file != null) {
+				String oriName = file.getOriginalFilename();
 				
-				File dir = new File("c:/SSAFY/final-prj/board/img" + subDir); // 디렉토리 경로를 나타내는 파일 객체
-				dir.mkdirs();
-				
-				String systemName = UUID.randomUUID().toString() + oriName;
-				
-				file.transferTo(new File(dir, systemName)); // 메모리의 파일 정보를 특정 위치에 저장
-				
-				BoardFile boardFile = new BoardFile();
-				boardFile.setPath(subDir);
-				boardFile.setOriName(oriName);
-				boardFile.setSystemName(systemName);
-				
-				board.setBoardFile(boardFile);
+				if (oriName != null && oriName.length() > 0) {
+					SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
+					String subDir = sdf.format(new Date());
+					
+					
+					
+					File dir = new File("c:/SSAFY/final-prj/board/img" + subDir); // 디렉토리 경로를 나타내는 파일 객체
+					dir.mkdirs();
+					
+					String systemName = UUID.randomUUID().toString() + oriName;
+					
+					file.transferTo(new File(dir, systemName)); // 메모리의 파일 정보를 특정 위치에 저장
+					
+					BoardFile boardFile = new BoardFile();
+					boardFile.setPath(subDir);
+					boardFile.setOriName(oriName);
+					boardFile.setSystemName(systemName);
+					
+					board.setBoardFile(boardFile);
+				}
 			}
 			boardService.addBoard(board);
 			
@@ -147,33 +152,44 @@ public class BoardController {
 	 * @return
 	 */
 	@PutMapping("/modify/{boardNo}")
-	public ResponseEntity<String> modify(@PathVariable int boardNo, @RequestPart Board board, @RequestPart MultipartFile file) {
+	public ResponseEntity<String> modify(@PathVariable int boardNo, @RequestPart Board board, @RequestPart(required = false) MultipartFile file) {
 		try {
 			
-			String oriName = file.getOriginalFilename();
+			Board tmp = boardService.selectOne(boardNo);
 			
-			if (oriName != null && oriName.length() > 0) {
-				SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
-				String subDir = sdf.format(new Date());
+			if (file != null) {
+				if (tmp.getBoardFile() != null) {
+					boardService.deleteFile(tmp.getBoardFile().getFileNo());
+				}
 				
-				File dir = new File("c:/SSAFY/final-prj/board/img" + subDir); // 디렉토리 경로를 나타내는 파일 객체
-				dir.mkdirs();
+				String oriName = file.getOriginalFilename();
 				
-				String systemName = UUID.randomUUID().toString() + oriName;
-				
-				file.transferTo(new File(dir, systemName)); // 메모리의 파일 정보를 특정 위치에 저장
-				
-				BoardFile boardFile = new BoardFile();
-				boardFile.setPath(subDir);
-				boardFile.setOriName(oriName);
-				boardFile.setSystemName(systemName);
-				
-				board.setBoardFile(boardFile);
-			} else {
-				board.setBoardFile(null);
+				if (oriName != null && oriName.length() > 0) {
+					SimpleDateFormat sdf = new SimpleDateFormat("/yyyy/MM/dd/HH");
+					String subDir = sdf.format(new Date());
+					
+					
+					
+					File dir = new File("c:/SSAFY/final-prj/board/img" + subDir); // 디렉토리 경로를 나타내는 파일 객체
+					dir.mkdirs();
+					
+					String systemName = UUID.randomUUID().toString() + oriName;
+					
+					file.transferTo(new File(dir, systemName)); // 메모리의 파일 정보를 특정 위치에 저장
+					
+					BoardFile boardFile = new BoardFile();
+					boardFile.setPath(subDir);
+					boardFile.setOriName(oriName);
+					boardFile.setSystemName(systemName);
+					
+					tmp.setBoardFile(boardFile);
+				}
 			}
 			
-			boardService.modifyBoard(board);
+			tmp.setTitle(board.getTitle());
+			tmp.setCategory(board.getCategory());
+			tmp.setContent(board.getContent());
+			boardService.modifyBoard(tmp);
 			
 			return ResponseEntity.status(HttpStatus.OK).body("수정완료");
 		} catch (Exception e) {
@@ -182,14 +198,16 @@ public class BoardController {
 		}
 	}
 	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * 좋아요 수 증가
 	 * @param boardNo
 	 * @param id
 	 * @return
 	 */
-	@PutMapping("/plus/{boardNo}")
-	public ResponseEntity<String> likePlus(@PathVariable int boardNo, @RequestBody String id) {
+	@PutMapping("/like/plus/{boardNo}/{id}")
+	public ResponseEntity<String> likePlus(@PathVariable int boardNo, @PathVariable String id) {
 		try {
 			boardService.increseLikeCnt(id, boardNo);
 			return ResponseEntity.status(HttpStatus.OK).body("좋아요 증가");
@@ -205,8 +223,10 @@ public class BoardController {
 	 * @param id
 	 * @return
 	 */
-	@PutMapping("/minus/{boardNo}")
-	public ResponseEntity<String> likeMinus(@PathVariable int boardNo, @RequestBody String id) {
+	@PutMapping("/like/minus/{boardNo}/{id}")
+	public ResponseEntity<String> likeMinus(@PathVariable int boardNo, @PathVariable String id) {
+		System.out.println(boardNo);
+		System.out.println(id);
 		try {
 			boardService.decreaseLikeCnt(id, boardNo);
 			return ResponseEntity.status(HttpStatus.OK).body("좋아요 감소");
@@ -216,6 +236,19 @@ public class BoardController {
 		}
 	}
 	
+	/**
+	 * 해당 게시글에 좋아요 눌렀는지 체크
+	 * @param boardNo
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("/like/status/{boardNo}/{id}")
+	public ResponseEntity<Object> getLikeStatus(@PathVariable int boardNo, @PathVariable String id) {
+		boolean isLiked = boardService.isLiked(id, boardNo);
+		System.out.println(isLiked);
+		return ResponseEntity.status(HttpStatus.OK).body(isLiked);
+	}
+	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	/**
@@ -223,8 +256,9 @@ public class BoardController {
 	 * @param comment
 	 * @return
 	 */
-	@PostMapping("/comment")
-	public ResponseEntity<String> writeComment(@RequestBody Comment comment) {
+	@PostMapping("/comment/{boardNo}")
+	public ResponseEntity<String> writeComment(@PathVariable int boardNo, @RequestBody Comment comment) {
+		comment.setBoardNo(boardNo);
 		try {
 			boardService.addComment(comment);
 			return ResponseEntity.status(HttpStatus.CREATED).body("댓글이 등록되었습니다");
@@ -239,8 +273,8 @@ public class BoardController {
 	 * @param boardNo
 	 * @return
 	 */
-	@GetMapping("/comment")
-	public ResponseEntity<Object> getBoardComment(int boardNo) {
+	@GetMapping("/comment/{boardNo}")
+	public ResponseEntity<Object> getBoardComment(@PathVariable int boardNo) {
 		try {
 			List<Comment> commentList = boardService.commentList(boardNo);
 			if (commentList == null) {
@@ -258,7 +292,7 @@ public class BoardController {
 	 * @param nickname
 	 * @return
 	 */
-	@GetMapping("/comment/{nickname}")
+	@GetMapping("/comment/member/{nickname}")
 	public ResponseEntity<Object> getMemberComment(@PathVariable String nickname) {
 		try {
 			List<Comment> commentList = boardService.userComment(nickname);
@@ -277,8 +311,8 @@ public class BoardController {
 	 * @param comment
 	 * @return
 	 */
-	@PutMapping("/comment")
-	public ResponseEntity<String> modifyComment(@RequestBody Comment comment) {
+	@PutMapping("/comment/{commentNo}")
+	public ResponseEntity<String> modifyComment(@PathVariable int commentNo, @RequestBody Comment comment) {
 		try {
 			boardService.modifyComment(comment);
 			return ResponseEntity.status(HttpStatus.OK).body("댓글이 수정되었습니다");
@@ -303,5 +337,7 @@ public class BoardController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 문제가 발생했습니다. 잠시 후 다시 시도해주세요");
 		}
 	}
+	
+	
 	
 }

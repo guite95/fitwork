@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS board (
 	board_no INT AUTO_INCREMENT,
     title VARCHAR(200),
     writer VARCHAR(50),
+    category VARCHAR(30),
     content VARCHAR(10000),
     reg_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     view_cnt INT DEFAULT 0,
@@ -66,11 +67,11 @@ CREATE TABLE IF NOT EXISTS board_file (
 
 
 # 카테고리 테이블
-CREATE TABLE IF NOT EXISTS category (
-	category_no INT AUTO_INCREMENT,
-    category_name VARCHAR(30) UNIQUE,
-    PRIMARY KEY(category_no)
-);
+-- CREATE TABLE IF NOT EXISTS category (
+-- 	category_no INT AUTO_INCREMENT,
+--     category_name VARCHAR(30) UNIQUE,
+--     PRIMARY KEY(category_no)
+-- );
 
 
 # 클래스 정보 관련 테이블
@@ -80,13 +81,13 @@ CREATE TABLE IF NOT EXISTS class (
     leader VARCHAR(50),
     class_name VARCHAR(100),
     category VARCHAR(30),
+    tag VARCHAR(1000),
     location VARCHAR(100),
     description VARCHAR(10000),
-    head_count INT DEFAULT 0,
     price INT NOT NULL,
     PRIMARY KEY(class_no),
-    FOREIGN KEY (leader) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (category) REFERENCES category(category_name) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (leader) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE
+    -- FOREIGN KEY (category) REFERENCES category(category_name) ON UPDATE CASCADE ON DELETE CASCADE 
 );
 -- 클래스 파일 테이블
 CREATE TABLE IF NOT EXISTS class_file (
@@ -121,12 +122,12 @@ CREATE TABLE IF NOT EXISTS club (
     leader VARCHAR(50),
     club_name VARCHAR(100),
     category VARCHAR(30),
+    tag VARCHAR(1000),
     location VARCHAR(100),
     description VARCHAR(10000),
-    head_count INT DEFAULT 0,
     PRIMARY KEY(club_no),
-    FOREIGN KEY (leader) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (category) REFERENCES category(category_name) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (leader) REFERENCES member(nickname) ON UPDATE CASCADE ON DELETE CASCADE
+    -- FOREIGN KEY (category) REFERENCES category(category_name) ON UPDATE CASCADE ON DELETE CASCADE
 );
 -- 모임 파일 테이블
 CREATE TABLE IF NOT EXISTS club_file (
