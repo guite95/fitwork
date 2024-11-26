@@ -33,7 +33,7 @@
           <SwiperSlide v-for="(club, index) in clubs" :key="index">
             <div class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition" @click="navigateToClubDetail(club.clubNo)">
               <!-- 이미지 추가 -->
-              <img src="/images/dumbbell.jpg" alt="Club Image" class="w-full h-40 object-cover rounded-md mb-4" />
+              <img :src="getClubImageUrl(club)" alt="Club Image" class="w-full h-40 object-cover rounded-md mb-4" />
               <p class="text-darkBlue font-medium text-sm font-title">{{ club.clubName }}</p>
             </div>
           </SwiperSlide>
@@ -52,7 +52,7 @@
             <div class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition"
               @click="navigateToClassDetail(exerciseClass.classNo)">
               <!-- 이미지 추가 -->
-              <img src="/images/dumbbell.jpg" alt="Class Image" class="w-full h-40 object-cover rounded-md mb-4" />
+              <img :src="getClassImageUrl(exerciseClass)" alt="Class Image" class="w-full h-40 object-cover rounded-md mb-4" />
               <p class="text-darkBlue font-medium text-sm font-title">{{ exerciseClass.className }}</p>
             </div>
           </SwiperSlide>
@@ -289,6 +289,26 @@ const popularPostsTransformed = computed(() =>
             : "기타",
   }))
 );
+
+// 이미지 URL 생성 메서드
+const getClubImageUrl = (club) => {
+  if (club.clubFile) {
+    return `http://192.168.210.83:8080/file/club${club.clubFile.path}/${club.clubFile.systemName}`;
+  }
+  return "/images/dumbbell.jpg"; // 기본 이미지
+};
+
+
+// 이미지 URL 생성 메서드
+const getClassImageUrl = (classItem) => {
+  if (classItem.classesFile) {
+    return `http://192.168.210.83:8080/file/class${classItem.classesFile.path}/${classItem.classesFile.systemName}`;
+  }
+  return "/images/dumbbell.jpg"; // 기본 이미지
+};
+
+
+
 
 </script>
 
