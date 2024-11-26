@@ -140,9 +140,8 @@
 	</update>
 	
 	<!-- 댓글 삭제 -->
-	<update id="deleteComment">
-		UPDATE comment
-		SET parent_comment_number = -1
+	<update id="deleteComment" parameterType="int">
+		DELETE FROM comment
 		WHERE comment_no = #{commentNo}
 	</update>
 	
