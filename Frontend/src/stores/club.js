@@ -26,6 +26,7 @@ export const useClubStore = defineStore('club', () => {
   const userMemberedClubs = ref([]);
   const leaderedClubs = ref([]);
   const loading = ref(false);
+  const isRegisted = ref(false);
 
   // 전체 클럽 목록 검색
   const getClubList = async () => {
@@ -210,13 +211,14 @@ const modifyClub = async (clubNo, updatedClub, file) => {
   };
 
   // 클럽 가입 신청
-  const registerClub = async (userId, clubNo) => {
+  const registerClub = async (id, clubNo) => {
     try {
-      await axios.post(`${REST_API_URL}/register/${userId}/${clubNo}`, null, {
+      await axios.post(`${REST_API_URL}/register/${id}/${clubNo}`, null, {
         headers: {
           Authorization: sessionStorage.getItem('memberToken'),
         },
       });
+      registStatus(id, clubNo);
       customSwal.fire('성공', '클럽 가입 신청이 완료되었습니다.', 'success');
     } catch (error) {
       customSwal.fire('에러', '클럽 가입 신청 중 문제가 발생했습니다.', 'error');
@@ -225,19 +227,33 @@ const modifyClub = async (clubNo, updatedClub, file) => {
   };
   
   // 클럽 신청 취소
-  const cancelRegistClub = async (id, classNo) => {
+  const cancelRegistClub = async (id, clubNo) => {
     try {
-      await axios.delete(`${REST_API_URL}/register/cancel/${id}/${classNo}`, {
+      await axios.delete(`${REST_API_URL}/register/cancel/${id}/${clubNo}`, {
         headers: {
           'Authorization': sessionStorage.getItem('memberToken'),
         }
       });
+      registStatus(id, clubNo);
       customSwal.fire('성공', '클럽 신청이 취소되었습니다', 'success');
     } catch (error) {
       customSwal.fire('에러', '클럽 신청 취소 중 문제가 발생했습니다', 'error')
       throw error;
     }
   };
+
+  const registStatus = async (id, clubNo) => {
+    try {
+      const response = await axios.get(`${REST_API_URL}/register/status/${id}/${clubNo}`, {
+        headers: {
+          'Authorization': sessionStorage.getItem('memberToken'),
+        },
+      })
+      isRegisted.value = response.data;
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return {
     clubList,
@@ -247,6 +263,7 @@ const modifyClub = async (clubNo, updatedClub, file) => {
     userMemberedClubs,
     leaderedClubs,
     loading,
+    isRegisted,
     getClubList,
     getClubsByLocation,
     getClubsByCategory,
@@ -260,5 +277,6 @@ const modifyClub = async (clubNo, updatedClub, file) => {
     getClubsByLeader,
     registerClub,
     cancelRegistClub,
+    registStatus,
   };
 });

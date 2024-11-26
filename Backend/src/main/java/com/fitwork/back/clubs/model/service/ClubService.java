@@ -28,6 +28,8 @@ public interface ClubService {
     
     public void addToRegisteredClub(String id, int clubNo);
     
+    public boolean isRegisted(String id, int clubNo);
+    
     public void permitMemberToClub(String id, int clubNo);
     
     public void exitFromClub(String id, int clubNo);

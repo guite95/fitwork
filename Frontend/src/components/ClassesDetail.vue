@@ -108,6 +108,7 @@ const classData = ref({});
 const comments = ref([]);
 const newComment = ref("");
 const imgSrc = ref("");
+const isRegisted = computed(() => store.isRegisted)
 
 // Check if the current user is the author
 const isAuthor = computed(() => {
@@ -124,6 +125,9 @@ const loadClassDetails = async () => {
   try {
     await store.getClassDetail(classNo);
     classData.value = store.classDetail;
+
+    await store.registStatus(sessionStorage.getItem('memberId'), classNo);
+    isRegisted.value = store.isRegisted;
 
     if (classData.value.classesFile) {
       imgSrc.value = `http://:192.168.210.83:8080/file/class${classData.value.classesFile.path}/${classData.value.classesFile.systemName}`;
@@ -205,18 +209,27 @@ const handleJoin = () => {
     return;
   }
 
-  store
-    .registerClass(memberStore.memberId, classNo)
-    .then(() => {
-      Swal.fire({
-        icon: "success",
-        title: "신청 완료",
-        text: "클래스 신청이 성공적으로 완료되었습니다.",
+  if (!isRegisted.value) {
+    store
+      .registerClass(memberStore.memberId, classNo)
+      .then(() => {
+        Swal.fire({
+          icon: "success",
+          title: "신청 완료",
+          text: "클래스 신청이 성공적으로 완료되었습니다.",
+        });
+      })
+      .catch((error) => {
+        console.error("클래스 신청 실패:", error);
       });
+  } else {
+    Swal.fire({
+      icon: 'info',
+      title: '',
+      text: '이미 신청하셨습니다',
+      confirmButtonText: '확인',
     })
-    .catch((error) => {
-      console.error("클래스 신청 실패:", error);
-    });
+  }
 };
 
 const navigateBack = () => {

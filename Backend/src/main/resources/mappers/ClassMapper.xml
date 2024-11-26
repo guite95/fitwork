@@ -200,6 +200,15 @@
 		INSERT INTO class_regist(id, class_no)
 		VALUES (#{id}, #{classNo})
 	</insert>
+	
+	<!-- 신청 했는지 확인 -->
+	<select id="isRegisted" resultType="boolean">
+		SELECT EXISTS (
+			SELECT 1
+			FROM class_regist
+			WHERE id = #{id} AND class_no = #{classNo}
+		)
+	</select>
 
 
 	<!-- 클래스 신청 목록에서 삭제 -->

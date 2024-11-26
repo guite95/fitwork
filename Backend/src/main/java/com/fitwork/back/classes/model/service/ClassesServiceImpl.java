@@ -114,6 +114,11 @@ public class ClassesServiceImpl implements ClassesService {
 	public void addToRegistedClass(String id, int classNo) {
 		classesRepository.insertClassRegist(id, classNo);
 	}
+	
+	@Override
+	public boolean isRegisted(String id, int classNo) {
+		return classesRepository.isRegisted(id, classNo);
+	}
 
 	@Override
 	public void permitMemberToClass(String id, int classNo) {

@@ -93,6 +93,8 @@ public interface ClassesRepository {
 	 */
 	public void deleteClassRegist(String id, int classNo);
 	
+	public boolean isRegisted(String id, int classNo);
+	
 	/**
 	 * 클래스 수강인원으로 등록
 	 * @param nickname

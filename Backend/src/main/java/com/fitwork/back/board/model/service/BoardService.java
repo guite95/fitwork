@@ -98,4 +98,6 @@ public interface BoardService {
 	 * @param commentNo
 	 */
 	public void deleteComment(int commentNo);
+
+	boolean isLiked(String id, int boardNo);
 }

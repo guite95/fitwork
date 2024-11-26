@@ -116,6 +116,7 @@ const club = ref({});
 const comments = ref([]);
 const newComment = ref("");
 const imgSrc = ref('');
+const isRegisted = computed(() => store.isRegisted)
 
 // 작성자와 현재 로그인한 사용자가 일치하는지 확인
 const isAuthor = computed(() => {
@@ -128,6 +129,9 @@ const loadClubDetails = async () => {
   try {
     await store.getClubDetail(clubNo);
     club.value = store.clubDetail;
+
+    await store.registStatus(sessionStorage.getItem('memberId'), clubNo);
+    isRegisted.value = store.isRegisted;
 
     if (club.value.clubFile) {
       imgSrc.value = `http://192.168.210.83:8080/file/club${club.value.clubFile.path}/${club.value.clubFile.systemName}`;
@@ -217,19 +221,27 @@ const handleJoin = () => {
     });
     return;
   }
-
-  store
-    .registerClub(memberStore.memberId, clubNo)
-    .then(() => {
-      customSwal.fire({
-        icon: "success",
-        title: "신청 완료",
-        text: "클럽 신청이 성공적으로 완료되었습니다.",
+  if (!isRegisted.value) {
+    store
+      .registerClub(memberStore.memberId, clubNo)
+      .then(() => {
+        customSwal.fire({
+          icon: "success",
+          title: "신청 완료",
+          text: "클럽 신청이 성공적으로 완료되었습니다.",
+        });
+      })
+      .catch((error) => {
+        console.error("클럽 신청 실패:", error);
       });
+  } else {
+    customSwal.fire({
+      icon: 'info',
+      title: '',
+      text: '이미 신청하셨습니다',
+      confirmButtonText: '확인',
     })
-    .catch((error) => {
-      console.error("클럽 신청 실패:", error);
-    });
+  }
 };
 
 const navigateBack = () => {
