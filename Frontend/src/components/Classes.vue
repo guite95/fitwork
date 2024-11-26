@@ -17,16 +17,35 @@
         </button>
       </div>
 
-      <!-- 추천 클래스 -->
-      <div class="mb-12">
+      <!-- 전체 클래스(로그인 안돼있을 때) -->
+      <div class="mb-12" v-if="!isLoggedIn">
+        <h2 class="text-xl font-title text-lightBlue mb-8">
+          <span class="text-lightBlue"></span> <span class="text-darkBlue">클래스 둘러보기</span>
+        </h2>
+        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="6" :space-between="20" navigation>
+          <SwiperSlide v-for="classItem in allClasses" :key="classItem.classNo">
+            <router-link :to="{ name: 'classesdetail', params: { classNo: classItem.classNo } }">
+              <div
+                class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition">
+                <img :src="getClassImageUrl(classItem)" alt="Class Image"
+                  class="w-full h-28 object-cover rounded-md mb-2" />
+                <span class="text-center text-darkBlue font-title">{{ classItem.className }}</span>
+              </div>
+            </router-link>
+          </SwiperSlide>
+        </Swiper>
+      </div>
+
+      <!-- 추천 클래스(로그인 돼있을 때) -->
+      <div class="mb-12" v-if="isLoggedIn">
         <h2 class="text-xl font-title text-lightBlue mb-8">
           <span class="text-lightBlue"> {{ memberDistrict }} </span> <span class="text-darkBlue">근처의</span>
         </h2>
-        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
+        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="6" :space-between="20" navigation>
           <SwiperSlide v-for="classItem in filteredRecommendedClasses" :key="classItem.classNo">
             <router-link :to="{ name: 'classesdetail', params: { classNo: classItem.classNo } }">
               <div
-                class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
+                class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition">
                 <img :src="getClassImageUrl(classItem)" alt="Class Image"
                   class="w-full h-28 object-cover rounded-md mb-2" />
                 <span class="text-center text-darkBlue font-title">{{ classItem.className }}</span>
@@ -40,12 +59,12 @@
       <!-- 인기 클래스 -->
       <div class="mb-12">
         <h2 class="text-xl font-title text-darkBlue mb-4">최근 인기 많은</h2>
-        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
+        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="6" :space-between="20" navigation>
           <SwiperSlide v-for="(classItem, index) in popularClasses" :key="index">
             <!-- 클래스 항목을 router-link로 감싸서 클릭 시 상세 페이지로 이동 -->
             <router-link :to="{ name: 'classesdetail', params: { classNo: classItem.classNo } }">
               <div
-                class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
+                class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition">
                 <img :src="getClassImageUrl(classItem)" alt="Class Image"
                   class="w-full h-28 object-cover rounded-md mb-2" />
                 <span class="text-center text-darkBlue font-title">{{ classItem.className }}</span>
@@ -67,8 +86,8 @@
         </router-link>
       </div>
     </section>
-    <Footer />
   </div>
+  <Footer />
 </template>
 
 <script setup>
@@ -98,6 +117,7 @@ const memberDistrict = computed(() => {
   }
   return "지역";
 });
+const isLoggedIn = computed(() => memberStore.isLoggedIn);
 
 // 검색 쿼리 상태
 const searchQuery = ref("");
@@ -105,11 +125,13 @@ const searchQuery = ref("");
 
 // 추천 클래스 데이터
 const recommendedClasses = ref([]);
+const allClasses = ref([]);
 
 // 컴포넌트 로드 시 클래스 데이터 가져오기
 onMounted(async () => {
   await classStore.getClassList(); // 전체 클래스 데이터 가져오기
   recommendedClasses.value = classStore.classList; // 전체 클럽을 추천 클럽 리스트에 반영
+  allClasses.value = classStore.classList;
 });
 
 // 추천 클럽 필터링 (사용자 지역 기준)
@@ -133,7 +155,7 @@ const popularClasses = computed(() => {
 // 이미지 URL 생성 메서드
 const getClassImageUrl = (classItem) => {
   if (classItem.classesFile) {
-    return `http://localhost:8080/file/class${classItem.classesFile.path}/${classItem.classesFile.systemName}`;
+    return `http://192.168.210.83:8080/file/class${classItem.classesFile.path}/${classItem.classesFile.systemName}`;
   }
   return "/images/dumbbell.jpg"; // 기본 이미지
 };

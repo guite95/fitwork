@@ -79,10 +79,11 @@
 
 <script setup>
 import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useMemberStore } from "../stores/member";
 
 // State
+const router = useRouter(); // Vue Router 사용
 const route = useRoute(); // 현재 경로 가져오기
 const memberStore = useMemberStore();
 const memberName = computed(() => memberStore.memberName);
@@ -92,21 +93,21 @@ const isLoggedIn = computed(() => !!memberStore.memberToken); // 로그인 여�
 function handleAuthAction() {
     if (isLoggedIn.value) {
         // 로그아웃 처리
-        memberStore.clearMemberToken(); // Pinia store의 토큰을 초기화
-        window.location.href = "/";
+        memberStore.clearMemberToken();
+        router.push("/"); // 로그아웃 후 홈으로 이동
     } else {
-        // 로그인 페이지로 이동
-        window.location.href = "/sign-in";
+        // 로그인 페이지로 이동하며 현재 경로를 쿼리로 전달
+        router.push({ path: "/sign-in", query: { redirect: route.fullPath } });
     }
 }
 
 function goToRegisterPage() {
     // 회원가입 페이지로 이동
-    window.location.href = "/register";
+    router.push({ path: "/register", query: { redirect: route.fullPath } });
 }
 
 function isActive(path) {
-    return route.path === path || (path !== '/' && route.path.startsWith(path));
+    return route.path === path || (path !== "/" && route.path.startsWith(path));
 }
 </script>
 

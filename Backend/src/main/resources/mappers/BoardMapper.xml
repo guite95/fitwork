@@ -83,6 +83,15 @@
 		WHERE id = #{id} AND board_no = #{boardNo}
 	</delete>
 	
+	<!-- 좋아요 상태 체크 -->
+	<select id="isLiked" resultType="boolean">
+		SELECT EXISTS(
+			SELECT 1
+			FROM board_like
+			WHERE id = #{id} AND board_no = #{boardNo}
+		)
+	</select>
+	
 	<!-- 게시물 삭제 -->
 	<delete id="deleteBoard" parameterType="int">
 		DELETE FROM board

@@ -20,7 +20,11 @@
               class="border-b border-gray-200"
             >
               <td class="py-3 text-darkBlue font-title text-left">{{ index + 1 }}</td>
-              <td class="py-3 text-darkBlue font-title text-left">{{ application.clubName }}</td>
+              <td class="py-3 text-darkBlue font-title text-left">
+                <router-link :to="{ name: 'clubsdetail', params: { clubNo: application.clubNo } }">
+                  {{ application.clubName }}
+                </router-link>
+              </td>
               <td class="py-3 text-center">
                 <button
                   @click="cancelApplication('club', application.clubNo)"
@@ -54,7 +58,11 @@
               class="border-b border-gray-200"
             >
               <td class="py-3 text-darkBlue font-title text-left">{{ index + 1 }}</td>
-              <td class="py-3 text-darkBlue font-title text-left">{{ application.className }}</td>
+              <td class="py-3 text-darkBlue font-title text-left">
+                <router-link :to="{ name: 'classesdetail', params: { classNo: application.classNo } }">
+                  {{ application.className }}
+                </router-link>
+              </td>
               <td class="py-3 text-center">
                 <button
                   @click="cancelApplication('class', application.classNo)"
@@ -92,7 +100,11 @@
                   class="border-b border-gray-200"
                 >
                   <td class="py-3 text-darkBlue font-title text-left">{{ index + 1 }}</td>
-                  <td class="py-3 text-darkBlue font-title text-left">{{ opened.clubName }}</td>
+                  <td class="py-3 text-darkBlue font-title text-left">
+                    <router-link :to="{ name: 'clubsdetail', params: { clubNo: opened.clubNo } }">
+                      {{ opened.clubName }}
+                    </router-link>
+                  </td>
                   <td class="py-3 text-center">
                     <button
                       @click="cancelOpenedApplication('club', opened.clubNo)"
@@ -126,7 +138,11 @@
                   class="border-b border-gray-200"
                 >
                   <td class="py-3 text-darkBlue font-title text-left">{{ index + 1 }}</td>
-                  <td class="py-3 text-darkBlue font-title text-left">{{ opened.className }}</td>
+                  <td class="py-3 text-darkBlue font-title text-left">
+                    <router-link :to="{ name: 'classesdetail', params: { classNo: opened.classNo } }">
+                      {{ opened.className }}
+                    </router-link>
+                  </td>
                   <td class="py-3 text-center">
                     <button
                       @click="cancelOpenedApplication('class', opened.classNo)"
@@ -150,7 +166,7 @@
   import { ref, onMounted } from "vue";
   import { useClassStore } from "../stores/class";
   import { useClubStore } from "../stores/club";
-  import { useRouter } from "vue-router";
+  import { RouterLink, useRouter } from "vue-router";
   
   // 상태 관리
   const classStore = useClassStore();

@@ -31,10 +31,10 @@
         <h3 class="text-xl font-title text-darkBlue mb-6">운동 클럽 🏃</h3>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="6" :space-between="20" navigation>
           <SwiperSlide v-for="(club, index) in clubs" :key="index">
-            <div class="bg-white shadow-md rounded-lg p-4">
+            <div class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition" @click="navigateToClubDetail(club.clubNo)">
               <!-- 이미지 추가 -->
-              <img src="/images/dumbbell.jpg" alt="Club Image" class="w-full h-40 object-cover rounded-md mb-4" />
-              <p class="text-gray-800 font-medium text-sm">{{ club.clubName }}</p>
+              <img :src="getClubImageUrl(club)" alt="Club Image" class="w-full h-40 object-cover rounded-md mb-4" />
+              <p class="text-darkBlue font-medium text-sm font-title">{{ club.clubName }}</p>
             </div>
           </SwiperSlide>
         </Swiper>
@@ -49,10 +49,11 @@
         <h3 class="text-xl font-title text-darkBlue mb-6">운동 클래스 🏋️‍♀️</h3>
         <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="6" :space-between="20" navigation>
           <SwiperSlide v-for="(exerciseClass, index) in classes" :key="index">
-            <div class="bg-white shadow-md rounded-lg p-4">
+            <div class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition"
+              @click="navigateToClassDetail(exerciseClass.classNo)">
               <!-- 이미지 추가 -->
-              <img src="/images/dumbbell.jpg" alt="Class Image" class="w-full h-40 object-cover rounded-md mb-4" />
-              <p class="text-gray-800 font-medium text-sm">{{ exerciseClass.className }}</p>
+              <img :src="getClassImageUrl(exerciseClass)" alt="Class Image" class="w-full h-40 object-cover rounded-md mb-4" />
+              <p class="text-darkBlue font-medium text-sm font-title">{{ exerciseClass.className }}</p>
             </div>
           </SwiperSlide>
         </Swiper>
@@ -68,8 +69,12 @@
     <section class="px-[20%] py-12 bg-gray-50">
       <h3 class="text-xl font-title text-darkBlue mb-6">실시간 인기글 💬</h3>
       <div class="grid grid-cols-2 gap-6">
-        <div v-for="(post, index) in popularPostsTransformed" :key="index" class="p-4 bg-gray-100 rounded-lg shadow-sm">
-          <p class="text-darkBlue font-title text-sm">[{{ post.categoryText }}] {{ post.title }}</p>
+        <div v-for="(post, index) in popularPostsTransformed" :key="index"
+          class="p-4 bg-gray-100 rounded-lg shadow-sm cursor-pointer hover:bg-gray-200 transition"
+          @click="navigateToPostDetail(post.boardNo)">
+          <p class="text-darkBlue font-title text-sm">
+            [{{ post.categoryText }}] {{ post.title }}
+          </p>
         </div>
       </div>
       <button @click="navigateToCommunity"
@@ -77,6 +82,7 @@
         더보기
       </button>
     </section>
+
 
     <!-- Footer 추가 -->
     <Footer />
@@ -143,6 +149,18 @@ function navigateToCommunity() {
   router.push("/community");
 }
 
+function navigateToClubDetail(clubId) {
+  router.push(`/clubs/${clubId}`);
+}
+
+function navigateToClassDetail(classId) {
+  router.push(`/classes/${classId}`);
+}
+
+function navigateToPostDetail(boardNo) {
+  router.push(`/community-details/${boardNo}`)
+}
+
 // Fetch board list and popular posts based on views
 const fetchPopularPosts = async () => {
   try {
@@ -170,9 +188,9 @@ const fetchAllClub = async () => {
 
     if (Array.isArray(clubStore.clubList) && clubStore.clubList.length > 0) {
       clubs.value = clubStore.clubList
-      .slice()
-      .sort((a, b) => b.headCount - a.headCount)
-      .slice(0, 10);
+        .slice()
+        .sort((a, b) => b.headCount - a.headCount)
+        .slice(0, 10);
       console.log("전체 클럽 로딩 완료", clubs.value);
     } else {
       console.log("클럽 목록이 비어있습니다");
@@ -189,9 +207,9 @@ const fetchAllClass = async () => {
 
     if (Array.isArray(classStore.classList) && classStore.classList.length > 0) {
       classes.value = classStore.classList
-      .slice()
-      .sort((a, b) => b.headCount - a.headCount)
-      .slice(0, 10);
+        .slice()
+        .sort((a, b) => b.headCount - a.headCount)
+        .slice(0, 10);
       console.log("전체 클래스 로딩 완료", classes.value);
     } else {
       console.log("클래스 목록이 비어있습니다");
@@ -207,9 +225,9 @@ const fetchPopolarClub = async () => {
     await clubStore.getClubsByLocation(memberDistrict.value)
     if (Array.isArray(clubStore.filteredClubs) && clubStore.filteredClubs.length > 0) {
       clubs.value = clubStore.filteredClubs
-      .slice()
-      .sort((a, b) => b.headCount - a.headCount)
-      .slice(0, 10);
+        .slice()
+        .sort((a, b) => b.headCount - a.headCount)
+        .slice(0, 10);
       console.log("인근 인기 클럽 로딩 성공", clubs.value);
     } else {
       console.log("클럽 목록이 비어있습니다");
@@ -224,9 +242,9 @@ const fetchPopolarClass = async () => {
     await classStore.getClassesByLocation(memberDistrict.value)
     if (Array.isArray(classStore.filteredClasses) && classStore.filteredClasses.length > 0) {
       classes.value = classStore.filteredClasses
-      .slice()
-      .sort((a, b) => b.headCount - a.headCount)
-      .slice(0, 10);
+        .slice()
+        .sort((a, b) => b.headCount - a.headCount)
+        .slice(0, 10);
       console.log("인근 인기 클래스 로딩 성공", classes.value);
     } else {
       console.log("클래스 목록이 비어있습니다");
@@ -238,14 +256,14 @@ const fetchPopolarClass = async () => {
 
 // 컴포넌트 마운트 시 게시글과 인기글 가져오기
 onMounted(async () => {
-    await fetchPopularPosts(); // 컴포넌트가 마운트될 때 게시글과 인기글 가져오기
-    if (!isLoggedIn.value) {
-      await fetchAllClub();
-      await fetchAllClass();
-    } else {
-      await fetchPopolarClub();
-      await fetchPopolarClass();
-    }
+  await fetchPopularPosts(); // 컴포넌트가 마운트될 때 게시글과 인기글 가져오기
+  if (!isLoggedIn.value) {
+    await fetchAllClub();
+    await fetchAllClass();
+  } else {
+    await fetchPopolarClub();
+    await fetchPopolarClass();
+  }
 });
 
 // Watch for route changes to reload data
@@ -271,6 +289,26 @@ const popularPostsTransformed = computed(() =>
             : "기타",
   }))
 );
+
+// 이미지 URL 생성 메서드
+const getClubImageUrl = (club) => {
+  if (club.clubFile) {
+    return `http://192.168.210.83:8080/file/club${club.clubFile.path}/${club.clubFile.systemName}`;
+  }
+  return "/images/dumbbell.jpg"; // 기본 이미지
+};
+
+
+// 이미지 URL 생성 메서드
+const getClassImageUrl = (classItem) => {
+  if (classItem.classesFile) {
+    return `http://192.168.210.83:8080/file/class${classItem.classesFile.path}/${classItem.classesFile.systemName}`;
+  }
+  return "/images/dumbbell.jpg"; // 기본 이미지
+};
+
+
+
 
 </script>
 

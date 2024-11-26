@@ -38,7 +38,7 @@
         <div class="flex space-x-2">
           <button @click="navigateBack"
             class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-greyBlue transition duration-300 text-sm font-title">
-            돌아가기
+            목록으로
           </button>
           <div v-if="isAuthor" class="flex space-x-2">
             <button @click="handleEdit"
@@ -51,10 +51,16 @@
             </button>
           </div>
           <!-- 클럽 신청하기 버튼 -->
-          <button v-else @click="handleJoin"
-            class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
-            클럽 신청하기
-          </button>
+           <div v-else @click="handleJoin">
+             <button v-if="!isRegisted"
+             class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
+             클럽 신청하기
+            </button>
+            <button v-if="isRegisted"
+             class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
+             신청 취소하기
+            </button>
+          </div>
         </div>
       </div>
 
@@ -87,11 +93,13 @@
       </div>
     </div>
   </div>
+  <Footer/>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import Header from "./Header.vue";
+import Footer from "./Footer.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useClubStore } from "@/stores/club";
 import { useMemberStore } from "@/stores/member";
@@ -116,6 +124,8 @@ const club = ref({});
 const comments = ref([]);
 const newComment = ref("");
 const imgSrc = ref('');
+const isRegisted = computed(() => store.isRegisted)
+const headCount = computed(() => store.clubDetail.headCount)
 
 // 작성자와 현재 로그인한 사용자가 일치하는지 확인
 const isAuthor = computed(() => {
@@ -129,8 +139,11 @@ const loadClubDetails = async () => {
     await store.getClubDetail(clubNo);
     club.value = store.clubDetail;
 
+    await store.registStatus(sessionStorage.getItem('memberId'), clubNo);
+    isRegisted.value = store.isRegisted;
+
     if (club.value.clubFile) {
-      imgSrc.value = `http://localhost:8080/file/club${club.value.clubFile.path}/${club.value.clubFile.systemName}`;
+      imgSrc.value = `http://192.168.210.83:8080/file/club${club.value.clubFile.path}/${club.value.clubFile.systemName}`;
     }
 
     comments.value = club.value.comments || [];
@@ -217,19 +230,30 @@ const handleJoin = () => {
     });
     return;
   }
-
-  store
-    .registerClub(memberStore.memberId, clubNo)
+  if (!isRegisted.value) {
+    store
+      .registerClub(memberStore.memberId, clubNo)
+      .then(() => {
+        customSwal.fire({
+          icon: "success",
+          title: "신청 완료",
+          text: "클럽 신청이 성공적으로 완료되었습니다.",
+        });
+      })
+      .catch((error) => {
+        console.error("클럽 신청 실패:", error);
+      });
+  } else {
+    store.cancelRegistClub(memberStore.memberId, clubNo)
     .then(() => {
       customSwal.fire({
-        icon: "success",
-        title: "신청 완료",
-        text: "클럽 신청이 성공적으로 완료되었습니다.",
-      });
+          icon: "success",
+          title: "취소 완료",
+          text: "클럽 신청이 성공적으로 취소되었습니다.",
+          confirmButtonText: '확인',
+        });
     })
-    .catch((error) => {
-      console.error("클럽 신청 실패:", error);
-    });
+  }
 };
 
 const navigateBack = () => {

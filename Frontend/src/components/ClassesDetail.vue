@@ -25,7 +25,7 @@
 
       <!-- Class Image -->
       <div class="mb-6 flex justify-center">
-        <img v-if="classData.classesFile" :src="imgSrc" alt="Class Image" class="rounded-lg object-contain" />
+        <img v-if="!isLoading && classData.classesFile" :src="imgSrc" alt="Class Image" class="rounded-lg object-contain" />
       </div>
 
       <!-- Class Description -->
@@ -39,7 +39,7 @@
         <div class="flex space-x-2">
           <button @click="navigateBack"
             class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-greyBlue transition duration-300 text-sm font-title">
-            돌아가기
+            목록으로
           </button>
           <div v-if="isAuthor" class="flex space-x-2">
             <button @click="handleEdit"
@@ -52,10 +52,16 @@
             </button>
           </div>
           <!-- 클래스 신청하기 버튼 -->
-          <button v-else @click="handleJoin"
-            class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
-            클래스 신청하기
-          </button>
+          <div v-else @click="handleJoin">
+            <button v-if="!isRegisted"
+              class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
+              클래스 신청하기
+            </button>
+            <button v-if="isRegisted"
+              class="px-4 py-2 bg-lightBlue text-white rounded-full hover:bg-darkBlue transition duration-300 text-sm font-title">
+              신청 취소하기
+            </button>
+          </div>
         </div>
       </div>
 
@@ -88,15 +94,18 @@
       </div>
     </div>
   </div>
+  <Footer></Footer>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import Header from "./Header.vue";
+import Footer from "./Footer.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useClassStore } from "@/stores/class";
 import { useMemberStore } from "@/stores/member";
 import Swal from "sweetalert2";
+import '@/assets/swal_custom.css';
 
 const route = useRoute();
 const router = useRouter();
@@ -107,6 +116,31 @@ const classData = ref({});
 const comments = ref([]);
 const newComment = ref("");
 const imgSrc = ref("");
+const isRegisted = computed(() => store.isRegisted)
+const isLoading = ref(true);
+
+const loadClassDetails = async () => {
+  try {
+    isLoading.value = true;
+    await store.getClassDetail(classNo);
+    classData.value = store.classDetail;
+
+    await store.registStatus(sessionStorage.getItem('memberId'), classNo);
+    isRegisted.value = store.isRegisted;
+
+    if (classData.value.classesFile) {
+      imgSrc.value = `http://192.168.210.83:8080/file/class${classData.value.classesFile.path}/${classData.value.classesFile.systemName}`;
+    }
+
+    comments.value = classData.value.comments || [];
+  } catch (error) {
+    console.error("클래스 상세 정보 로드 실패:", error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+
 
 // Check if the current user is the author
 const isAuthor = computed(() => {
@@ -119,33 +153,8 @@ const isAuthor = computed(() => {
 
 const classNo = route.params.classNo;
 
-const loadClassDetails = async () => {
-  try {
-    await store.getClassDetail(classNo);
-    classData.value = store.classDetail;
-
-    if (classData.value.classesFile) {
-      imgSrc.value = `http://localhost:8080/file/class${classData.value.classesFile.path}/${classData.value.classesFile.systemName}`;
-    }
-
-    comments.value = classData.value.comments || [];
-  } catch (error) {
-    console.error("클래스 상세 정보 로드 실패:", error);
-  }
-};
 
 const addComment = () => {
-  if (!memberStore.memberId) {
-    Swal.fire({
-      icon: "warning",
-      title: "로그인이 필요합니다.",
-      text: "댓글 작성을 위해 로그인해주세요.",
-      confirmButtonText: "로그인하기",
-    }).then(() => {
-      router.push({ path: "/sign-in", query: { redirect: router.currentRoute.value.fullPath } });
-    });
-    return;
-  }
   if (newComment.value.trim() === "") {
     Swal.fire({
       icon: "warning",
@@ -215,18 +224,31 @@ const handleJoin = () => {
     return;
   }
 
-  store
-    .registerClass(memberStore.memberId, classNo)
-    .then(() => {
-      Swal.fire({
-        icon: "success",
-        title: "신청 완료",
-        text: "클래스 신청이 성공적으로 완료되었습니다.",
+  if (!isRegisted.value) {
+    store
+      .registerClass(memberStore.memberId, classNo)
+      .then(() => {
+        Swal.fire({
+          icon: "success",
+          title: "신청 완료",
+          text: "클래스 신청이 성공적으로 완료되었습니다.",
+          confirmButtonText: '확인',
+        });
+      })
+      .catch((error) => {
+        console.error("클래스 신청 실패:", error);
       });
-    })
-    .catch((error) => {
-      console.error("클래스 신청 실패:", error);
-    });
+  } else {
+    store.cancelRegistClass(memberStore.memberId, classNo)
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: '취소완료',
+          text: '클래스 신청이 성공적으로 취소되었습니다.',
+          confirmButtonText: '확인',
+        });
+      })
+  }
 };
 
 const navigateBack = () => {

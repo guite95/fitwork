@@ -112,6 +112,11 @@ public class ClubServiceImpl implements ClubService {
     public void addToRegisteredClub(String id, int clubNo) {
         clubRepository.insertClubRegister(id, clubNo);
     }
+    
+    @Override
+    public boolean isRegisted(String id, int clubNo) {
+    	return clubRepository.isRegisted(id, clubNo);
+    }
 
     @Override
     public void permitMemberToClub(String id, int clubNo) {

@@ -81,6 +81,8 @@ public interface ClassesService {
 	 */
 	public void addToRegistedClass(String id, int classNo);
 	
+	public boolean isRegisted(String id, int classNo);
+	
 	/**
 	 * 클래스 등록 완료
 	 * @param id

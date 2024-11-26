@@ -17,16 +17,34 @@
         </button>
       </div>
 
-      <!-- 추천 클럽 -->
-      <div class="mb-12">
+      <!-- 전체 클럽(로그인 안돼있을 때) -->
+      <div class="mb-12" v-if="!isLoggedIn">
+        <h2 class="text-xl font-title text-lightBlue mb-8">
+          <span class="text-lightBlue"></span> <span class="text-darkBlue">클럽 둘러보기</span>
+        </h2>
+        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="6" :space-between="20" navigation>
+          <SwiperSlide v-for="club in allClubs" :key="club.clubNo">
+            <router-link :to="{ name: 'clubsdetail', params: { clubNo: club.clubNo } }" >
+              <div
+                class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition">
+                <img :src="getClubImageUrl(club)" alt="Club Image" class="w-full h-28 object-cover rounded-md mb-2" />
+                <span class="text-center text-darkBlue font-title">{{ club.clubName }}</span>
+              </div>
+            </router-link>
+          </SwiperSlide>
+        </Swiper>
+      </div>
+
+      <!-- 추천 클럽(로그인 되어있을 때) -->
+      <div class="mb-12" v-if="isLoggedIn">
         <h2 class="text-xl font-title text-lightBlue mb-8">
           <span class="text-lightBlue"> {{ memberDistrict }} </span> <span class="text-darkBlue">근처의</span>
         </h2>
-        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
+        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="6" :space-between="20" navigation>
           <SwiperSlide v-for="club in filteredRecommendedClubs" :key="club.clubNo">
             <router-link :to="{ name: 'clubsdetail', params: { clubNo: club.clubNo } }">
               <div
-                class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
+                class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition">
                 <img :src="getClubImageUrl(club)" alt="Club Image" class="w-full h-28 object-cover rounded-md mb-2" />
                 <span class="text-center text-darkBlue font-title">{{ club.clubName }}</span>
               </div>
@@ -38,11 +56,11 @@
       <!-- 인기 클럽 -->
       <div class="mb-12">
         <h2 class="text-xl font-title text-darkBlue mb-4">최근 인기 많은</h2>
-        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="3" :space-between="20" navigation>
+        <Swiper class="my-swiper" :modules="[Navigation]" :slides-per-view="6" :space-between="20" navigation>
           <SwiperSlide v-for="club in popularClubs" :key="club.clubNo">
             <router-link :to="{ name: 'clubsdetail', params: { clubNo: club.clubNo } }">
               <div
-                class="bg-gray-100 p-4 rounded-md shadow h-48 flex flex-col items-center justify-between cursor-pointer hover:bg-gray-200 transition">
+                class="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-200 transition">
                 <img :src="getClubImageUrl(club)" alt="Club Image" class="w-full h-28 object-cover rounded-md mb-2" />
                 <span class="text-center text-darkBlue font-title">{{ club.clubName }}</span>
               </div>
@@ -61,8 +79,8 @@
         </router-link>
       </div>
     </section>
-    <Footer />
   </div>
+  <Footer />
 </template>
 
 <script setup>
@@ -92,17 +110,20 @@ const memberDistrict = computed(() => {
   }
   return "지역";
 });
+const isLoggedIn = computed(() => memberStore.isLoggedIn);
 
 // 검색 쿼리 상태
 const searchQuery = ref("");
 
 // 추천 클럽 데이터
 const recommendedClubs = ref([]);
+const allClubs = ref([]);
 
 // 컴포넌트 로드 시 클럽 데이터 가져오기
 onMounted(async () => {
   await clubStore.getClubList(); // 전체 클럽 데이터 가져오기
   recommendedClubs.value = clubStore.clubList; // 전체 클럽을 추천 클럽 리스트에 반영
+  allClubs.value = clubStore.clubList;
 });
 
 // 추천 클럽 필터링 (사용자 지역 기준)
@@ -127,7 +148,7 @@ const popularClubs = computed(() => {
 // 이미지 URL 생성 메서드
 const getClubImageUrl = (club) => {
   if (club.clubFile) {
-    return `http://localhost:8080/file/club${club.clubFile.path}/${club.clubFile.systemName}`;
+    return `http://192.168.210.83:8080/file/club${club.clubFile.path}/${club.clubFile.systemName}`;
   }
   return "/images/dumbbell.jpg"; // 기본 이미지
 };
