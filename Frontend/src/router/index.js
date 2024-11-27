@@ -110,6 +110,18 @@ const routes = [
         name: 'applications',
         component: Applications,
       },
+      {
+        path: "admin",
+        name: "admin",
+        component: AdminView,
+        children: [
+          {
+            path: "",
+            name: 'visitorstat',
+            component: VisitorStats,
+          },
+        ]
+      },
     ],
   },
   {
@@ -133,18 +145,7 @@ const routes = [
       query: route.query.query, // 검색어
     }),
   },
-  {
-    path: "/admin",
-    name: "admin",
-    component: AdminView,
-    children: [
-      {
-        path: "",
-        name: 'visitorstat',
-        component: VisitorStats,
-      },
-    ]
-  },
+  
 
 
   // 다른 경로 추가 가능

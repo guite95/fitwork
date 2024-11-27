@@ -3,13 +3,15 @@
         <div>
             <label for="period" class="block text-darkBlue font-title mb-2">기간 선택</label>
             <select id="period" v-model="selectedPeriod" @change="fetchStats"
-              class="w-full px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white text-gray-500 font-title" required>
+                class="w-full px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-lightBlue bg-white text-gray-500 font-title"
+                required>
                 <option value="daily">일별 (최근 7일)</option>
                 <option value="weekly">주별 (최근 4주)</option>
                 <option value="monthly">월별 (최근 3개월)</option>
             </select>
         </div>
-        <div ref="chart" style="width: 600px; height: 400px;" class="mt-6"></div>
+        <div ref="chart" style="width: 700px; height: 750px;" class="mt-6 mx-auto flex items-center justify-center">
+        </div>
     </div>
 </template>
 
@@ -22,6 +24,20 @@ import dayjs from 'dayjs'; // 날짜 형식 변환을 위한 dayjs 라이브러�
 const selectedPeriod = ref('daily');  // 선택된 기간 ('daily', 'weekly', 'monthly')
 const chart = ref(null);  // 차트를 그릴 div 요소 참조
 let chartInstance = null;  // ECharts 인스턴스
+
+// 기간에 따른 차트 제목 설정
+const getChartTitle = (period) => {
+    switch (period) {
+        case 'daily':
+            return '일별 방문자 통계';
+        case 'weekly':
+            return '주별 방문자 통계';
+        case 'monthly':
+            return '월별 방문자 통계';
+        default:
+            return '방문자 통계';
+    }
+};
 
 // 방문자 통계 데이터를 서버로부터 가져오는 함수
 const fetchStats = async () => {
@@ -62,7 +78,7 @@ const fetchStats = async () => {
                 }
 
                 const visitorCounts = data.map((item) => item.visitorCount || 0);
-                updateChart(labels, visitorCounts);
+                updateChart(labels.reverse(), visitorCounts.reverse()); // 최근 데이터를 오른쪽으로 배치
             }
         } else {
             // 비 JSON 응답을 확인하기 위해 추가적인 로그 출력
@@ -80,7 +96,7 @@ const fetchStats = async () => {
 const updateChart = (labels, visitorCounts, errorMessage = null) => {
     const option = {
         title: {
-            text: errorMessage || `${selectedPeriod.value} 방문자 통계`,
+            text: errorMessage || getChartTitle(selectedPeriod.value),
             left: 'center',
             top: 'top',
         },
@@ -93,14 +109,24 @@ const updateChart = (labels, visitorCounts, errorMessage = null) => {
         },
         yAxis: {
             type: 'value',
+            // axisLine: {
+            //     show: false  // 세로축 라인 제거
+            // },
+            splitLine: {
+                show: false  // 가로선을 제거
+            }
         },
         series: [
             {
                 data: visitorCounts,
                 type: 'bar',  // 막대그래프 타입으로 변경
                 name: '방문자 수',
+                barWidth: '30%',  // 막대 너비를 가늘게 설정
                 animationEasing: 'bounceOut', // 애니메이션 추가
                 animationDuration: 1000, // 애니메이션 지속 시간
+                itemStyle: {
+                    color: '#93AAFD',
+                },
             },
         ],
         grid: {

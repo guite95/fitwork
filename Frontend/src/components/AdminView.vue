@@ -1,9 +1,7 @@
 <template>
-    <Header></Header>
-    <div>
+    <div class="bg-gray-50 min-h-screen">
         <VisitorStats />
     </div>
-    <Footer></Footer>
 </template>
 
 <script setup>
