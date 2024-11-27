@@ -27,6 +27,16 @@
                 신청/개설 목록
               </router-link>
             </li>
+            <li>
+              <router-link
+                :to="{ name: 'admin' }"
+                class="hover:text-lightBlue font-title"
+                active-class="font-bold text-lightBlue"
+                v-if="memberRole === 'ROLE_ADMIN'"
+              >
+                방문자 통계
+              </router-link>
+            </li>
           </ul>
         </aside>
   
@@ -42,6 +52,11 @@
   <script setup>
   import Header from './Header.vue';
   import Footer from './Footer.vue';
+  import { useMemberStore } from '../stores/member';
+
+  const memberStore = useMemberStore();
+  
+  const memberRole = memberStore.memberRole;
   </script>
   
   <style scoped>
